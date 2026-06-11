@@ -37,11 +37,17 @@ export interface RoleResponse { id: number; name: string; description: string; }
 export interface CountryResponse { id: number; isoCode: string; name: string; region: string; active: boolean; }
 export interface CurrencyResponse { id: number; code: string; name: string; symbol: string; active: boolean; }
 export interface ProductCategoryResponse { id: number; name: string; description: string; active: boolean; }
+export interface LoginRequest { email: string; password: string; }
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: { id: number; email: string; fullName: string; roles: string[]; };
+}
 
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1',
+    baseUrl: import.meta.env.VITE_API_BASE_URL || '/api/v1',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.accessToken;
       if (token) {
@@ -59,6 +65,14 @@ export const apiSlice = createApi({
     'MarketPrice', 'Report',
   ],
   endpoints: (builder) => ({
+    // Auth
+    login: builder.mutation<LoginResponse, LoginRequest>({
+      query: (body) => ({ url: '/auth/login', method: 'POST', body }),
+    }),
+    register: builder.mutation<LoginResponse, LoginRequest & { fullName: string }>({
+      query: (body) => ({ url: '/auth/register', method: 'POST', body }),
+    }),
+
     // Dashboard
     getKpis: builder.query<DashboardKpiResponse, void>({
       query: () => '/dashboard/kpis',
@@ -130,6 +144,7 @@ export const apiSlice = createApi({
 });
 
 export const {
+  useLoginMutation, useRegisterMutation,
   useGetKpisQuery,
   useGetUsersQuery, useDeactivateUserMutation,
   useGetFarmersQuery, useVerifyFarmerMutation,

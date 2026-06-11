@@ -7,10 +7,15 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payments")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Payment {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,5 +54,7 @@ public class Payment {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PreUpdate
-    public void onUpdate() { this.updatedAt = LocalDateTime.now(); }
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

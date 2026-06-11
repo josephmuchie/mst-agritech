@@ -8,7 +8,7 @@ export function useSSE<T>(url: string, enabled = true) {
   useEffect(() => {
     if (!enabled) return;
     const token = localStorage.getItem('accessToken');
-    const fullUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1'}${url}${token ? `?token=${token}` : ''}`;
+    const fullUrl = `${import.meta.env.VITE_API_BASE_URL || '/api/v1'}${url}${token ? `?token=${token}` : ''}`;
     const es = new EventSource(fullUrl);
     esRef.current = es;
 

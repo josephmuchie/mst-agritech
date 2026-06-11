@@ -57,8 +57,9 @@ services:
       REDIS_HOST: redis
       JWT_SECRET: ${JWT_SECRET:-replace_me_with_a_very_long_secret_key_at_least_512_bits}
       JASYPT_ENCRYPTOR_PASSWORD: ${JASYPT_PASSWORD:-jasypt_dev_pass}
+      SERVER_PORT: 8081
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       postgres:
         condition: service_healthy

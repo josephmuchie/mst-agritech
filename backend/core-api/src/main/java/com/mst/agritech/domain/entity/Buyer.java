@@ -6,10 +6,15 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "buyers")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Buyer {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -42,5 +47,7 @@ public class Buyer {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PreUpdate
-    public void onUpdate() { this.updatedAt = LocalDateTime.now(); }
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
