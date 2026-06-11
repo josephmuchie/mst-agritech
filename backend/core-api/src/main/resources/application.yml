@@ -1,0 +1,84 @@
+spring:
+  application:
+    name: mst-agritech-core-api
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:agritech_db}
+    username: ${DB_USER:agritech}
+    password: ${DB_PASSWORD:agritech_pass}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_schema: public
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:mst-agritech-super-secret-key-change-in-production-2026}
+    access-token-expiry-ms: 900000       # 15 minutes
+    refresh-token-expiry-ms: 604800000   # 7 days
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  info:
+    title: MST Agritech API
+    description: REST API for the MST Agritech Agricultural Trading Platform
+    version: 1.0.0
+    contact:
+      name: MST Agritech
+      email: dev@mstagritech.co.zw
+
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD:jasypt-dev-secret}
+    algorithm: PBEWithMD5AndDES
+
+logging:
+  level:
+    com.mst.agritech: DEBUG
+    org.springframework.security: INFO
+    org.flywaydb: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
