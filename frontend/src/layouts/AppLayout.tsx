@@ -1,39 +1,41 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Dropdown, Badge, Typography, Space, Button } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, Badge, Typography, Space, Button, Tag } from 'antd';
 import {
   DashboardOutlined, TeamOutlined, ShopOutlined, ShoppingCartOutlined,
   CarOutlined, DollarOutlined, BarChartOutlined, SettingOutlined,
   AuditOutlined, GlobalOutlined, BellOutlined, LogoutOutlined,
   UserOutlined, MenuFoldOutlined, MenuUnfoldOutlined, ApiOutlined,
-  FileTextOutlined, SafetyOutlined, BuildOutlined,
+  FileTextOutlined, SafetyOutlined, BuildOutlined, SwapOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/store';
-import { clearCredentials } from '../features/auth/authSlice';
+import { clearCredentials, switchRole } from '../features/auth/authSlice';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
-const menuItems = [
-  { key: '/', icon: <DashboardOutlined />, label: 'Dashboard' },
-  { key: '/farmers', icon: <TeamOutlined />, label: 'Farmers' },
-  { key: '/buyers', icon: <ShopOutlined />, label: 'Buyers' },
-  { key: '/marketplace', icon: <GlobalOutlined />, label: 'Marketplace' },
-  { key: '/orders', icon: <ShoppingCartOutlined />, label: 'Orders' },
-  { key: '/payments', icon: <DollarOutlined />, label: 'Payments' },
-  { key: '/shipments', icon: <CarOutlined />, label: 'Shipments' },
-  { key: '/reports', icon: <FileTextOutlined />, label: 'Reports' },
-  { key: '/analytics', icon: <BarChartOutlined />, label: 'Analytics' },
+const iconStyle = { fontSize: 26 };
+
+const allMenuItems = [
+  { key: '/', icon: <DashboardOutlined style={iconStyle} />, label: 'Dashboard' },
+  { key: '/farmers', icon: <TeamOutlined style={iconStyle} />, label: 'Farmers' },
+  { key: '/buyers', icon: <ShopOutlined style={iconStyle} />, label: 'Buyers' },
+  { key: '/marketplace', icon: <GlobalOutlined style={iconStyle} />, label: 'Marketplace' },
+  { key: '/orders', icon: <ShoppingCartOutlined style={iconStyle} />, label: 'Orders' },
+  { key: '/payments', icon: <DollarOutlined style={iconStyle} />, label: 'Payments' },
+  { key: '/shipments', icon: <CarOutlined style={iconStyle} />, label: 'Shipments' },
+  { key: '/reports', icon: <FileTextOutlined style={iconStyle} />, label: 'Reports' },
+  { key: '/analytics', icon: <BarChartOutlined style={iconStyle} />, label: 'Analytics' },
   {
-    key: 'admin', icon: <SettingOutlined />, label: 'Administration',
+    key: 'admin', icon: <SettingOutlined style={iconStyle} />, label: 'Administration',
     children: [
-      { key: '/admin/users', icon: <UserOutlined />, label: 'Users' },
-      { key: '/admin/roles', icon: <SafetyOutlined />, label: 'Roles & Permissions' },
-      { key: '/admin/master-data', icon: <BuildOutlined />, label: 'Master Data' },
-      { key: '/admin/logistics', icon: <CarOutlined />, label: 'Logistics Companies' },
-      { key: '/admin/integrations', icon: <ApiOutlined />, label: 'Integrations' },
-      { key: '/admin/audit-logs', icon: <AuditOutlined />, label: 'Audit Logs' },
-      { key: '/admin/settings', icon: <SettingOutlined />, label: 'App Settings' },
+      { key: '/admin/users', icon: <UserOutlined style={iconStyle} />, label: 'Users' },
+      { key: '/admin/roles', icon: <SafetyOutlined style={iconStyle} />, label: 'Roles & Permissions' },
+      { key: '/admin/master-data', icon: <BuildOutlined style={iconStyle} />, label: 'Master Data' },
+      { key: '/admin/logistics', icon: <CarOutlined style={iconStyle} />, label: 'Logistics Companies' },
+      { key: '/admin/integrations', icon: <ApiOutlined style={iconStyle} />, label: 'Integrations' },
+      { key: '/admin/audit-logs', icon: <AuditOutlined style={iconStyle} />, label: 'Audit Logs' },
+      { key: '/admin/settings', icon: <SettingOutlined style={iconStyle} />, label: 'App Settings' },
     ],
   },
 ];
@@ -45,9 +47,17 @@ const AppLayout: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((s) => s.auth);
 
+  const isAdmin = user?.roles.includes('ADMIN') ?? false;
+
   const userMenu = {
     items: [
       { key: 'profile', label: 'Profile', icon: <UserOutlined /> },
+      {
+        key: 'switch-role',
+        label: isAdmin ? 'Switch to: Normal User' : 'Switch to: Admin',
+        icon: <SwapOutlined />,
+        onClick: () => { dispatch(switchRole()); navigate('/'); },
+      },
       { type: 'divider' as const },
       {
         key: 'logout', label: 'Sign Out', icon: <LogoutOutlined />, danger: true,
@@ -78,8 +88,8 @@ const AppLayout: React.FC = () => {
           theme="dark"
           mode="inline"
           selectedKeys={[location.pathname]}
-          defaultOpenKeys={['admin']}
-          items={menuItems}
+          defaultOpenKeys={isAdmin ? ['admin'] : []}
+          items={isAdmin ? allMenuItems : allMenuItems.filter((item) => item.key !== 'admin')}
           onClick={({ key }) => navigate(key)}
           style={{ borderRight: 0, paddingTop: 8 }}
         />
@@ -103,10 +113,17 @@ const AppLayout: React.FC = () => {
             </Badge>
             <Dropdown menu={userMenu} placement="bottomRight">
               <Space style={{ cursor: 'pointer' }}>
-                <Avatar style={{ backgroundColor: '#0891B2' }}>
+                <Avatar style={{ backgroundColor: isAdmin ? '#0891B2' : '#16A34A' }}>
                   {user?.fullName?.[0]?.toUpperCase() || 'U'}
                 </Avatar>
-                {!collapsed && <Text style={{ color: '#0C4A6E', fontWeight: 500 }}>{user?.fullName}</Text>}
+                {!collapsed && (
+                  <Space size={6}>
+                    <Text style={{ color: '#0C4A6E', fontWeight: 500 }}>{user?.fullName}</Text>
+                    <Tag color={isAdmin ? 'cyan' : 'green'} style={{ margin: 0, fontSize: 11 }}>
+                      {isAdmin ? 'ADMIN' : 'USER'}
+                    </Tag>
+                  </Space>
+                )}
               </Space>
             </Dropdown>
           </Space>

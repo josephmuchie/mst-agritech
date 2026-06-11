@@ -36,8 +36,18 @@ const authSlice = createSlice({
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
     },
+    switchRole(state) {
+      if (!state.user) return;
+      const isAdmin = state.user.roles.includes('ADMIN');
+      state.user = {
+        ...state.user,
+        roles: isAdmin ? ['USER'] : ['ADMIN'],
+        fullName: isAdmin ? 'Jane Farmer' : 'Admin User',
+        email: isAdmin ? 'farmer@mstagritech.co.zw' : 'admin@mstagritech.co.zw',
+      };
+    },
   },
 });
 
-export const { setCredentials, clearCredentials } = authSlice.actions;
+export const { setCredentials, clearCredentials, switchRole } = authSlice.actions;
 export default authSlice.reducer;

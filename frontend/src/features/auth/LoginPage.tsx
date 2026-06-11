@@ -1,6 +1,6 @@
 import React from 'react';
-import { Form, Input, Button, Card, Typography, Tag } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Card, Typography, Tag, Divider, Space } from 'antd';
+import { UserOutlined, LockOutlined, CrownOutlined, TeamOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch } from '../../app/store';
 import { setCredentials } from './authSlice';
@@ -14,20 +14,18 @@ const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const [form] = Form.useForm();
 
-  const onFinish = (values: { email?: string }) => {
-    // DEV MODE: bypass backend auth — any credentials accepted
+  const loginAs = (role: 'ADMIN' | 'USER') => {
     dispatch(setCredentials({
       accessToken: 'dev-token',
       refreshToken: 'dev-refresh',
-      user: {
-        id: 1,
-        email: values.email || 'admin@mstagritech.co.zw',
-        fullName: 'Admin User',
-        roles: ['ADMIN'],
-      },
+      user: role === 'ADMIN'
+        ? { id: 1, email: 'admin@mstagritech.co.zw', fullName: 'Admin User', roles: ['ADMIN'] }
+        : { id: 2, email: 'farmer@mstagritech.co.zw', fullName: 'Jane Farmer', roles: ['USER'] },
     }));
     navigate(from, { replace: true });
   };
+
+  const onFinish = () => loginAs('ADMIN');
 
   return (
     <div style={{
@@ -43,6 +41,27 @@ const LoginPage: React.FC = () => {
           <Tag color="orange" style={{ marginTop: 8 }}>Dev Mode — No password required</Tag>
         </div>
 
+        <Divider style={{ margin: '0 0 16px' }}>Quick Login</Divider>
+        <Space direction="vertical" style={{ width: '100%', marginBottom: 24 }} size={10}>
+          <Button
+            block size="large" type="primary"
+            icon={<CrownOutlined />}
+            onClick={() => loginAs('ADMIN')}
+            style={{ background: '#0891B2', borderColor: '#0891B2' }}
+          >
+            Login as Admin
+          </Button>
+          <Button
+            block size="large"
+            icon={<TeamOutlined />}
+            onClick={() => loginAs('USER')}
+            style={{ borderColor: '#16A34A', color: '#16A34A' }}
+          >
+            Login as Normal User
+          </Button>
+        </Space>
+
+        <Divider style={{ margin: '0 0 16px' }}>Or enter credentials</Divider>
         <Form form={form} layout="vertical" onFinish={onFinish} size="large">
           <Form.Item name="email" label="Email">
             <Input prefix={<UserOutlined />} placeholder="any email or leave blank" />
@@ -52,7 +71,7 @@ const LoginPage: React.FC = () => {
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
-              Sign In
+              Sign In as Admin
             </Button>
           </Form.Item>
         </Form>
