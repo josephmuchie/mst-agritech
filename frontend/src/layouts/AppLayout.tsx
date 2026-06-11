@@ -57,7 +57,7 @@ const AppLayout: React.FC = () => {
   };
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: '100vh', background: '#F0F9FF' }}>
       <Sider
         collapsible
         collapsed={collapsed}
@@ -85,7 +85,7 @@ const AppLayout: React.FC = () => {
         />
       </Sider>
 
-      <Layout style={{ marginLeft: collapsed ? 80 : 240, transition: 'margin-left 0.2s' }}>
+      <Layout style={{ marginLeft: collapsed ? 80 : 240, transition: 'margin-left 0.2s', background: '#F0F9FF' }}>
         <Header style={{
           position: 'sticky', top: 0, zIndex: 99, background: '#FFFFFF',
           padding: '0 24px', display: 'flex', alignItems: 'center',
