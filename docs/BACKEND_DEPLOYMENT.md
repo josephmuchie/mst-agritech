@@ -49,36 +49,35 @@ Railway runs your `docker-compose.yml` services with minimal setup.
    - New → Database → Redis  
    - Note `REDIS_URL` or host/port.
 
-5. **Deploy core-api**  
-   - New → GitHub Repo → set **Root Directory** to `backend/core-api`  
-   - Or deploy the whole repo with Docker Compose (Railway supports compose).
+5. **Deploy core-api** (`mst-agritech-api`)  
+   - New → GitHub Repo → **Root Directory:** `backend/core-api`  
+   - Railway reads `backend/core-api/railway.toml` (healthcheck `/actuator/health`)  
+   - **Do not set `SERVER_PORT` manually** — Railway injects `PORT`; the app maps it automatically.
 
-6. **Set environment variables** on the `core-api` service:
+6. **Link Postgres & Redis** (no manual `DB_*` copy required if services are in the same project)  
+   The API auto-reads Railway's `DATABASE_URL` / `PGHOST` / `PGPORT` / `PGUSER` / `PGPASSWORD` / `PGDATABASE`  
+   and `REDISHOST` / `REDISPORT` / `REDISPASSWORD` via `CloudEnvironmentPostProcessor`.  
+   **Remove any empty `DB_HOST` variable** — blank values break JDBC.
+
+   **Required variables** on `mst-agritech-api`:
 
    ```env
-   DB_HOST=<postgres-host>
-   DB_PORT=5432
-   DB_NAME=railway
-   DB_USER=postgres
-   DB_PASSWORD=<from-railway>
-   REDIS_HOST=<redis-host>
-   REDIS_PORT=6379
    JWT_SECRET=<generate-64+-char-random-string>
    JASYPT_PASSWORD=<generate-random-string>
-   SERVER_PORT=8081
-   FRONTEND_URL=https://your-app.vercel.app
-   API_BASE_URL=https://your-api.up.railway.app
+   FRONTEND_URL=https://your-frontend-domain
+   API_BASE_URL=https://agritech-api.mst.co.zw
    ```
 
-7. **Generate a public domain**  
-   - Service → Settings → Networking → Generate Domain  
-   - Example: `https://mst-agritech-api.up.railway.app`
+7. **Custom domain** `agritech-api.mst.co.zw`  
+   - Service → **Settings** → **Networking** → **Custom Domain** → add `agritech-api.mst.co.zw`  
+   - In DNS for `mst.co.zw`, add **CNAME** `agritech-api` → Railway's target hostname  
+   - Wait for SSL (automatic), then set `API_BASE_URL=https://agritech-api.mst.co.zw` and redeploy.
 
 8. **Point Vercel frontend** to the API:
 
    ```env
-   VITE_API_BASE_URL=https://mst-agritech-api.up.railway.app/api/v1
-   VITE_OPENAPI_URL=https://mst-agritech-api.up.railway.app/api-docs
+   VITE_API_BASE_URL=https://agritech-api.mst.co.zw/api/v1
+   VITE_OPENAPI_URL=https://agritech-api.mst.co.zw/api-docs
    ```
 
 9. **Redeploy Vercel** after setting env vars.

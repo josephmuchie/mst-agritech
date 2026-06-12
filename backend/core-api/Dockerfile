@@ -10,6 +10,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 ENV SERVER_PORT=8081
 EXPOSE 8081
+# Railway sets PORT at runtime; CloudEnvironmentPostProcessor maps PORT -> SERVER_PORT
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-  CMD curl -f http://localhost:8081/actuator/health || exit 1
+  CMD sh -c 'curl -f http://localhost:${SERVER_PORT:-${PORT:-8081}}/actuator/health || exit 1'
 ENTRYPOINT ["java", "-jar", "app.jar"]
