@@ -79,20 +79,13 @@ const LoginPage: React.FC = () => {
   const passwordLoginAllowed = ssoInfo?.allowPasswordLogin !== false;
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', alignItems: 'center',
-      justifyContent: 'center', position: 'relative', overflow: 'hidden',
-      background: 'linear-gradient(135deg, #0C4A6E 0%, #0891B2 100%)',
-    }}>
+    <div className="auth-page">
       <BrandLogo
         variant="icon-white"
         height={420}
-        style={{
-          position: 'absolute', right: '-80px', bottom: '-80px',
-          opacity: 0.08, pointerEvents: 'none',
-        }}
+        className="auth-page-watermark"
       />
-      <Card style={{ width: 420, borderRadius: 12, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
+      <Card className="auth-card">
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <BrandLogo
             variant="primary-cyan"

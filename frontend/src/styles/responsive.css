@@ -1,0 +1,277 @@
+/* MST Agritech — mobile & tablet responsive overrides */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  touch-action: manipulation;
+}
+
+/* ── App shell ─────────────────────────────────────────────── */
+
+.app-content {
+  margin: 24px;
+  min-height: calc(100vh - 64px - 48px);
+  min-height: calc(100dvh - 64px - 48px);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.app-header {
+  padding: 0 24px !important;
+}
+
+.app-header-user-name {
+  display: inline;
+}
+
+@media (max-width: 767px) {
+  .app-content {
+    margin: 12px;
+    min-height: calc(100dvh - 56px - 24px);
+  }
+
+  .app-header {
+    padding: 0 12px !important;
+    height: 56px !important;
+    line-height: 56px !important;
+  }
+
+  .app-header-user-name,
+  .app-header-role-tag {
+    display: none !important;
+  }
+
+  .ant-layout-header .ant-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* Mobile nav drawer */
+.mobile-nav-drawer .ant-drawer-body {
+  padding: 0 !important;
+  background: #0C4A6E;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-nav-logo {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+/* ── Login / auth pages ────────────────────────────────────── */
+
+.auth-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+  background: linear-gradient(135deg, #0C4A6E 0%, #0891B2 100%);
+}
+
+.auth-page-watermark {
+  position: absolute;
+  right: -80px;
+  bottom: -80px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 767px) {
+  .auth-page-watermark {
+    right: -120px;
+    bottom: -120px;
+    transform: scale(0.6);
+  }
+
+  .auth-card .ant-card-body {
+    padding: 20px 16px;
+  }
+}
+
+/* ── Page cards & toolbars ─────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .ant-card-head {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ant-card-head-wrapper {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .ant-card-extra {
+    margin-inline-start: 0 !important;
+    width: 100%;
+  }
+
+  .ant-card-extra .ant-space {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .ant-card-extra .ant-input-search,
+  .ant-card-extra .ant-select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .page-toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .page-toolbar .ant-space {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
+
+/* ── Tables ────────────────────────────────────────────────── */
+
+.responsive-table .ant-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  .ant-table-content {
+    overflow-x: auto;
+  }
+
+  .ant-table {
+    font-size: 13px;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 8px 10px !important;
+    white-space: nowrap;
+  }
+
+  .ant-pagination {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+}
+
+/* ── Forms & modals ────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .ant-modal {
+    max-width: calc(100vw - 16px) !important;
+    margin: 8px auto !important;
+    padding-bottom: 0;
+  }
+
+  .ant-modal-body {
+    max-height: calc(100dvh - 120px);
+    overflow-y: auto;
+  }
+
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+}
+
+/* ── Swagger API docs ──────────────────────────────────────── */
+
+.swagger-docs-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .swagger-docs-wrap .swagger-ui .info {
+    margin: 16px 0;
+  }
+
+  .swagger-docs-wrap .swagger-ui .opblock-summary {
+    flex-wrap: wrap;
+  }
+
+  .swagger-docs-wrap .swagger-ui .opblock-summary-method {
+    min-width: 60px;
+  }
+}
+
+/* ── Dashboard & stats ─────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 8px;
+  }
+
+  .ant-statistic-content-value {
+    font-size: 22px !important;
+  }
+}
+
+/* ── Tabs ──────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .ant-tabs-nav-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ant-tabs-nav-list {
+    flex-wrap: nowrap;
+  }
+}
+
+/* ── Typography ────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  h1.ant-typography,
+  .ant-typography h1 {
+    font-size: 28px !important;
+  }
+
+  h3.ant-typography,
+  .ant-typography h3 {
+    font-size: 20px !important;
+  }
+
+  h4.ant-typography,
+  .ant-typography h4 {
+    font-size: 18px !important;
+  }
+}

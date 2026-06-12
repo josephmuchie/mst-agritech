@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col, Card, Statistic, Badge, Typography, Table, Tag } from 'antd';
 import { ArrowUpOutlined, ShoppingCartOutlined, TeamOutlined, DollarOutlined, CarOutlined } from '@ant-design/icons';
 import { useSSE } from '../hooks/useSSE';
+import { TABLE_SCROLL } from '../utils/table';
 
 const { Title, Text } = Typography;
 
@@ -40,7 +41,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="dashboard-header" style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={4} style={{ margin: 0 }}>Dashboard</Title>
         <Badge
           status={connected ? 'processing' : 'default'}
@@ -95,7 +96,7 @@ const DashboardPage: React.FC = () => {
       </Row>
 
       <Card title="Recent Orders" extra={<Text type="secondary">Auto-updating</Text>}>
-        <Table dataSource={recentOrders} columns={columns} pagination={false} size="small" />
+        <Table dataSource={recentOrders} columns={columns} pagination={false} size="small" scroll={TABLE_SCROLL} className="responsive-table" />
       </Card>
     </div>
   );

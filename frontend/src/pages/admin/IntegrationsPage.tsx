@@ -217,7 +217,8 @@ const IntegrationsPage: React.FC = () => {
         onCancel={() => setConfigTarget(null)}
         onOk={handleSaveConfig}
         confirmLoading={saving}
-        width={560}
+        width="100%"
+        style={{ maxWidth: 560, top: 20 }}
         okText="Save Connector"
       >
         <Form form={form} layout="vertical">
@@ -262,7 +263,8 @@ const IntegrationsPage: React.FC = () => {
         open={!!detailTarget}
         onCancel={() => setDetailTarget(null)}
         footer={null}
-        width={800}
+        width="100%"
+        style={{ maxWidth: 800, top: 20 }}
       >
         <Paragraph type="secondary">Manual and scheduled invoke runs for this connector.</Paragraph>
         <Table

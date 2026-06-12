@@ -106,7 +106,7 @@ const ApiDocsPage: React.FC = () => {
         )}
 
         {specStatus === 'ready' && (
-          <div className="mst-swagger-ui" style={{ padding: '0 16px 16px' }}>
+          <div className="mst-swagger-ui swagger-docs-wrap" style={{ padding: '0 16px 16px' }}>
             <SwaggerUI
               key={retryKey}
               url={OPENAPI_URL}

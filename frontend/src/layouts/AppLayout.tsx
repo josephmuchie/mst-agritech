@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Menu, Avatar, Dropdown, Badge, Typography, Space, Button, Tag } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, Badge, Typography, Space, Button, Tag, Drawer } from 'antd';
 import {
   DashboardOutlined, TeamOutlined, ShopOutlined, ShoppingCartOutlined,
   CarOutlined, DollarOutlined, BarChartOutlined, SettingOutlined,
@@ -12,11 +12,13 @@ import { useAppSelector, useAppDispatch } from '../app/store';
 import { clearCredentials, switchRole } from '../features/auth/authSlice';
 import BrandLogo from '../components/BrandLogo';
 import { useResizableSider } from '../hooks/useResizableSider';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
 const iconStyle = { fontSize: 26 };
+const mobileIconStyle = { fontSize: 22 };
 
 const allMenuItems = [
   { key: '/', icon: <DashboardOutlined style={iconStyle} />, label: 'Dashboard' },
@@ -42,8 +44,23 @@ const allMenuItems = [
   },
 ];
 
+const mobileMenuItems = allMenuItems.map((item) => ({
+  ...item,
+  icon: React.isValidElement(item.icon)
+    ? React.cloneElement(item.icon as React.ReactElement<{ style?: React.CSSProperties }>, { style: mobileIconStyle })
+    : item.icon,
+  children: item.children?.map((child) => ({
+    ...child,
+    icon: React.isValidElement(child.icon)
+      ? React.cloneElement(child.icon as React.ReactElement<{ style?: React.CSSProperties }>, { style: mobileIconStyle })
+      : child.icon,
+  })),
+}));
+
 const AppLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
@@ -53,12 +70,32 @@ const AppLayout: React.FC = () => {
   const [openKeys, setOpenKeys] = useState<string[]>(isAdmin ? ['admin'] : []);
   const { siderWidth, onResizeStart } = useResizableSider(collapsed);
 
+  const menuItems = isAdmin ? allMenuItems : allMenuItems.filter((item) => item.key !== 'admin');
+  const mobileItems = isAdmin ? mobileMenuItems : mobileMenuItems.filter((item) => item.key !== 'admin');
+
   useEffect(() => {
     setOpenKeys((keys) => {
       if (isAdmin) return keys.includes('admin') ? keys : [...keys, 'admin'];
       return keys.filter((key) => key !== 'admin');
     });
   }, [isAdmin]);
+
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (isMobile) {
+      setCollapsed(true);
+    }
+  }, [isMobile]);
+
+  const handleNavigate = (key: string) => {
+    navigate(key);
+    if (isMobile) {
+      setDrawerOpen(false);
+    }
+  };
 
   const userMenu = {
     items: [
@@ -86,105 +123,129 @@ const AppLayout: React.FC = () => {
     ],
   };
 
-  return (
-    <Layout style={{ minHeight: '100vh', background: '#F0F9FF' }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        trigger={null}
-        width={siderWidth}
-        collapsedWidth={80}
-        style={{ position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0, zIndex: 100 }}
-      >
-        <div
-          style={{
-            height: 80, display: 'flex', alignItems: 'center',
-            justifyContent: collapsed ? 'center' : 'flex-start',
-            padding: collapsed ? '0 10px' : '0 12px',
-            borderBottom: '1px solid rgba(255,255,255,0.1)',
-            cursor: 'pointer',
-            width: '100%',
-          }}
-          onClick={() => navigate('/')}
-        >
-          <BrandLogo
-            variant={collapsed ? 'icon-white' : 'primary-white'}
-            height={collapsed ? 52 : 56}
-            style={collapsed ? undefined : { width: '100%' }}
-          />
-        </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          openKeys={openKeys}
-          onOpenChange={setOpenKeys}
-          items={isAdmin ? allMenuItems : allMenuItems.filter((item) => item.key !== 'admin')}
-          onClick={({ key }) => navigate(key)}
-          style={{ borderRight: 0, paddingTop: 8 }}
-        />
-        {!collapsed && (
-          <div
-            role="separator"
-            aria-orientation="vertical"
-            aria-label="Resize sidebar"
-            onMouseDown={onResizeStart}
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: 6,
-              height: '100%',
-              cursor: 'col-resize',
-              zIndex: 101,
-              background: 'transparent',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-          />
-        )}
-      </Sider>
+  const menuProps = {
+    theme: 'dark' as const,
+    mode: 'inline' as const,
+    selectedKeys: [location.pathname],
+    openKeys,
+    onOpenChange: setOpenKeys,
+    items: isMobile ? mobileItems : menuItems,
+    onClick: ({ key }: { key: string }) => handleNavigate(key),
+    style: { borderRight: 0, paddingTop: 8, flex: 1, overflowY: 'auto' as const },
+  };
 
-      <Layout style={{ marginLeft: siderWidth, transition: collapsed ? 'margin-left 0.2s' : undefined, background: '#F0F9FF' }}>
-        <Header style={{
+  const contentMargin = isMobile ? 0 : siderWidth;
+
+  return (
+    <Layout style={{ minHeight: '100dvh', background: '#F0F9FF' }}>
+      {!isMobile && (
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          trigger={null}
+          width={siderWidth}
+          collapsedWidth={80}
+          style={{ position: 'fixed', height: '100dvh', left: 0, top: 0, bottom: 0, zIndex: 100 }}
+        >
+          <div
+            style={{
+              height: 80, display: 'flex', alignItems: 'center',
+              justifyContent: collapsed ? 'center' : 'flex-start',
+              padding: collapsed ? '0 10px' : '0 12px',
+              borderBottom: '1px solid rgba(255,255,255,0.1)',
+              cursor: 'pointer',
+              width: '100%',
+            }}
+            onClick={() => navigate('/')}
+          >
+            <BrandLogo
+              variant={collapsed ? 'icon-white' : 'primary-white'}
+              height={collapsed ? 52 : 56}
+              style={collapsed ? undefined : { width: '100%' }}
+            />
+          </div>
+          <Menu {...menuProps} />
+          {!collapsed && (
+            <div
+              role="separator"
+              aria-orientation="vertical"
+              aria-label="Resize sidebar"
+              onMouseDown={onResizeStart}
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: 6,
+                height: '100%',
+                cursor: 'col-resize',
+                zIndex: 101,
+                background: 'transparent',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+            />
+          )}
+        </Sider>
+      )}
+
+      {isMobile && (
+        <Drawer
+          className="mobile-nav-drawer"
+          placement="left"
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          width={280}
+          closable={false}
+          styles={{ body: { padding: 0 } }}
+        >
+          <div className="mobile-nav-logo" onClick={() => handleNavigate('/')}>
+            <BrandLogo variant="primary-white" height={48} style={{ width: '100%' }} />
+          </div>
+          <Menu {...menuProps} />
+        </Drawer>
+      )}
+
+      <Layout style={{ marginLeft: contentMargin, transition: !isMobile && collapsed ? 'margin-left 0.2s' : undefined, background: '#F0F9FF' }}>
+        <Header className="app-header" style={{
           position: 'sticky', top: 0, zIndex: 99, background: '#FFFFFF',
-          padding: '0 24px', display: 'flex', alignItems: 'center',
+          display: 'flex', alignItems: 'center',
           justifyContent: 'space-between', boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
         }}>
           <Button
             type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: 16, color: '#0C4A6E' }}
+            aria-label={isMobile ? 'Open navigation menu' : collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            icon={isMobile || collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => (isMobile ? setDrawerOpen(true) : setCollapsed(!collapsed))}
+            style={{ fontSize: 18, color: '#0C4A6E' }}
           />
-          <Space size={16}>
+          <Space size={isMobile ? 8 : 16}>
             <Badge count={3} size="small">
-              <Button type="text" icon={<BellOutlined style={{ fontSize: 18 }} />} />
+              <Button type="text" icon={<BellOutlined style={{ fontSize: 18 }} />} aria-label="Notifications" />
             </Badge>
-            <Dropdown menu={userMenu} placement="bottomRight">
-              <Space style={{ cursor: 'pointer' }}>
+            <Dropdown menu={userMenu} placement="bottomRight" trigger={['click']}>
+              <Space style={{ cursor: 'pointer' }} aria-label="User menu">
                 <Avatar
-                  size={40}
+                  size={isMobile ? 36 : 40}
                   style={{ backgroundColor: isAdmin ? '#0891B2' : '#16A34A' }}
                   src="/Assets/SVG/icon white.svg"
                   alt={user?.fullName || 'User'}
                 >
                   {user?.fullName?.[0]?.toUpperCase() || 'U'}
                 </Avatar>
-                {!collapsed && (
-                  <Space size={6}>
-                    <Text style={{ color: '#0C4A6E', fontWeight: 500 }}>{user?.fullName}</Text>
-                    <Tag color={isAdmin ? 'cyan' : 'green'} style={{ margin: 0, fontSize: 11 }}>
-                      {isAdmin ? 'ADMIN' : 'USER'}
-                    </Tag>
-                  </Space>
-                )}
+                <Space size={6}>
+                  <Text className="app-header-user-name" style={{ color: '#0C4A6E', fontWeight: 500 }}>
+                    {user?.fullName}
+                  </Text>
+                  <Tag className="app-header-role-tag" color={isAdmin ? 'cyan' : 'green'} style={{ margin: 0, fontSize: 11 }}>
+                    {isAdmin ? 'ADMIN' : 'USER'}
+                  </Tag>
+                </Space>
               </Space>
             </Dropdown>
           </Space>
         </Header>
 
-        <Content style={{ margin: '24px', minHeight: 'calc(100vh - 64px - 48px)' }}>
+        <Content className="app-content">
           <Outlet />
         </Content>
       </Layout>

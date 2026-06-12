@@ -36,10 +36,7 @@ const SsoCallbackPage: React.FC = () => {
 
   if (error) {
     return (
-      <div style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: 'linear-gradient(135deg, #0C4A6E 0%, #0891B2 100%)',
-      }}>
+      <div className="auth-page">
         <Result
           status="error"
           title="SSO Sign-in Failed"
@@ -51,11 +48,7 @@ const SsoCallbackPage: React.FC = () => {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', gap: 24,
-      background: 'linear-gradient(135deg, #0C4A6E 0%, #0891B2 100%)',
-    }}>
+    <div className="auth-page" style={{ flexDirection: 'column', gap: 24 }}>
       <BrandLogo variant="primary-white" height={56} />
       <Spin size="large" />
       <span style={{ color: '#fff' }}>Completing company sign-in…</span>
