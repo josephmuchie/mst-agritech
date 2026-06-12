@@ -51,7 +51,9 @@ Railway runs your `docker-compose.yml` services with minimal setup.
 
 5. **Deploy core-api** (`mst-agritech-api`)  
    - New → GitHub Repo → **Root Directory:** `backend/core-api`  
-   - Railway reads `backend/core-api/railway.toml` (healthcheck `/actuator/health`)  
+   - **Config-as-code path:** `/backend/core-api/railway.json`  
+   - Full setup guide: [`backend/core-api/RAILWAY.md`](../backend/core-api/RAILWAY.md)  
+   - Variable template: `backend/core-api/.railway/variables.env`  
    - **Do not set `SERVER_PORT` manually** — Railway injects `PORT`; the app maps it automatically.
 
 6. **Link Postgres & Redis** (no manual `DB_*` copy required if services are in the same project)  

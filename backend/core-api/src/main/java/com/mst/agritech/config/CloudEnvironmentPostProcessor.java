@@ -40,6 +40,15 @@ public class CloudEnvironmentPostProcessor implements EnvironmentPostProcessor {
             overrides.put("SERVER_PORT", railwayPort);
         }
 
+        // Default public API URL from Railway custom domain when API_BASE_URL is unset
+        if (isBlank(environment.getProperty("API_BASE_URL"))) {
+            String publicDomain = firstNonBlank(environment, "RAILWAY_PUBLIC_DOMAIN");
+            if (publicDomain != null) {
+                String scheme = publicDomain.contains("localhost") ? "http" : "https";
+                overrides.put("API_BASE_URL", scheme + "://" + publicDomain);
+            }
+        }
+
         if (!overrides.isEmpty()) {
             environment.getPropertySources().addFirst(new MapPropertySource(SOURCE, overrides));
         }
