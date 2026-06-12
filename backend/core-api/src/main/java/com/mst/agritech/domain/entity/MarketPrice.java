@@ -3,7 +3,6 @@ package com.mst.agritech.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,18 +18,19 @@ public class MarketPrice {
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_id", nullable = false)
+    @JoinColumn(name = "country_id")
     private Country country;
 
-    @Column(name = "price_date", nullable = false)
-    private LocalDate priceDate;
+    @Column(name = "price", nullable = false, precision = 12, scale = 2)
+    private BigDecimal price;
 
-    @Column(name = "price_usd", nullable = false, precision = 10, scale = 4)
-    private BigDecimal priceUsd;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id", nullable = false)
+    private Currency currency;
 
-    @Column(name = "source")
-    private String source;
+    @Column(name = "price_source")
+    private String priceSource;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "recorded_at", nullable = false, updatable = false)
+    private LocalDateTime recordedAt = LocalDateTime.now();
 }

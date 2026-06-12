@@ -2,8 +2,6 @@ package com.mst.agritech.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,20 +16,10 @@ public class Quote {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Column(name = "quoted_amount", nullable = false, precision = 12, scale = 2)
-    private BigDecimal quotedAmount;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "currency_id", nullable = false)
-    private Currency currency;
-
-    @Column(nullable = false)
-    private String status = "PENDING";
-
     @Column(name = "valid_until")
-    private LocalDate validUntil;
+    private LocalDateTime validUntil;
 
-    @Column(name = "notes", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String notes;
 
     @Column(name = "created_at", nullable = false, updatable = false)

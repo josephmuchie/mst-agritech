@@ -24,13 +24,17 @@ public class DashboardController {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     @GetMapping("/dashboard/kpis")
-    @Operation(summary = "Get current KPI snapshot")
+    @Operation(
+            summary = "Get current KPI snapshot",
+            description = "Returns a point-in-time snapshot of dashboard KPIs: total orders, active farmers, revenue (USD), and active shipments.")
     public ResponseEntity<DashboardKpiResponse> getKpis() {
         return ResponseEntity.ok(dashboardService.getKpis());
     }
 
     @GetMapping(value = "/stream/dashboard/kpis", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @Operation(summary = "Server-Sent Events stream for live KPI updates")
+    @Operation(
+            summary = "Server-Sent Events stream for live KPI updates",
+            description = "Opens an SSE connection that pushes KPI updates every 5 seconds. Event name: `kpi`. Content-Type: text/event-stream.")
     public SseEmitter streamKpis() {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(() -> {

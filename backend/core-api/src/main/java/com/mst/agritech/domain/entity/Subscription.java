@@ -14,8 +14,8 @@ public class Subscription {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "farmer_id", nullable = false)
-    private Farmer farmer;
+    @JoinColumn(name = "buyer_id", nullable = false)
+    private Buyer buyer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id", nullable = false)
@@ -30,8 +30,8 @@ public class Subscription {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "auto_renew", nullable = false)
-    private boolean autoRenew = true;
+    @Column(name = "stripe_subscription_id")
+    private String stripeSubscriptionId;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

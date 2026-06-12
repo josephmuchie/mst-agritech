@@ -20,15 +20,15 @@ public class OrderItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false, precision = 10, scale = 3)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal quantity;
+
+    @Column(name = "quantity_unit", nullable = false)
+    private String quantityUnit;
 
     @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
-    private BigDecimal totalPrice;
-
-    @Column(name = "notes", columnDefinition = "TEXT")
-    private String notes;
+    @Column(name = "line_total", precision = 12, scale = 2, insertable = false, updatable = false)
+    private BigDecimal lineTotal;
 }

@@ -2,6 +2,7 @@ package com.mst.agritech.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,18 +17,24 @@ public class ShipmentTrackingEvent {
     @JoinColumn(name = "shipment_id", nullable = false)
     private Shipment shipment;
 
-    @Column(nullable = false)
-    private String status;
+    @Column(name = "gps_latitude", precision = 10, scale = 7)
+    private BigDecimal gpsLatitude;
 
-    @Column(nullable = false)
-    private String location;
+    @Column(name = "gps_longitude", precision = 10, scale = 7)
+    private BigDecimal gpsLongitude;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "temperature_celsius", precision = 5, scale = 2)
+    private BigDecimal temperatureCelsius;
 
-    @Column(name = "event_time", nullable = false)
-    private LocalDateTime eventTime;
+    @Column(name = "humidity_percent", precision = 5, scale = 2)
+    private BigDecimal humidityPercent;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "status_event", nullable = false)
+    private String statusEvent;
+
+    @Column(name = "event_source", nullable = false)
+    private String eventSource = "MANUAL";
+
+    @Column(name = "recorded_at", nullable = false, updatable = false)
+    private LocalDateTime recordedAt = LocalDateTime.now();
 }

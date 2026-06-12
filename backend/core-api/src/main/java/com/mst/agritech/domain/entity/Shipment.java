@@ -21,29 +21,29 @@ public class Shipment {
     @JoinColumn(name = "logistics_company_id")
     private LogisticsCompany logisticsCompany;
 
-    @Column(name = "tracking_number")
-    private String trackingNumber;
-
     @Column(name = "shipment_type", nullable = false)
     private String shipmentType;
+
+    @Column(name = "min_temp_celsius", precision = 5, scale = 2)
+    private BigDecimal minTempCelsius;
+
+    @Column(name = "max_temp_celsius", precision = 5, scale = 2)
+    private BigDecimal maxTempCelsius;
+
+    @Column(name = "tracking_number")
+    private String trackingNumber;
 
     @Column(nullable = false)
     private String status = "PENDING";
 
-    @Column(name = "origin_address", columnDefinition = "TEXT")
-    private String originAddress;
+    @Column(name = "estimated_departure")
+    private LocalDateTime estimatedDeparture;
 
-    @Column(name = "destination_address", columnDefinition = "TEXT")
-    private String destinationAddress;
+    @Column(name = "estimated_arrival")
+    private LocalDateTime estimatedArrival;
 
-    @Column(name = "estimated_delivery_date")
-    private LocalDateTime estimatedDeliveryDate;
-
-    @Column(name = "actual_delivery_date")
-    private LocalDateTime actualDeliveryDate;
-
-    @Column(name = "shipping_cost", precision = 10, scale = 2)
-    private BigDecimal shippingCost;
+    @Column(name = "actual_arrival")
+    private LocalDateTime actualArrival;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

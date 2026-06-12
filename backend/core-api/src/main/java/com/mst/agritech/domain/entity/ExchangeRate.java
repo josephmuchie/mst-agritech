@@ -21,12 +21,9 @@ public class ExchangeRate {
     @JoinColumn(name = "to_currency_id", nullable = false)
     private Currency toCurrency;
 
-    @Column(nullable = false, precision = 18, scale = 8)
+    @Column(nullable = false, precision = 20, scale = 8)
     private BigDecimal rate;
 
-    @Column(name = "effective_date", nullable = false)
-    private java.time.LocalDate effectiveDate;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "recorded_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

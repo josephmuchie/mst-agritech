@@ -23,7 +23,9 @@ public class RoleController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "List all roles")
+    @Operation(
+            summary = "List all roles",
+            description = "Returns all platform role definitions (e.g. ADMIN, FARMER, BUYER, LOGISTICS, ANALYST). Admin only.")
     public ResponseEntity<List<Role>> list() {
         return ResponseEntity.ok(roleRepository.findAll());
     }

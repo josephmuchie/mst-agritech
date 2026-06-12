@@ -1,0 +1,245 @@
+/* MST Agritech themed Swagger UI overrides */
+
+.mst-swagger-ui .swagger-ui {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.mst-swagger-ui .swagger-ui .topbar {
+  display: none;
+}
+
+.mst-swagger-ui .swagger-ui .info {
+  margin: 0 0 24px;
+}
+
+.mst-swagger-ui .swagger-ui .info .title {
+  color: #0C4A6E;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.mst-swagger-ui .swagger-ui .info .title small {
+  background: #0891B2;
+  color: #FFFFFF;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+}
+
+.mst-swagger-ui .swagger-ui .info .description,
+.mst-swagger-ui .swagger-ui .info p,
+.mst-swagger-ui .swagger-ui .info li,
+.mst-swagger-ui .swagger-ui .info a {
+  color: #475569;
+}
+
+.mst-swagger-ui .swagger-ui .info a {
+  color: #0891B2;
+}
+
+.mst-swagger-ui .swagger-ui .scheme-container {
+  background: #E0F2FE;
+  border: 1px solid #BAE6FD;
+  border-radius: 6px;
+  box-shadow: none;
+  padding: 16px;
+}
+
+.mst-swagger-ui .swagger-ui .opblock-tag {
+  border-bottom: 1px solid #BAE6FD;
+  color: #0C4A6E;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.mst-swagger-ui .swagger-ui .opblock-tag:hover {
+  background: #F0F9FF;
+}
+
+.mst-swagger-ui .swagger-ui .opblock {
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+}
+
+.mst-swagger-ui .swagger-ui .opblock .opblock-summary-method {
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.mst-swagger-ui .swagger-ui .opblock.opblock-get {
+  border-color: #0891B2;
+  background: rgba(8, 145, 178, 0.04);
+}
+
+.mst-swagger-ui .swagger-ui .opblock.opblock-get .opblock-summary-method {
+  background: #0891B2;
+}
+
+.mst-swagger-ui .swagger-ui .opblock.opblock-post {
+  border-color: #16A34A;
+  background: rgba(22, 163, 74, 0.04);
+}
+
+.mst-swagger-ui .swagger-ui .opblock.opblock-post .opblock-summary-method {
+  background: #16A34A;
+}
+
+.mst-swagger-ui .swagger-ui .opblock.opblock-put,
+.mst-swagger-ui .swagger-ui .opblock.opblock-patch {
+  border-color: #D97706;
+  background: rgba(217, 119, 6, 0.04);
+}
+
+.mst-swagger-ui .swagger-ui .opblock.opblock-put .opblock-summary-method,
+.mst-swagger-ui .swagger-ui .opblock.opblock-patch .opblock-summary-method {
+  background: #D97706;
+}
+
+.mst-swagger-ui .swagger-ui .opblock.opblock-delete {
+  border-color: #DC2626;
+  background: rgba(220, 38, 38, 0.04);
+}
+
+.mst-swagger-ui .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+  background: #DC2626;
+}
+
+.mst-swagger-ui .swagger-ui .opblock .opblock-summary-path,
+.mst-swagger-ui .swagger-ui .opblock .opblock-summary-description {
+  color: #0F172A;
+}
+
+.mst-swagger-ui .swagger-ui .opblock-body pre {
+  background: #0C4A6E;
+  border-radius: 4px;
+}
+
+.mst-swagger-ui .swagger-ui .btn.authorize {
+  border-color: #0891B2;
+  color: #0891B2;
+}
+
+.mst-swagger-ui .swagger-ui .btn.authorize svg {
+  fill: #0891B2;
+}
+
+.mst-swagger-ui .swagger-ui .btn.authorize.unlocked {
+  background: #0891B2;
+  border-color: #0891B2;
+  color: #FFFFFF;
+}
+
+.mst-swagger-ui .swagger-ui .btn.authorize.unlocked svg {
+  fill: #FFFFFF;
+}
+
+.mst-swagger-ui .swagger-ui .btn.execute {
+  background: #0891B2;
+  border-color: #0891B2;
+  color: #FFFFFF;
+}
+
+.mst-swagger-ui .swagger-ui .btn.execute:hover {
+  background: #0E7490;
+  border-color: #0E7490;
+  color: #FFFFFF;
+}
+
+.mst-swagger-ui .swagger-ui .btn.cancel {
+  color: #475569;
+}
+
+.mst-swagger-ui .swagger-ui section.models {
+  border: 1px solid #BAE6FD;
+  border-radius: 6px;
+}
+
+.mst-swagger-ui .swagger-ui section.models h4 {
+  color: #0C4A6E;
+}
+
+.mst-swagger-ui .swagger-ui table thead tr th,
+.mst-swagger-ui .swagger-ui table thead tr td {
+  color: #0C4A6E;
+  border-bottom: 1px solid #BAE6FD;
+}
+
+.mst-swagger-ui .swagger-ui .parameter__name,
+.mst-swagger-ui .swagger-ui .response-col_status {
+  color: #0C4A6E;
+  font-weight: 600;
+}
+
+.mst-swagger-ui .swagger-ui .response-col_description__inner p {
+  color: #475569;
+}
+
+.mst-swagger-ui .swagger-ui .model-title,
+.mst-swagger-ui .swagger-ui .model {
+  color: #0F172A;
+}
+
+.mst-swagger-ui .swagger-ui .auth-wrapper .btn.modal-btn.auth,
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux-content .btn.modal-btn.auth,
+.mst-swagger-ui .swagger-ui .auth-btn-wrapper .btn.modal-btn.auth {
+  background: #0891B2 !important;
+  border-color: #0891B2 !important;
+  color: #FFFFFF !important;
+}
+
+.mst-swagger-ui .swagger-ui .auth-wrapper .btn.modal-btn.auth:hover,
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux-content .btn.modal-btn.auth:hover,
+.mst-swagger-ui .swagger-ui .auth-btn-wrapper .btn.modal-btn.auth:hover {
+  background: #0E7490 !important;
+  border-color: #0E7490 !important;
+  color: #FFFFFF !important;
+}
+
+.mst-swagger-ui .swagger-ui .auth-btn-wrapper .btn-done,
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux-content .auth-btn-wrapper .btn-done {
+  background: #0891B2 !important;
+  border-color: #0891B2 !important;
+  color: #FFFFFF !important;
+}
+
+.mst-swagger-ui .swagger-ui .auth-btn-wrapper .btn-done:hover,
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux-content .auth-btn-wrapper .btn-done:hover {
+  background: #0E7490 !important;
+  border-color: #0E7490 !important;
+  color: #FFFFFF !important;
+}
+
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux {
+  border-radius: 6px;
+}
+
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux-header {
+  background: #0C4A6E;
+  color: #FFFFFF;
+}
+
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux-header h3 {
+  color: #FFFFFF;
+}
+
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux-header .close-modal {
+  fill: #FFFFFF;
+}
+
+.mst-swagger-ui .swagger-ui input[type='text'],
+.mst-swagger-ui .swagger-ui input[type='password'],
+.mst-swagger-ui .swagger-ui textarea,
+.mst-swagger-ui .swagger-ui select {
+  border: 1px solid #BAE6FD;
+  border-radius: 4px;
+}
+
+.mst-swagger-ui .swagger-ui input[type='text']:focus,
+.mst-swagger-ui .swagger-ui input[type='password']:focus,
+.mst-swagger-ui .swagger-ui textarea:focus,
+.mst-swagger-ui .swagger-ui select:focus {
+  border-color: #0891B2;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.15);
+}

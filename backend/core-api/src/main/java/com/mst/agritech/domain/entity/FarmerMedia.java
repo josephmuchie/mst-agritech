@@ -19,11 +19,12 @@ public class FarmerMedia {
     @Column(name = "media_type", nullable = false)
     private String mediaType;
 
-    @Column(name = "url", nullable = false)
+    @Column(name = "file_url", nullable = false)
     private String url;
 
+    @Column(name = "caption")
     private String caption;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "uploaded_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

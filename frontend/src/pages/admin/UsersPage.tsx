@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Tag, Button, Space, Typography, Card, Popconfirm, message } from 'antd';
+import { Table, Tag, Button, Typography, Card, Popconfirm, message } from 'antd';
 import { UserDeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useGetUsersQuery, useDeactivateUserMutation } from '../../app/apiSlice';

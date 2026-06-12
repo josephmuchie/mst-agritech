@@ -19,15 +19,18 @@ public class ComplianceDocument {
     @Column(name = "doc_type", nullable = false)
     private String docType;
 
-    @Column(name = "document_url", nullable = false)
+    @Column(name = "file_url", nullable = false)
     private String documentUrl;
 
     @Column(name = "issued_by")
     private String issuedBy;
 
+    @Column(name = "issue_date")
+    private java.time.LocalDate issueDate;
+
     @Column(name = "expiry_date")
     private java.time.LocalDate expiryDate;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "uploaded_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -3,7 +3,6 @@ package com.mst.agritech.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "harvest_calendars")
@@ -26,11 +25,18 @@ public class HarvestCalendar {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name = "expected_harvest_date", nullable = false)
-    private LocalDate expectedHarvestDate;
+    @Column(name = "harvest_month", nullable = false)
+    private Short harvestMonth;
 
-    @Column(name = "expected_quantity_kg", precision = 10, scale = 2)
-    private BigDecimal expectedQuantityKg;
+    @Column(name = "expected_quantity", nullable = false, precision = 12, scale = 2)
+    private BigDecimal expectedQuantity;
 
+    @Column(name = "quantity_unit", nullable = false)
+    private String quantityUnit;
+
+    @Column(name = "season_year", nullable = false)
+    private Short seasonYear;
+
+    @Column(name = "notes")
     private String notes;
 }

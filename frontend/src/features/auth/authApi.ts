@@ -1,16 +1,16 @@
 import { apiSlice } from '../../app/apiSlice';
-import { setCredentials, clearCredentials } from './authSlice';
+import { normalizeAuthResponse, setCredentials, clearCredentials } from './authSlice';
+import type { AuthApiResponse } from './authSlice';
 
 interface LoginRequest { email: string; password: string; }
-interface LoginResponse { accessToken: string; refreshToken: string; user: { id: number; email: string; fullName: string; roles: string[] } }
 
 export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation<LoginResponse, LoginRequest>({
+    login: builder.mutation<AuthApiResponse, LoginRequest>({
       query: (credentials) => ({ url: '/auth/login', method: 'POST', body: credentials }),
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         const { data } = await queryFulfilled;
-        dispatch(setCredentials(data));
+        dispatch(setCredentials(normalizeAuthResponse(data)));
       },
     }),
     logout: builder.mutation<void, void>({

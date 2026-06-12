@@ -6,6 +6,7 @@ import { store } from './app/store';
 import themeConfig from './theme/themeConfig';
 import AppLayout from './layouts/AppLayout';
 import LoginPage from './features/auth/LoginPage';
+import SsoCallbackPage from './features/auth/SsoCallbackPage';
 import RequireAuth from './features/auth/RequireAuth';
 import DashboardPage from './pages/DashboardPage';
 import FarmersPage from './pages/FarmersPage';
@@ -23,6 +24,7 @@ import LogisticsPage from './pages/admin/LogisticsPage';
 import IntegrationsPage from './pages/admin/IntegrationsPage';
 import AuditLogsPage from './pages/admin/AuditLogsPage';
 import AppSettingsPage from './pages/admin/AppSettingsPage';
+import ApiDocsPage from './pages/ApiDocsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ForbiddenPage from './pages/ForbiddenPage';
 
@@ -33,6 +35,7 @@ const App: React.FC = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/login/sso/callback" element={<SsoCallbackPage />} />
             <Route path="/403" element={<ForbiddenPage />} />
             <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
               <Route index element={<DashboardPage />} />
@@ -44,6 +47,7 @@ const App: React.FC = () => (
               <Route path="shipments" element={<ShipmentsPage />} />
               <Route path="reports" element={<ReportsPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="api-docs" element={<ApiDocsPage />} />
               <Route path="admin/users" element={<RequireAuth allowedRoles={['ADMIN']}><UsersPage /></RequireAuth>} />
               <Route path="admin/roles" element={<RequireAuth allowedRoles={['ADMIN']}><RolesPage /></RequireAuth>} />
               <Route path="admin/master-data" element={<RequireAuth allowedRoles={['ADMIN']}><MasterDataPage /></RequireAuth>} />

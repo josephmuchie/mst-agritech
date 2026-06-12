@@ -2,7 +2,6 @@ package com.mst.agritech.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "farmer_certifications")
@@ -16,17 +15,14 @@ public class FarmerCertification {
     @JoinColumn(name = "farmer_id", nullable = false)
     private Farmer farmer;
 
-    @Column(name = "certification_type", nullable = false)
-    private String certificationType;
+    @Column(name = "cert_type", nullable = false)
+    private String certType;
 
-    @Column(name = "issuing_body")
-    private String issuingBody;
+    @Column(name = "issuer")
+    private String issuer;
 
-    @Column(name = "certificate_number")
-    private String certificateNumber;
-
-    @Column(name = "issued_date")
-    private java.time.LocalDate issuedDate;
+    @Column(name = "issue_date")
+    private java.time.LocalDate issueDate;
 
     @Column(name = "expiry_date")
     private java.time.LocalDate expiryDate;
@@ -34,6 +30,6 @@ public class FarmerCertification {
     @Column(name = "document_url")
     private String documentUrl;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true;
 }

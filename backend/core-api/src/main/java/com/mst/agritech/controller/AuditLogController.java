@@ -3,6 +3,7 @@ package com.mst.agritech.controller;
 import com.mst.agritech.domain.entity.AuditLog;
 import com.mst.agritech.repository.AuditLogRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +27,12 @@ public class AuditLogController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "List all audit log entries (paginated)")
+    @Operation(
+            summary = "List all audit log entries (paginated)",
+            description = "Returns system audit trail entries including user, action, entity, IP address, and HTTP status. Admin only.")
     public ResponseEntity<Page<Map<String, Object>>> list(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int size) {
+            @Parameter(description = "Page number (zero-based)", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Number of records per page", example = "50") @RequestParam(defaultValue = "50") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return ResponseEntity.ok(auditLogRepository.findAll(pageable).map(this::toMap));
     }

@@ -6,6 +6,7 @@ import com.mst.agritech.dto.request.RegisterUserRequest;
 import com.mst.agritech.dto.response.AuthResponse;
 import com.mst.agritech.exception.ConflictException;
 import com.mst.agritech.repository.RoleRepository;
+import com.mst.agritech.repository.TenantRepository;
 import com.mst.agritech.repository.UserRepository;
 import com.mst.agritech.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,14 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final SsoService ssoService;
+    private final TenantRepository tenantRepository;
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
+        if (!ssoService.isPasswordLoginAllowed(request.getEmail())) {
+            throw new BadCredentialsException("Password sign-in is disabled for your organization. Use company SSO.");
+        }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -61,10 +67,13 @@ public class AuthService {
             role = roleRepository.findById(request.getRoleId()).orElse(role);
         }
 
+        Tenant defaultTenant = tenantRepository.findBySlug("mst-agritech").orElse(null);
+
         User user = User.builder()
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .fullName(request.getFullName())
+                .tenant(defaultTenant)
                 .active(true)
                 .roles(new HashSet<>(Set.of(role)))
                 .build();

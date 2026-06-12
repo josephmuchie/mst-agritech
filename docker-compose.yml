@@ -52,7 +52,7 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: agritech_db
-      DB_USERNAME: agritech
+      DB_USER: agritech
       DB_PASSWORD: ${POSTGRES_PASSWORD:-agritech_dev_pass}
       REDIS_HOST: redis
       JWT_SECRET: ${JWT_SECRET:-replace_me_with_a_very_long_secret_key_at_least_512_bits}

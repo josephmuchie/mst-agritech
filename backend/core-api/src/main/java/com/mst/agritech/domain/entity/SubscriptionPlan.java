@@ -3,7 +3,6 @@ package com.mst.agritech.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "subscription_plans")
@@ -13,20 +12,21 @@ public class SubscriptionPlan {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
 
-    @Column(name = "price_usd", nullable = false, precision = 10, scale = 2)
-    private BigDecimal priceUsd;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id", nullable = false)
+    private Currency currency;
 
     @Column(name = "billing_cycle", nullable = false)
     private String billingCycle;
 
-    @Column(name = "max_listings")
-    private Integer maxListings;
+    @Column(columnDefinition = "jsonb")
+    private String features;
 
     @Column(name = "is_active", nullable = false)
     private boolean active = true;

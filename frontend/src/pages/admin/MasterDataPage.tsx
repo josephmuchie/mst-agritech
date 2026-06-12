@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, Tabs, Table, Tag, Typography, Space } from 'antd';
 import { DatabaseOutlined } from '@ant-design/icons';
 import { useGetCountriesQuery, useGetCurrenciesQuery, useGetProductCategoriesQuery } from '../../app/apiSlice';

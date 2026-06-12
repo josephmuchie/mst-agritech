@@ -23,19 +23,25 @@ public class MasterDataController {
     private final ProductCategoryRepository productCategoryRepository;
 
     @GetMapping("/countries")
-    @Operation(summary = "List all active countries")
+    @Operation(
+            summary = "List all active countries",
+            description = "Returns reference data for all active countries including ISO code, name, and region.")
     public ResponseEntity<List<Country>> getCountries() {
         return ResponseEntity.ok(countryRepository.findByActiveTrue());
     }
 
     @GetMapping("/currencies")
-    @Operation(summary = "List all active currencies")
+    @Operation(
+            summary = "List all active currencies",
+            description = "Returns reference data for all active currencies including code, name, and symbol.")
     public ResponseEntity<List<Currency>> getCurrencies() {
         return ResponseEntity.ok(currencyRepository.findByActiveTrue());
     }
 
     @GetMapping("/product-categories")
-    @Operation(summary = "List all active product categories")
+    @Operation(
+            summary = "List all active product categories",
+            description = "Returns reference data for agricultural product categories used in marketplace listings.")
     public ResponseEntity<List<ProductCategory>> getProductCategories() {
         return ResponseEntity.ok(productCategoryRepository.findByActiveTrue());
     }

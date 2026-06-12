@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Menu, Avatar, Dropdown, Badge, Typography, Space, Button, Tag } from 'antd';
 import {
   DashboardOutlined, TeamOutlined, ShopOutlined, ShoppingCartOutlined,
@@ -10,6 +10,8 @@ import {
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/store';
 import { clearCredentials, switchRole } from '../features/auth/authSlice';
+import BrandLogo from '../components/BrandLogo';
+import { useResizableSider } from '../hooks/useResizableSider';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -48,15 +50,33 @@ const AppLayout: React.FC = () => {
   const { user } = useAppSelector((s) => s.auth);
 
   const isAdmin = user?.roles.includes('ADMIN') ?? false;
+  const [openKeys, setOpenKeys] = useState<string[]>(isAdmin ? ['admin'] : []);
+  const { siderWidth, onResizeStart } = useResizableSider(collapsed);
+
+  useEffect(() => {
+    setOpenKeys((keys) => {
+      if (isAdmin) return keys.includes('admin') ? keys : [...keys, 'admin'];
+      return keys.filter((key) => key !== 'admin');
+    });
+  }, [isAdmin]);
 
   const userMenu = {
     items: [
       { key: 'profile', label: 'Profile', icon: <UserOutlined /> },
       {
+        key: 'api-docs',
+        label: 'API Documentation',
+        icon: <ApiOutlined />,
+        onClick: () => navigate('/api-docs'),
+      },
+      {
         key: 'switch-role',
         label: isAdmin ? 'Switch to: Normal User' : 'Switch to: Admin',
         icon: <SwapOutlined />,
-        onClick: () => { dispatch(switchRole()); navigate('/'); },
+        onClick: () => {
+          dispatch(switchRole());
+          navigate('/');
+        },
       },
       { type: 'divider' as const },
       {
@@ -72,30 +92,60 @@ const AppLayout: React.FC = () => {
         collapsible
         collapsed={collapsed}
         trigger={null}
-        width={240}
+        width={siderWidth}
+        collapsedWidth={80}
         style={{ position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0, zIndex: 100 }}
       >
-        <div style={{
-          height: 64, display: 'flex', alignItems: 'center',
-          justifyContent: collapsed ? 'center' : 'flex-start',
-          padding: collapsed ? 0 : '0 20px', borderBottom: '1px solid rgba(255,255,255,0.1)',
-        }}>
-          <Text style={{ color: '#FFFFFF', fontSize: collapsed ? 20 : 16, fontWeight: 700, whiteSpace: 'nowrap' }}>
-            {collapsed ? '🌿' : '🌿 MST Agritech'}
-          </Text>
+        <div
+          style={{
+            height: 80, display: 'flex', alignItems: 'center',
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            padding: collapsed ? '0 10px' : '0 12px',
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
+            cursor: 'pointer',
+            width: '100%',
+          }}
+          onClick={() => navigate('/')}
+        >
+          <BrandLogo
+            variant={collapsed ? 'icon-white' : 'primary-white'}
+            height={collapsed ? 52 : 56}
+            style={collapsed ? undefined : { width: '100%' }}
+          />
         </div>
         <Menu
           theme="dark"
           mode="inline"
           selectedKeys={[location.pathname]}
-          defaultOpenKeys={isAdmin ? ['admin'] : []}
+          openKeys={openKeys}
+          onOpenChange={setOpenKeys}
           items={isAdmin ? allMenuItems : allMenuItems.filter((item) => item.key !== 'admin')}
           onClick={({ key }) => navigate(key)}
           style={{ borderRight: 0, paddingTop: 8 }}
         />
+        {!collapsed && (
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize sidebar"
+            onMouseDown={onResizeStart}
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: 6,
+              height: '100%',
+              cursor: 'col-resize',
+              zIndex: 101,
+              background: 'transparent',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          />
+        )}
       </Sider>
 
-      <Layout style={{ marginLeft: collapsed ? 80 : 240, transition: 'margin-left 0.2s', background: '#F0F9FF' }}>
+      <Layout style={{ marginLeft: siderWidth, transition: collapsed ? 'margin-left 0.2s' : undefined, background: '#F0F9FF' }}>
         <Header style={{
           position: 'sticky', top: 0, zIndex: 99, background: '#FFFFFF',
           padding: '0 24px', display: 'flex', alignItems: 'center',
@@ -113,7 +163,12 @@ const AppLayout: React.FC = () => {
             </Badge>
             <Dropdown menu={userMenu} placement="bottomRight">
               <Space style={{ cursor: 'pointer' }}>
-                <Avatar style={{ backgroundColor: isAdmin ? '#0891B2' : '#16A34A' }}>
+                <Avatar
+                  size={40}
+                  style={{ backgroundColor: isAdmin ? '#0891B2' : '#16A34A' }}
+                  src="/Assets/SVG/icon white.svg"
+                  alt={user?.fullName || 'User'}
+                >
                   {user?.fullName?.[0]?.toUpperCase() || 'U'}
                 </Avatar>
                 {!collapsed && (

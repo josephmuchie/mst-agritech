@@ -12,26 +12,26 @@ public class IntegrationConfig {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "integration_system", nullable = false, unique = true)
-    private String integrationSystem;
+    @Column(name = "system_type", nullable = false)
+    private String systemType;
 
-    @Column(name = "base_url")
-    private String baseUrl;
+    @Column(name = "display_name", nullable = false)
+    private String displayName;
 
-    @Column(name = "api_key_encrypted")
-    private String apiKeyEncrypted;
+    @Column(name = "endpoint_url")
+    private String endpointUrl;
 
-    @Column(name = "client_id")
-    private String clientId;
+    @Column(name = "credentials_encrypted", columnDefinition = "TEXT")
+    private String credentialsEncrypted;
+
+    @Column(name = "extra_config", columnDefinition = "jsonb")
+    private String extraConfig;
 
     @Column(name = "is_active", nullable = false)
     private boolean active = false;
 
-    @Column(name = "environment")
-    private String environment = "sandbox";
-
-    @Column(name = "extra_config", columnDefinition = "TEXT")
-    private String extraConfig;
+    @Column(name = "last_sync_at")
+    private LocalDateTime lastSyncAt;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
