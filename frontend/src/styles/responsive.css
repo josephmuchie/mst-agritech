@@ -124,11 +124,76 @@ body {
   letter-spacing: -0.02em;
 }
 
-.auth-page-description.ant-typography {
+.auth-page-description {
   color: #BAE6FD;
   margin-bottom: 0 !important;
   font-size: 16px;
   line-height: 1.65;
+  display: block;
+}
+
+.auth-page-shell {
+  width: 100%;
+}
+
+.auth-page-shell-header {
+  display: none;
+}
+
+.auth-page-form-header--compact .auth-page-form-title {
+  font-size: 18px !important;
+}
+
+.auth-page-form-header--compact .auth-page-form-subtitle {
+  font-size: 13px;
+}
+
+.auth-page-sso-hint {
+  margin-bottom: 12px;
+}
+
+.auth-page-divider {
+  margin: 4px 0 12px !important;
+}
+
+.auth-page-divider-text {
+  font-size: 12px;
+}
+
+.auth-page-form-item--tight {
+  margin-bottom: 8px !important;
+}
+
+.auth-page-form-item--submit {
+  margin-bottom: 0 !important;
+}
+
+.auth-page-error {
+  margin-top: 12px;
+}
+
+.auth-page-dev {
+  margin-top: 4px;
+}
+
+.auth-page-dev-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.auth-page-dev-tag {
+  display: block;
+  width: fit-content;
+  margin: 10px auto 0;
+  font-size: 11px;
+  border: none;
+}
+
+.auth-page-form .ant-form-item-label > label {
+  color: #0C4A6E;
+  font-weight: 500;
 }
 
 .auth-page-brand-accent {
@@ -174,18 +239,191 @@ body {
   color: #0C4A6E !important;
 }
 
-.auth-page-form .ant-form-item-label > label {
-  color: #0C4A6E;
-  font-weight: 500;
-}
-
 .auth-sso-button {
   border-color: #0891B2 !important;
   color: #0891B2 !important;
 }
 
+/* Mobile: full-viewport split layout — brand header + form body */
+.auth-page--mobile {
+  display: block;
+  flex: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background: #0C4A6E;
+}
+
+.auth-mobile-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+}
+
+.auth-mobile-brand {
+  flex: 0 0 32vh;
+  min-height: 200px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: max(16px, env(safe-area-inset-top)) 24px 28px;
+  background: linear-gradient(160deg, #0C4A6E 0%, #075985 50%, #0891B2 100%);
+  position: relative;
+}
+
+.auth-mobile-brand::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 24px;
+  background: #FFFFFF;
+  border-radius: 24px 24px 0 0;
+}
+
+.auth-mobile-logo {
+  width: min(75vw, 300px) !important;
+  height: auto !important;
+  max-height: 64px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.18));
+}
+
+.auth-mobile-tagline {
+  position: relative;
+  z-index: 1;
+  color: #BAE6FD;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+  max-width: 300px;
+}
+
+.auth-mobile-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: #FFFFFF;
+  min-height: 0;
+}
+
+.auth-mobile-body-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 8px 20px 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.auth-mobile-intro {
+  margin-bottom: 16px;
+}
+
+.auth-mobile-title.ant-typography {
+  margin: 0 0 4px !important;
+  color: #0C4A6E !important;
+  font-size: 22px !important;
+  font-weight: 600;
+}
+
+.auth-mobile-subtitle {
+  font-size: 14px;
+  line-height: 1.4;
+  display: block;
+}
+
+.auth-page--mobile .auth-page-sso-hint {
+  margin-bottom: 12px;
+  border-radius: 6px;
+}
+
+.auth-page--mobile .auth-page-sso-hint .ant-alert-message {
+  font-size: 13px;
+}
+
+.auth-page--mobile .auth-page-form {
+  flex: 1;
+}
+
+.auth-page--mobile .auth-page-form .ant-form-item {
+  margin-bottom: 14px;
+}
+
+.auth-page--mobile .auth-page-form .ant-form-item-label {
+  padding-bottom: 4px;
+}
+
+.auth-page--mobile .auth-page-form .ant-form-item-label > label {
+  font-size: 13px;
+  color: #0C4A6E;
+  font-weight: 500;
+}
+
+.auth-page--mobile .auth-page-form .ant-input-affix-wrapper,
+.auth-page--mobile .auth-page-form .ant-input {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 6px;
+}
+
+.auth-page--mobile .auth-page-form .ant-btn {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.auth-page--mobile .auth-page-form-item--submit {
+  margin-top: 4px;
+  margin-bottom: 0 !important;
+}
+
+.auth-page--mobile .auth-page-dev--compact {
+  flex-shrink: 0;
+  width: 100%;
+  margin: 0;
+  padding: 12px 20px max(14px, env(safe-area-inset-bottom));
+  background: #F1F5F9;
+  border-top: 1px solid #E2E8F0;
+}
+
+.auth-page--mobile .auth-page-dev--compact .auth-page-dev-divider {
+  margin: 0 0 10px !important;
+}
+
+.auth-page--mobile .auth-page-dev--compact .auth-page-dev-label {
+  font-size: 11px !important;
+}
+
+.auth-page--mobile .auth-page-dev--compact .auth-page-dev-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.auth-page--mobile .auth-page-dev--compact .auth-page-dev-tag {
+  display: block;
+  width: fit-content;
+  margin: 8px auto 0;
+  font-size: 11px;
+}
+
 @media (max-width: 991px) {
-  .auth-page {
+  .auth-page:not(.auth-page--mobile) {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     display: flex;
@@ -197,13 +435,13 @@ body {
     flex-shrink: 0;
   }
 
-  .auth-page-logo {
+  .auth-page:not(.auth-page--mobile) .auth-page-logo {
     max-height: 140px;
     width: min(72vw, 300px) !important;
     margin-bottom: 16px;
   }
 
-  .auth-page-tagline.ant-typography {
+  .auth-page:not(.auth-page--mobile) .auth-page-tagline.ant-typography {
     font-size: 20px !important;
     line-height: 1.35;
     margin-bottom: 0 !important;
@@ -213,7 +451,7 @@ body {
     display: none;
   }
 
-  .auth-page-panel {
+  .auth-page:not(.auth-page--mobile) .auth-page-panel {
     flex: 1;
     padding: 0;
     margin-top: -36px;
@@ -221,7 +459,7 @@ body {
     background: transparent;
   }
 
-  .auth-page-form-wrap {
+  .auth-page:not(.auth-page--mobile) .auth-page-form-wrap {
     flex: 1;
     max-width: none;
     margin: 0;
@@ -232,12 +470,12 @@ body {
     box-shadow: 0 -12px 40px rgba(12, 74, 110, 0.12);
   }
 
-  .auth-page-form-header {
+  .auth-page:not(.auth-page--mobile) .auth-page-form-header {
     margin-bottom: 20px;
     text-align: center;
   }
 
-  .auth-page-form-title {
+  .auth-page:not(.auth-page--mobile) .auth-page-form-title {
     margin: 0 !important;
     color: #0C4A6E !important;
   }
@@ -248,62 +486,62 @@ body {
 }
 
 @media (max-width: 767px) {
-  .auth-page-brand {
+  .auth-page:not(.auth-page--mobile) .auth-page-brand {
     padding: max(20px, env(safe-area-inset-top)) 20px 48px;
   }
 
-  .auth-page-brand-accent {
+  .auth-page:not(.auth-page--mobile) .auth-page-brand-accent {
     width: 280px;
     height: 280px;
     right: -80px;
     bottom: -60px;
   }
 
-  .auth-page-logo {
+  .auth-page:not(.auth-page--mobile) .auth-page-logo {
     max-height: 112px;
     width: min(68vw, 260px) !important;
     margin-bottom: 12px;
   }
 
-  .auth-page-tagline.ant-typography {
+  .auth-page:not(.auth-page--mobile) .auth-page-tagline.ant-typography {
     font-size: 17px !important;
     padding: 0 8px;
   }
 
-  .auth-page-panel {
+  .auth-page:not(.auth-page--mobile) .auth-page-panel {
     margin-top: -28px;
   }
 
-  .auth-page-form-wrap {
+  .auth-page:not(.auth-page--mobile) .auth-page-form-wrap {
     padding: 24px 16px max(20px, env(safe-area-inset-bottom));
     border-radius: 20px 20px 0 0;
   }
 
-  .auth-page-form-header {
+  .auth-page:not(.auth-page--mobile) .auth-page-form-header {
     margin-bottom: 16px;
   }
 
-  .auth-page-form .ant-form-item {
+  .auth-page:not(.auth-page--mobile) .auth-page-form .ant-form-item {
     margin-bottom: 16px;
   }
 
-  .auth-page-form .ant-alert {
+  .auth-page:not(.auth-page--mobile) .auth-page-form .ant-alert {
     font-size: 13px;
   }
 
-  .auth-page-dev-divider {
+  .auth-page:not(.auth-page--mobile) .auth-page-dev-divider {
     margin: 20px 0 12px !important;
   }
 
-  .auth-page-dev-label {
+  .auth-page:not(.auth-page--mobile) .auth-page-dev-label {
     font-size: 11px !important;
   }
 
-  .auth-page-dev-actions {
+  .auth-page:not(.auth-page--mobile) .auth-page-dev-actions {
     width: 100%;
   }
 
-  .auth-page-dev-tag {
+  .auth-page:not(.auth-page--mobile) .auth-page-dev-tag {
     text-align: center;
     margin-top: 10px;
   }
