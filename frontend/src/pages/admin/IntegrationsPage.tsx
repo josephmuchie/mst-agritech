@@ -18,6 +18,7 @@ import {
   type IntegrationSyncRunResponse,
   type ExternalInvoiceResponse,
 } from '../../app/apiSlice';
+import { TABLE_SCROLL } from '../../utils/table';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -135,8 +136,9 @@ const IntegrationsPage: React.FC = () => {
   if (isLoading) return <Spin size="large" style={{ display: 'block', margin: '80px auto' }} />;
 
   return (
-    <div>
+    <div className="page-root">
       <Alert
+        className="page-alert"
         type="info"
         showIcon
         style={{ marginBottom: 16 }}
@@ -273,6 +275,8 @@ const IntegrationsPage: React.FC = () => {
           columns={runColumns}
           dataSource={runs?.content ?? []}
           pagination={false}
+          scroll={TABLE_SCROLL}
+          className="responsive-table"
         />
 
         {detailTarget?.systemType === 'ORACLE_ERP' && (
@@ -285,6 +289,8 @@ const IntegrationsPage: React.FC = () => {
               columns={invoiceColumns}
               dataSource={invoices?.content ?? []}
               pagination={false}
+              scroll={TABLE_SCROLL}
+              className="responsive-table"
             />
           </>
         )}

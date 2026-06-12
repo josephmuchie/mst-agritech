@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Typography, Table, Tag, Space, Button } from 'antd';
 import { TruckOutlined } from '@ant-design/icons';
+import { TABLE_SCROLL } from '../utils/table';
 
 const { Title } = Typography;
 
@@ -16,23 +17,27 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 const ShipmentsPage: React.FC = () => (
-  <Card title={<Space><TruckOutlined /><Title level={4} style={{ margin: 0 }}>Shipments</Title></Space>}>
-    <Table
-      rowKey="id"
-      dataSource={SAMPLE_SHIPMENTS}
-      pagination={false}
-      size="middle"
-      columns={[
-        { title: 'Tracking #', dataIndex: 'trackingNo', key: 'trackingNo', render: (v) => <code>{v}</code> },
-        { title: 'Carrier', dataIndex: 'carrier', key: 'carrier' },
-        { title: 'Origin', dataIndex: 'origin', key: 'origin' },
-        { title: 'Destination', dataIndex: 'destination', key: 'destination' },
-        { title: 'Status', key: 'status', render: (_, r) => <Tag color={STATUS_COLOR[r.status]}>{r.status.replace('_', ' ')}</Tag> },
-        { title: 'ETA', dataIndex: 'eta', key: 'eta' },
-        { title: '', key: 'action', render: () => <Button size="small">Track</Button> },
-      ]}
-    />
-  </Card>
+  <div className="page-root">
+    <Card title={<Space><TruckOutlined /><Title level={4} style={{ margin: 0 }}>Shipments</Title></Space>}>
+      <Table
+        rowKey="id"
+        dataSource={SAMPLE_SHIPMENTS}
+        pagination={false}
+        size="middle"
+        scroll={TABLE_SCROLL}
+        className="responsive-table"
+        columns={[
+          { title: 'Tracking #', dataIndex: 'trackingNo', key: 'trackingNo', render: (v) => <code>{v}</code> },
+          { title: 'Carrier', dataIndex: 'carrier', key: 'carrier' },
+          { title: 'Origin', dataIndex: 'origin', key: 'origin' },
+          { title: 'Destination', dataIndex: 'destination', key: 'destination' },
+          { title: 'Status', key: 'status', render: (_, r) => <Tag color={STATUS_COLOR[r.status]}>{r.status.replace('_', ' ')}</Tag> },
+          { title: 'ETA', dataIndex: 'eta', key: 'eta' },
+          { title: '', key: 'action', render: () => <Button size="small">Track</Button> },
+        ]}
+      />
+    </Card>
+  </div>
 );
 
 export default ShipmentsPage;

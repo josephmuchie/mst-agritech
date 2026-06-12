@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Tabs, Table, Tag, Typography, Space } from 'antd';
 import { DatabaseOutlined } from '@ant-design/icons';
 import { useGetCountriesQuery, useGetCurrenciesQuery, useGetProductCategoriesQuery } from '../../app/apiSlice';
+import { TABLE_SCROLL } from '../../utils/table';
 
 const { Title } = Typography;
 
@@ -31,24 +32,26 @@ const MasterDataPage: React.FC = () => {
   ];
 
   return (
+    <div className="page-root">
     <Card title={<Space><DatabaseOutlined /><Title level={4} style={{ margin: 0 }}>Master Data</Title></Space>}>
       <Tabs
         items={[
           {
             key: 'countries', label: 'Countries',
-            children: <Table rowKey="id" dataSource={countries ?? []} columns={countryColumns} loading={cLoading} pagination={false} size="small" />,
+            children: <Table rowKey="id" dataSource={countries ?? []} columns={countryColumns} loading={cLoading} pagination={false} size="small" scroll={TABLE_SCROLL} className="responsive-table" />,
           },
           {
             key: 'currencies', label: 'Currencies',
-            children: <Table rowKey="id" dataSource={currencies ?? []} columns={currencyColumns} loading={curLoading} pagination={false} size="small" />,
+            children: <Table rowKey="id" dataSource={currencies ?? []} columns={currencyColumns} loading={curLoading} pagination={false} size="small" scroll={TABLE_SCROLL} className="responsive-table" />,
           },
           {
             key: 'categories', label: 'Product Categories',
-            children: <Table rowKey="id" dataSource={categories ?? []} columns={categoryColumns} loading={catLoading} pagination={false} size="small" />,
+            children: <Table rowKey="id" dataSource={categories ?? []} columns={categoryColumns} loading={catLoading} pagination={false} size="small" scroll={TABLE_SCROLL} className="responsive-table" />,
           },
         ]}
       />
     </Card>
+    </div>
   );
 };
 

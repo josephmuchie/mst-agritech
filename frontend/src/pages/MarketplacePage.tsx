@@ -31,36 +31,38 @@ const MarketplacePage: React.FC = () => {
   );
 
   return (
-    <Space direction="vertical" style={{ width: '100%' }} size="middle">
-      <Card>
-        <Space>
-          <Search placeholder="Search products or farms…" style={{ width: 280 }} onSearch={setSearch} onChange={(e) => !e.target.value && setSearch('')} allowClear />
-          <Select value={category} onChange={setCategory} style={{ width: 160 }}
-            options={CATEGORIES.map((c) => ({ value: c, label: c }))} />
-        </Space>
-      </Card>
-      <Row gutter={[16, 16]}>
-        {filtered.map((p) => (
-          <Col key={p.id} xs={24} sm={12} md={8} lg={6}>
-            <Badge.Ribbon text={p.available ? 'Available' : 'Out of Stock'} color={p.available ? 'green' : 'red'}>
-              <Card
-                hoverable={p.available}
-                actions={[<Button type="primary" icon={<ShoppingCartOutlined />} disabled={!p.available} size="small">Request Quote</Button>]}
-              >
-                <Tag color={CATEGORY_COLOR[p.category] ?? 'default'} style={{ marginBottom: 8 }}>{p.category}</Tag>
-                <Title level={5} style={{ margin: '4px 0' }}>{p.name}</Title>
-                <Space><EnvironmentOutlined style={{ color: '#0891B2' }} /><Text type="secondary">{p.farmer} · {p.country}</Text></Space>
-                <div style={{ marginTop: 12 }}>
-                  <Text strong style={{ fontSize: 18, color: '#0891B2' }}>${p.priceUsd}</Text>
-                  <Text type="secondary"> / {p.unit}</Text>
-                </div>
-                <div><Text type="secondary" style={{ fontSize: 12 }}>Stock: {p.stock.toLocaleString()} {p.unit}s</Text></div>
-              </Card>
-            </Badge.Ribbon>
-          </Col>
-        ))}
-      </Row>
-    </Space>
+    <div className="page-root">
+      <Space direction="vertical" style={{ width: '100%' }} size="middle">
+        <Card className="page-filter-bar">
+          <Space wrap>
+            <Search placeholder="Search products or farms…" onSearch={setSearch} onChange={(e) => !e.target.value && setSearch('')} allowClear />
+            <Select value={category} onChange={setCategory}
+              options={CATEGORIES.map((c) => ({ value: c, label: c }))} />
+          </Space>
+        </Card>
+        <Row gutter={[16, 16]} className="marketplace-grid">
+          {filtered.map((p) => (
+            <Col key={p.id} xs={24} sm={12} md={8} lg={6}>
+              <Badge.Ribbon text={p.available ? 'Available' : 'Out of Stock'} color={p.available ? 'green' : 'red'}>
+                <Card
+                  hoverable={p.available}
+                  actions={[<Button type="primary" icon={<ShoppingCartOutlined />} disabled={!p.available} size="small">Request Quote</Button>]}
+                >
+                  <Tag color={CATEGORY_COLOR[p.category] ?? 'default'} style={{ marginBottom: 8 }}>{p.category}</Tag>
+                  <Title level={5} style={{ margin: '4px 0' }}>{p.name}</Title>
+                  <Space wrap><EnvironmentOutlined style={{ color: '#0891B2' }} /><Text type="secondary">{p.farmer} · {p.country}</Text></Space>
+                  <div style={{ marginTop: 12 }}>
+                    <Text strong style={{ fontSize: 18, color: '#0891B2' }}>${p.priceUsd}</Text>
+                    <Text type="secondary"> / {p.unit}</Text>
+                  </div>
+                  <div><Text type="secondary" style={{ fontSize: 12 }}>Stock: {p.stock.toLocaleString()} {p.unit}s</Text></div>
+                </Card>
+              </Badge.Ribbon>
+            </Col>
+          ))}
+        </Row>
+      </Space>
+    </div>
   );
 };
 

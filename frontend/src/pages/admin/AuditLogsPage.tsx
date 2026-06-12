@@ -4,6 +4,7 @@ import { ReloadOutlined, AuditOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useGetAuditLogsQuery } from '../../app/apiSlice';
 import type { AuditLogResponse } from '../../app/apiSlice';
+import { TABLE_SCROLL } from '../../utils/table';
 
 const { Title } = Typography;
 
@@ -27,6 +28,7 @@ const AuditLogsPage: React.FC = () => {
   ];
 
   return (
+    <div className="page-root">
     <Card
       title={<Space><AuditOutlined /><Title level={4} style={{ margin: 0 }}>Audit Logs</Title></Space>}
       extra={<Button icon={<ReloadOutlined />} onClick={() => refetch()} loading={isFetching} />}
@@ -38,9 +40,11 @@ const AuditLogsPage: React.FC = () => {
         loading={isLoading || isFetching}
         pagination={{ current: page + 1, pageSize: 50, total: data?.totalElements ?? 0, onChange: (p) => setPage(p - 1), showTotal: (t) => `${t} log entries` }}
         size="small"
-        scroll={{ x: 900 }}
+        scroll={TABLE_SCROLL}
+        className="responsive-table"
       />
     </Card>
+    </div>
   );
 };
 

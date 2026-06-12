@@ -9,7 +9,7 @@ const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 48 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 48 }} className="page-result">
       <BrandLogo variant="icon-cyan" height={88} style={{ marginBottom: 24 }} />
       <Result
         status="404"

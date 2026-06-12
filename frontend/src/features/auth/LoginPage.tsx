@@ -6,6 +6,7 @@ import { useAppDispatch } from '../../app/store';
 import { normalizeAuthResponse, setCredentials } from './authSlice';
 import { useDiscoverSsoQuery, useLazyGetSsoAuthorizeQuery, useLoginMutation } from '../../app/apiSlice';
 import BrandLogo from '../../components/BrandLogo';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -21,6 +22,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [ssoStarting, setSsoStarting] = useState(false);
+  const isMobile = useIsMobile();
 
   const { data: ssoInfo } = useDiscoverSsoQuery(
     { email: email || undefined },
@@ -101,11 +103,12 @@ const LoginPage: React.FC = () => {
       <section className="auth-page-panel">
         <div className="auth-page-form-wrap">
           <div className="auth-page-form-header">
-            <BrandLogo variant="primary-cyan" height={48} className="auth-page-form-logo-mobile" />
-            <Title level={3} style={{ margin: 0, color: '#0C4A6E' }}>
+            <Title level={isMobile ? 4 : 3} className="auth-page-form-title">
               Welcome back
             </Title>
-            <Text type="secondary">Sign in to your MST Agritech account</Text>
+            <Text type="secondary" className="auth-page-form-subtitle">
+              Sign in to your MST Agritech account
+            </Text>
           </div>
 
           {ssoInfo?.ssoEnabled && (
@@ -118,7 +121,13 @@ const LoginPage: React.FC = () => {
             />
           )}
 
-          <Form form={form} layout="vertical" onFinish={onFinish} size="large" className="auth-page-form">
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            size={isMobile ? 'middle' : 'large'}
+            className="auth-page-form"
+          >
             <Form.Item name="email" label="Work Email" rules={[{ required: true, type: 'email', message: 'Enter a valid email' }]}>
               <Input
                 prefix={<UserOutlined />}
@@ -167,29 +176,33 @@ const LoginPage: React.FC = () => {
             {error && <Alert message={error} type="warning" showIcon style={{ marginTop: 16 }} />}
           </Form>
 
-          <Divider style={{ margin: '24px 0 16px' }}>
-            <Text type="secondary" style={{ fontSize: 12 }}>Dev Mode — Quick Login</Text>
-          </Divider>
-          <Space direction="vertical" style={{ width: '100%' }} size={10}>
-            <Button
-              block
-              icon={<CrownOutlined />}
-              onClick={() => loginDev('ADMIN')}
-              style={{ borderColor: '#0891B2', color: '#0891B2' }}
-            >
-              Dev: Login as Admin
-            </Button>
-            <Button
-              block
-              icon={<TeamOutlined />}
-              onClick={() => loginDev('USER')}
-              style={{ borderColor: '#16A34A', color: '#16A34A' }}
-            >
-              Dev: Login as Normal User
-            </Button>
-          </Space>
-          <div style={{ textAlign: 'center', marginTop: 12 }}>
-            <Tag color="orange">Dev Mode — Quick login bypasses auth</Tag>
+          <div className="auth-page-dev">
+            <Divider className="auth-page-dev-divider">
+              <Text type="secondary" className="auth-page-dev-label">Dev quick login</Text>
+            </Divider>
+            <Space direction="vertical" className="auth-page-dev-actions" size={8}>
+              <Button
+                block
+                size={isMobile ? 'middle' : 'large'}
+                icon={<CrownOutlined />}
+                onClick={() => loginDev('ADMIN')}
+                className="auth-dev-btn auth-dev-btn--admin"
+              >
+                Login as Admin
+              </Button>
+              <Button
+                block
+                size={isMobile ? 'middle' : 'large'}
+                icon={<TeamOutlined />}
+                onClick={() => loginDev('USER')}
+                className="auth-dev-btn auth-dev-btn--user"
+              >
+                Login as User
+              </Button>
+            </Space>
+            <div className="auth-page-dev-tag">
+              <Tag color="orange">Dev mode — bypasses auth</Tag>
+            </div>
           </div>
         </div>
       </section>

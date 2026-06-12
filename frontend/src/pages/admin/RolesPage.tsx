@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Table, Tag, Typography, Space, Button } from 'antd';
 import { LockOutlined, PlusOutlined } from '@ant-design/icons';
+import { TABLE_SCROLL } from '../../utils/table';
 
 const { Title } = Typography;
 
@@ -17,25 +18,29 @@ const ROLE_COLOR: Record<string, string> = {
 };
 
 const RolesPage: React.FC = () => (
-  <Card
-    title={<Space><LockOutlined /><Title level={4} style={{ margin: 0 }}>Roles &amp; Permissions</Title></Space>}
-    extra={<Button icon={<PlusOutlined />} type="primary" disabled>New Role</Button>}
-  >
-    <Table
-      rowKey="id"
-      dataSource={ROLES}
-      pagination={false}
-      size="middle"
-      columns={[
-        { title: 'Role', dataIndex: 'name', key: 'name', render: (v) => <Tag color={ROLE_COLOR[v] ?? 'default'}>{v}</Tag> },
-        { title: 'Description', dataIndex: 'description', key: 'description' },
-        {
-          title: 'Permissions', key: 'permissions',
-          render: (_, r) => r.permissions.map((p) => <Tag key={p} style={{ marginBottom: 4 }}>{p}</Tag>),
-        },
-      ]}
-    />
-  </Card>
+  <div className="page-root">
+    <Card
+      title={<Space><LockOutlined /><Title level={4} style={{ margin: 0 }}>Roles &amp; Permissions</Title></Space>}
+      extra={<Button icon={<PlusOutlined />} type="primary" disabled>New Role</Button>}
+    >
+      <Table
+        rowKey="id"
+        dataSource={ROLES}
+        pagination={false}
+        size="middle"
+        scroll={TABLE_SCROLL}
+        className="responsive-table"
+        columns={[
+          { title: 'Role', dataIndex: 'name', key: 'name', render: (v) => <Tag color={ROLE_COLOR[v] ?? 'default'}>{v}</Tag> },
+          { title: 'Description', dataIndex: 'description', key: 'description' },
+          {
+            title: 'Permissions', key: 'permissions',
+            render: (_, r) => r.permissions.map((p) => <Tag key={p} style={{ marginBottom: 4 }}>{p}</Tag>),
+          },
+        ]}
+      />
+    </Card>
+  </div>
 );
 
 export default RolesPage;

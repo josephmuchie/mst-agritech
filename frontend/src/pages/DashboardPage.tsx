@@ -40,7 +40,7 @@ const DashboardPage: React.FC = () => {
   const { data: kpi, connected } = useSSE<KpiData>('/stream/dashboard/kpis');
 
   return (
-    <div>
+    <div className="page-root">
       <div className="dashboard-header" style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={4} style={{ margin: 0 }}>Dashboard</Title>
         <Badge

@@ -70,6 +70,7 @@ const AppSettingsPage: React.FC = () => {
   };
 
   return (
+    <div className="page-root">
     <Space direction="vertical" size={16} style={{ width: '100%' }}>
       <Card title={<Space><SettingOutlined /><Title level={4} style={{ margin: 0 }}>App Settings</Title></Space>}>
         <Form
@@ -266,6 +267,7 @@ const AppSettingsPage: React.FC = () => {
         )}
       </Card>
     </Space>
+    </div>
   );
 };
 

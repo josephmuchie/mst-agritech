@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Typography, Table, Tag, Space, Statistic, Row, Col } from 'antd';
 import { DollarOutlined } from '@ant-design/icons';
+import { TABLE_SCROLL } from '../utils/table';
 
 const { Title } = Typography;
 
@@ -20,30 +21,34 @@ const PaymentsPage: React.FC = () => {
   const totalRevenue = SAMPLE_PAYMENTS.filter((p) => p.status === 'COMPLETED').reduce((s, p) => s + p.amount, 0);
 
   return (
-    <Space direction="vertical" style={{ width: '100%' }} size="large">
-      <Row gutter={16}>
-        <Col span={6}><Card><Statistic title="Total Received (USD)" value={totalRevenue} prefix={<DollarOutlined />} precision={2} /></Card></Col>
-        <Col span={6}><Card><Statistic title="Pending" value={SAMPLE_PAYMENTS.filter((p) => p.status === 'PENDING').length} suffix="payments" /></Card></Col>
-        <Col span={6}><Card><Statistic title="Completed" value={SAMPLE_PAYMENTS.filter((p) => p.status === 'COMPLETED').length} /></Card></Col>
-        <Col span={6}><Card><Statistic title="Failed" value={SAMPLE_PAYMENTS.filter((p) => p.status === 'FAILED').length} valueStyle={{ color: '#cf1322' }} /></Card></Col>
-      </Row>
-      <Card title={<Title level={4} style={{ margin: 0 }}>Payment Transactions</Title>}>
-        <Table
-          rowKey="id"
-          dataSource={SAMPLE_PAYMENTS}
-          size="middle"
-          pagination={{ current: page, pageSize: 20, total: SAMPLE_PAYMENTS.length, onChange: setPage }}
-          columns={[
-            { title: 'Reference', dataIndex: 'reference', key: 'reference', render: (v) => <code>{v}</code> },
-            { title: 'Order', dataIndex: 'orderRef', key: 'orderRef' },
-            { title: 'Amount', key: 'amount', align: 'right', render: (_, r) => `${r.currency} ${r.amount.toLocaleString()}` },
-            { title: 'Gateway', dataIndex: 'gateway', key: 'gateway', render: (v) => <Tag>{v.replace('_', ' ')}</Tag> },
-            { title: 'Status', key: 'status', render: (_, r) => <Tag color={STATUS_COLOR[r.status]}>{r.status}</Tag> },
-            { title: 'Date', dataIndex: 'createdAt', key: 'createdAt' },
-          ]}
-        />
-      </Card>
-    </Space>
+    <div className="page-root">
+      <Space direction="vertical" style={{ width: '100%' }} size="large">
+        <Row gutter={[16, 16]} className="analytics-stats-row">
+          <Col xs={24} sm={12} lg={6}><Card><Statistic title="Total Received (USD)" value={totalRevenue} prefix={<DollarOutlined />} precision={2} /></Card></Col>
+          <Col xs={24} sm={12} lg={6}><Card><Statistic title="Pending" value={SAMPLE_PAYMENTS.filter((p) => p.status === 'PENDING').length} suffix="payments" /></Card></Col>
+          <Col xs={24} sm={12} lg={6}><Card><Statistic title="Completed" value={SAMPLE_PAYMENTS.filter((p) => p.status === 'COMPLETED').length} /></Card></Col>
+          <Col xs={24} sm={12} lg={6}><Card><Statistic title="Failed" value={SAMPLE_PAYMENTS.filter((p) => p.status === 'FAILED').length} valueStyle={{ color: '#cf1322' }} /></Card></Col>
+        </Row>
+        <Card title={<Title level={4} style={{ margin: 0 }}>Payment Transactions</Title>}>
+          <Table
+            rowKey="id"
+            dataSource={SAMPLE_PAYMENTS}
+            size="middle"
+            scroll={TABLE_SCROLL}
+            className="responsive-table"
+            pagination={{ current: page, pageSize: 20, total: SAMPLE_PAYMENTS.length, onChange: setPage }}
+            columns={[
+              { title: 'Reference', dataIndex: 'reference', key: 'reference', render: (v) => <code>{v}</code> },
+              { title: 'Order', dataIndex: 'orderRef', key: 'orderRef' },
+              { title: 'Amount', key: 'amount', align: 'right', render: (_, r) => `${r.currency} ${r.amount.toLocaleString()}` },
+              { title: 'Gateway', dataIndex: 'gateway', key: 'gateway', render: (v) => <Tag>{v.replace('_', ' ')}</Tag> },
+              { title: 'Status', key: 'status', render: (_, r) => <Tag color={STATUS_COLOR[r.status]}>{r.status}</Tag> },
+              { title: 'Date', dataIndex: 'createdAt', key: 'createdAt' },
+            ]}
+          />
+        </Card>
+      </Space>
+    </div>
   );
 };
 

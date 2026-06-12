@@ -4,6 +4,7 @@ import { CheckCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useGetFarmersQuery, useVerifyFarmerMutation } from '../app/apiSlice';
 import type { FarmerResponse } from '../app/apiSlice';
+import { TABLE_SCROLL } from '../utils/table';
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -63,6 +64,7 @@ const FarmersPage: React.FC = () => {
   ];
 
   return (
+    <div className="page-root">
     <Card
       title={<Title level={4} style={{ margin: 0 }}>Farmers</Title>}
       extra={
@@ -85,8 +87,11 @@ const FarmersPage: React.FC = () => {
           showTotal: (t) => `${t} farmers`,
         }}
         size="middle"
+        scroll={TABLE_SCROLL}
+        className="responsive-table"
       />
     </Card>
+    </div>
   );
 };
 

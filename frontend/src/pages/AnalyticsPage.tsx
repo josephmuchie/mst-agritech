@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Row, Col, Statistic, Typography, Table, Tag, Space } from 'antd';
 import { RiseOutlined, FallOutlined, TrophyOutlined } from '@ant-design/icons';
+import { TABLE_SCROLL } from '../utils/table';
 
 const { Title } = Typography;
 
@@ -21,49 +22,61 @@ const TOP_MARKETS = [
 ];
 
 const AnalyticsPage: React.FC = () => (
-  <Space direction="vertical" style={{ width: '100%' }} size="large">
-    <Row gutter={16}>
-      <Col span={6}><Card><Statistic title="YTD Revenue (USD)" value={171300} precision={0} prefix="$" /></Card></Col>
-      <Col span={6}><Card><Statistic title="Total Orders (YTD)" value={154} /></Card></Col>
-      <Col span={6}><Card><Statistic title="Avg Order Value" value={1112} precision={0} prefix="$" /></Card></Col>
-      <Col span={6}><Card><Statistic title="Avg Fulfillment (days)" value={4.2} precision={1} /></Card></Col>
-    </Row>
+  <div className="page-root">
+    <Space direction="vertical" style={{ width: '100%' }} size="large">
+      <Row gutter={[16, 16]} className="analytics-stats-row">
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="YTD Revenue (USD)" value={171300} precision={0} prefix="$" /></Card></Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="Total Orders (YTD)" value={154} /></Card></Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="Avg Order Value" value={1112} precision={0} prefix="$" /></Card></Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="Avg Fulfillment (days)" value={4.2} precision={1} /></Card></Col>
+      </Row>
 
-    <Row gutter={16}>
-      <Col span={14}>
-        <Card title={<Space><TrophyOutlined /><Title level={5} style={{ margin: 0 }}>Top Products by Revenue</Title></Space>}>
-          <Table
-            rowKey="rank" dataSource={TOP_PRODUCTS} pagination={false} size="small"
-            columns={[
-              { title: '#', dataIndex: 'rank', key: 'rank', width: 40 },
-              { title: 'Product', dataIndex: 'name', key: 'name' },
-              { title: 'Category', key: 'cat', render: (_, r) => <Tag>{r.category}</Tag> },
-              { title: 'Revenue', key: 'rev', align: 'right', render: (_, r) => `$${r.revenueUsd.toLocaleString()}` },
-              { title: 'Orders', dataIndex: 'orders', key: 'orders', align: 'right' },
-              {
-                title: 'Growth', key: 'growth', align: 'right',
-                render: (_, r) => r.growth >= 0
-                  ? <span style={{ color: '#3f8600' }}><RiseOutlined /> {r.growth}%</span>
-                  : <span style={{ color: '#cf1322' }}><FallOutlined /> {Math.abs(r.growth)}%</span>,
-              },
-            ]}
-          />
-        </Card>
-      </Col>
-      <Col span={10}>
-        <Card title={<Title level={5} style={{ margin: 0 }}>Top Export Markets</Title>}>
-          <Table
-            rowKey="code" dataSource={TOP_MARKETS} pagination={false} size="small"
-            columns={[
-              { title: 'Country', key: 'country', render: (_, r) => <><Tag>{r.code}</Tag> {r.country}</> },
-              { title: 'Revenue', key: 'rev', align: 'right', render: (_, r) => `$${r.revenue.toLocaleString()}` },
-              { title: 'Share', key: 'share', align: 'right', render: (_, r) => `${r.share}%` },
-            ]}
-          />
-        </Card>
-      </Col>
-    </Row>
-  </Space>
+      <Row gutter={[16, 16]} className="analytics-tables-row">
+        <Col xs={24} xl={14}>
+          <Card title={<Space><TrophyOutlined /><Title level={5} style={{ margin: 0 }}>Top Products by Revenue</Title></Space>}>
+            <Table
+              rowKey="rank"
+              dataSource={TOP_PRODUCTS}
+              pagination={false}
+              size="small"
+              scroll={TABLE_SCROLL}
+              className="responsive-table"
+              columns={[
+                { title: '#', dataIndex: 'rank', key: 'rank', width: 40 },
+                { title: 'Product', dataIndex: 'name', key: 'name' },
+                { title: 'Category', key: 'cat', render: (_, r) => <Tag>{r.category}</Tag> },
+                { title: 'Revenue', key: 'rev', align: 'right', render: (_, r) => `$${r.revenueUsd.toLocaleString()}` },
+                { title: 'Orders', dataIndex: 'orders', key: 'orders', align: 'right' },
+                {
+                  title: 'Growth', key: 'growth', align: 'right',
+                  render: (_, r) => r.growth >= 0
+                    ? <span style={{ color: '#3f8600' }}><RiseOutlined /> {r.growth}%</span>
+                    : <span style={{ color: '#cf1322' }}><FallOutlined /> {Math.abs(r.growth)}%</span>,
+                },
+              ]}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} xl={10}>
+          <Card title={<Title level={5} style={{ margin: 0 }}>Top Export Markets</Title>}>
+            <Table
+              rowKey="code"
+              dataSource={TOP_MARKETS}
+              pagination={false}
+              size="small"
+              scroll={TABLE_SCROLL}
+              className="responsive-table"
+              columns={[
+                { title: 'Country', key: 'country', render: (_, r) => <><Tag>{r.code}</Tag> {r.country}</> },
+                { title: 'Revenue', key: 'rev', align: 'right', render: (_, r) => `$${r.revenue.toLocaleString()}` },
+                { title: 'Share', key: 'share', align: 'right', render: (_, r) => `${r.share}%` },
+              ]}
+            />
+          </Card>
+        </Col>
+      </Row>
+    </Space>
+  </div>
 );
 
 export default AnalyticsPage;

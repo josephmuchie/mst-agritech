@@ -4,6 +4,7 @@ import { UserDeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useGetUsersQuery, useDeactivateUserMutation } from '../../app/apiSlice';
 import type { UserResponse } from '../../app/apiSlice';
+import { TABLE_SCROLL } from '../../utils/table';
 
 const { Title } = Typography;
 
@@ -52,6 +53,7 @@ const UsersPage: React.FC = () => {
   ];
 
   return (
+    <div className="page-root">
     <Card
       title={<Title level={4} style={{ margin: 0 }}>Users</Title>}
       extra={<Button icon={<ReloadOutlined />} onClick={() => refetch()} loading={isFetching} />}
@@ -63,8 +65,11 @@ const UsersPage: React.FC = () => {
         loading={isLoading || isFetching}
         pagination={{ current: page + 1, pageSize: 20, total: data?.totalElements ?? 0, onChange: (p) => setPage(p - 1), showTotal: (t) => `${t} users` }}
         size="middle"
+        scroll={TABLE_SCROLL}
+        className="responsive-table"
       />
     </Card>
+    </div>
   );
 };
 

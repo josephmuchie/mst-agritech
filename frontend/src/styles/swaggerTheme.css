@@ -243,3 +243,51 @@
   outline: none;
   box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.15);
 }
+
+@media (max-width: 767px) {
+  .mst-swagger-ui .swagger-ui .wrapper {
+    padding: 0;
+  }
+
+  .mst-swagger-ui .swagger-ui .information-container.wrapper {
+    padding: 0 8px;
+  }
+
+  .mst-swagger-ui .swagger-ui .opblock-tag-section {
+    margin: 0 4px;
+  }
+
+  .mst-swagger-ui .swagger-ui .opblock {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  .mst-swagger-ui .swagger-ui .opblock .opblock-body pre {
+    font-size: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mst-swagger-ui .swagger-ui .highlight-code {
+    overflow-x: auto;
+  }
+
+  .mst-swagger-ui .swagger-ui .auth-wrapper,
+  .mst-swagger-ui .swagger-ui .dialog-ux .modal-ux-content {
+    padding: 12px;
+  }
+
+  .mst-swagger-ui .swagger-ui .auth-container {
+    padding: 0;
+  }
+
+  .mst-swagger-ui .swagger-ui .auth-btn-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mst-swagger-ui .swagger-ui .auth-btn-wrapper .btn {
+    width: 100%;
+  }
+}

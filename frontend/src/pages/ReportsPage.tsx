@@ -19,6 +19,7 @@ const CATEGORY_COLOR: Record<string, string> = {
 };
 
 const ReportsPage: React.FC = () => (
+  <div className="page-root">
   <Row gutter={[16, 16]}>
     <Col span={24}>
       <Card title={<Space><BarChartOutlined /><Title level={4} style={{ margin: 0 }}>Reports</Title></Space>}>
@@ -43,6 +44,7 @@ const ReportsPage: React.FC = () => (
       </Card>
     </Col>
   </Row>
+  </div>
 );
 
 export default ReportsPage;
