@@ -29,7 +29,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
+        final String authHeader = resolveAuthHeader(request);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -51,5 +51,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    /** EventSource/SSE cannot send Authorization headers; accept ?token= as fallback. */
+    private static String resolveAuthHeader(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader;
+        }
+        String tokenParam = request.getParameter("token");
+        if (tokenParam != null && !tokenParam.isBlank()) {
+            return "Bearer " + tokenParam.trim();
+        }
+        return authHeader;
     }
 }

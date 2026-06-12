@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Client } from '@stomp/stompjs';
 import type { IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { getWebSocketUrl } from '../config/api';
 
 interface UseWebSocketOptions {
   topic: string;
@@ -16,7 +17,7 @@ export function useWebSocket({ topic, onMessage, enabled = true }: UseWebSocketO
     if (!enabled) return;
     const token = localStorage.getItem('accessToken');
     const client = new Client({
-      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '') || 'http://localhost:8080'}/ws`),
+      webSocketFactory: () => new SockJS(getWebSocketUrl()),
       connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
       reconnectDelay: 5000,
       onConnect: () => {

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.info.*;
 import io.swagger.v3.oas.models.security.*;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,7 +15,11 @@ import java.util.List;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI openAPI() {
+    public OpenAPI openAPI(@Value("${app.api-base-url:http://localhost:8081}") String apiBaseUrl) {
+        String serverUrl = apiBaseUrl.endsWith("/")
+                ? apiBaseUrl.substring(0, apiBaseUrl.length() - 1)
+                : apiBaseUrl;
+
         return new OpenAPI()
                 .info(new Info()
                         .title("MST Agritech Platform API")
@@ -37,7 +42,7 @@ public class OpenApiConfig {
                                 .name("MST Agritech")
                                 .email("dev@mstagritech.co.zw")))
                 .servers(List.of(
-                        new Server().url("/").description("Current environment"),
+                        new Server().url(serverUrl).description("API server"),
                         new Server().url("http://localhost:8081").description("Local development")))
                 .tags(List.of(
                         new Tag().name("Authentication").description("Login, registration, and JWT token issuance"),

@@ -36,7 +36,8 @@ spring:
       initialize-schema: always
 
 server:
-  port: ${SERVER_PORT:8081}
+  # Railway/Render inject PORT; SERVER_PORT kept for local Docker
+  port: ${PORT:${SERVER_PORT:8081}}
   servlet:
     context-path: /
 

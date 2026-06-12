@@ -79,39 +79,190 @@ body {
 .auth-page {
   min-height: 100vh;
   min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  position: relative;
+  overflow: hidden;
+  background: #F0F9FF;
+}
+
+.auth-page-brand {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  padding: 48px 56px;
+  background: linear-gradient(145deg, #0C4A6E 0%, #075985 45%, #0891B2 100%);
+  color: #fff;
   overflow: hidden;
-  padding: 16px;
-  background: linear-gradient(135deg, #0C4A6E 0%, #0891B2 100%);
 }
 
-.auth-page-watermark {
+.auth-page-brand-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  text-align: center;
+}
+
+.auth-page-logo {
+  width: min(88vw, 420px) !important;
+  height: auto !important;
+  max-height: 240px;
+  margin: 0 auto 32px;
+  filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.18));
+}
+
+.auth-page-tagline.ant-typography {
+  color: #E0F2FE !important;
+  margin: 0 0 16px !important;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.auth-page-description.ant-typography {
+  color: #BAE6FD;
+  margin-bottom: 0 !important;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.auth-page-brand-accent {
   position: absolute;
-  right: -80px;
-  bottom: -80px;
-  opacity: 0.08;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  right: -120px;
+  bottom: -120px;
+  background: radial-gradient(circle, rgba(224, 242, 254, 0.14) 0%, transparent 70%);
   pointer-events: none;
 }
 
-.auth-card {
+.auth-page-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  background:
+    radial-gradient(circle at top right, rgba(186, 230, 253, 0.55), transparent 42%),
+    linear-gradient(180deg, #F0F9FF 0%, #FFFFFF 100%);
+}
+
+.auth-page-form-wrap {
   width: 100%;
-  max-width: 420px;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  max-width: 440px;
+  padding: 36px 32px;
+  border-radius: 16px;
+  border: 1px solid #BAE6FD;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 64px rgba(12, 74, 110, 0.08);
+}
+
+.auth-page-form-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.auth-page-form-logo-mobile {
+  display: none;
+  margin-bottom: 8px;
+}
+
+.auth-page-form .ant-form-item-label > label {
+  color: #0C4A6E;
+  font-weight: 500;
+}
+
+.auth-sso-button {
+  border-color: #0891B2 !important;
+  color: #0891B2 !important;
+}
+
+@media (max-width: 991px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .auth-page-brand {
+    padding: 40px 24px 32px;
+  }
+
+  .auth-page-logo {
+    max-height: 120px;
+    margin-bottom: 20px;
+  }
+
+  .auth-page-tagline.ant-typography {
+    font-size: 22px !important;
+  }
+
+  .auth-page-description {
+    display: none;
+  }
+
+  .auth-page-panel {
+    padding: 24px 16px 32px;
+    align-items: flex-start;
+  }
+
+  .auth-page-form-wrap {
+    padding: 24px 20px;
+    border-radius: 12px;
+  }
+
+  .auth-page-form-logo-mobile {
+    display: block;
+  }
 }
 
 @media (max-width: 767px) {
-  .auth-page-watermark {
-    right: -120px;
-    bottom: -120px;
-    transform: scale(0.6);
+  .auth-page-brand {
+    padding: 32px 20px 24px;
   }
 
-  .auth-card .ant-card-body {
+  .auth-page-logo {
+    max-height: 96px;
+  }
+
+  .auth-page-form-wrap {
     padding: 20px 16px;
+    box-shadow: 0 12px 32px rgba(12, 74, 110, 0.06);
+  }
+}
+
+.auth-page--callback {
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+}
+
+.auth-page-brand--compact {
+  padding: 32px;
+}
+
+.auth-page-panel--center {
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-page-callback-text {
+  color: #0C4A6E;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+@media (max-width: 991px) {
+  .auth-page--callback {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-page-brand--compact {
+    padding: 24px;
+  }
+
+  .auth-page-brand--compact .auth-page-logo {
+    max-height: 72px;
+    margin-bottom: 0;
   }
 }
 

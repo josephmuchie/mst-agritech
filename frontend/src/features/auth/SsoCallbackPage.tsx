@@ -48,10 +48,16 @@ const SsoCallbackPage: React.FC = () => {
   }
 
   return (
-    <div className="auth-page" style={{ flexDirection: 'column', gap: 24 }}>
-      <BrandLogo variant="primary-white" height={56} />
-      <Spin size="large" />
-      <span style={{ color: '#fff' }}>Completing company sign-in…</span>
+    <div className="auth-page auth-page--callback">
+      <section className="auth-page-brand auth-page-brand--compact">
+        <div className="auth-page-brand-inner">
+          <BrandLogo variant="primary-white" height={160} className="auth-page-logo" />
+        </div>
+      </section>
+      <section className="auth-page-panel auth-page-panel--center">
+        <Spin size="large" />
+        <span className="auth-page-callback-text">Completing company sign-in…</span>
+      </section>
     </div>
   );
 };

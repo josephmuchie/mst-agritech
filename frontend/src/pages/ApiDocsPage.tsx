@@ -6,10 +6,11 @@ import 'swagger-ui-react/swagger-ui.css';
 import '../styles/swaggerTheme.css';
 import { useAppSelector } from '../app/store';
 import BrandLogo from '../components/BrandLogo';
+import { getApiBaseUrl, getOpenApiUrl } from '../config/api';
 
 const { Title, Paragraph, Text } = Typography;
 
-const OPENAPI_URL = import.meta.env.VITE_OPENAPI_URL || '/api-docs';
+const OPENAPI_URL = getOpenApiUrl();
 
 const ApiDocsPage: React.FC = () => {
   const accessToken = useAppSelector((s) => s.auth.accessToken);
@@ -89,8 +90,9 @@ const ApiDocsPage: React.FC = () => {
               description={
                 <Space direction="vertical" size={8}>
                   <Text type="secondary">
-                    The backend API server is not reachable. Make sure the core-api service is running
-                    on port 8081, then retry.
+                    Could not reach the OpenAPI spec at{' '}
+                    <Text code>{OPENAPI_URL}</Text>. Confirm the API is running (
+                    <Text code>{getApiBaseUrl()}</Text>), then retry.
                   </Text>
                   <Button
                     type="primary"

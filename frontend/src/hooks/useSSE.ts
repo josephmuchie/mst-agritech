@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { getApiBaseUrl } from '../config/api';
 
 export function useSSE<T>(url: string, enabled = true) {
   const [data, setData] = useState<T | null>(null);
@@ -8,7 +9,7 @@ export function useSSE<T>(url: string, enabled = true) {
   useEffect(() => {
     if (!enabled) return;
     const token = localStorage.getItem('accessToken');
-    const fullUrl = `${import.meta.env.VITE_API_BASE_URL || '/api/v1'}${url}${token ? `?token=${token}` : ''}`;
+    const fullUrl = `${getApiBaseUrl()}${url}${token ? `?token=${token}` : ''}`;
     const es = new EventSource(fullUrl);
     esRef.current = es;
 

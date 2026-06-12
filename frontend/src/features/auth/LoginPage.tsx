@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Form, Input, Button, Card, Typography, Tag, Divider, Space, Alert } from 'antd';
+import { Form, Input, Button, Typography, Tag, Divider, Space, Alert } from 'antd';
 import { UserOutlined, LockOutlined, CrownOutlined, TeamOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch } from '../../app/store';
@@ -7,7 +7,7 @@ import { normalizeAuthResponse, setCredentials } from './authSlice';
 import { useDiscoverSsoQuery, useLazyGetSsoAuthorizeQuery, useLoginMutation } from '../../app/apiSlice';
 import BrandLogo from '../../components/BrandLogo';
 
-const { Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const SSO_CALLBACK_URL = `${window.location.origin}/login/sso/callback`;
 
@@ -80,103 +80,119 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="auth-page">
-      <BrandLogo
-        variant="icon-white"
-        height={420}
-        className="auth-page-watermark"
-      />
-      <Card className="auth-card">
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+      <section className="auth-page-brand" aria-label="MST Agritech">
+        <div className="auth-page-brand-inner">
           <BrandLogo
-            variant="primary-cyan"
-            height={72}
-            style={{ margin: '0 auto 16px' }}
+            variant="primary-white"
+            height={220}
+            className="auth-page-logo"
           />
-          <Text type="secondary">Zimbabwe's Global Agricultural Platform</Text>
+          <Title level={2} className="auth-page-tagline">
+            Zimbabwe&apos;s Global Agricultural Platform
+          </Title>
+          <Paragraph className="auth-page-description">
+            Connect farmers, buyers, and logistics on one trusted platform for trade,
+            compliance, and real-time market intelligence.
+          </Paragraph>
         </div>
+        <div className="auth-page-brand-accent" aria-hidden />
+      </section>
 
-        {ssoInfo?.ssoEnabled && (
-          <Alert
-            type="info"
-            showIcon
-            style={{ marginBottom: 16 }}
-            message={`${ssoInfo.tenantName ?? 'Your organization'} supports company sign-on`}
-            description={`Use "${ssoInfo.providerLabel ?? 'Corporate SSO'}" with your work email.`}
-          />
-        )}
-
-        <Form form={form} layout="vertical" onFinish={onFinish} size="large">
-          <Form.Item name="email" label="Work Email" rules={[{ required: true, type: 'email', message: 'Enter a valid email' }]}>
-            <Input
-              prefix={<UserOutlined />}
-              placeholder="you@company.com"
-              onChange={(e) => setEmail(e.target.value.trim())}
-            />
-          </Form.Item>
+      <section className="auth-page-panel">
+        <div className="auth-page-form-wrap">
+          <div className="auth-page-form-header">
+            <BrandLogo variant="primary-cyan" height={48} className="auth-page-form-logo-mobile" />
+            <Title level={3} style={{ margin: 0, color: '#0C4A6E' }}>
+              Welcome back
+            </Title>
+            <Text type="secondary">Sign in to your MST Agritech account</Text>
+          </div>
 
           {ssoInfo?.ssoEnabled && (
-            <Form.Item>
-              <Button
-                block
-                size="large"
-                icon={<SafetyCertificateOutlined />}
-                loading={ssoStarting}
-                onClick={() => void startSso()}
-                style={{ borderColor: '#0891B2', color: '#0891B2', marginBottom: passwordLoginAllowed ? 8 : 0 }}
-              >
-                Sign in with {ssoInfo.providerLabel ?? 'Company SSO'}
-              </Button>
-            </Form.Item>
+            <Alert
+              type="info"
+              showIcon
+              style={{ marginBottom: 16 }}
+              message={`${ssoInfo.tenantName ?? 'Your organization'} supports company sign-on`}
+              description={`Use "${ssoInfo.providerLabel ?? 'Corporate SSO'}" with your work email.`}
+            />
           )}
 
-          {passwordLoginAllowed && (
-            <>
-              {ssoInfo?.ssoEnabled && (
-                <Divider plain style={{ margin: '8px 0 16px' }}>
-                  <Text type="secondary" style={{ fontSize: 12 }}>or use password</Text>
-                </Divider>
-              )}
-              <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Enter your password' }]}>
-                <Input.Password prefix={<LockOutlined />} placeholder="Password" />
-              </Form.Item>
+          <Form form={form} layout="vertical" onFinish={onFinish} size="large" className="auth-page-form">
+            <Form.Item name="email" label="Work Email" rules={[{ required: true, type: 'email', message: 'Enter a valid email' }]}>
+              <Input
+                prefix={<UserOutlined />}
+                placeholder="you@company.com"
+                onChange={(e) => setEmail(e.target.value.trim())}
+              />
+            </Form.Item>
+
+            {ssoInfo?.ssoEnabled && (
               <Form.Item>
-                <Button type="primary" htmlType="submit" block loading={isLoading}>
-                  Sign In
+                <Button
+                  block
+                  size="large"
+                  icon={<SafetyCertificateOutlined />}
+                  loading={ssoStarting}
+                  onClick={() => void startSso()}
+                  className="auth-sso-button"
+                >
+                  Sign in with {ssoInfo.providerLabel ?? 'Company SSO'}
                 </Button>
               </Form.Item>
-            </>
-          )}
+            )}
 
-          {!passwordLoginAllowed && !ssoInfo?.ssoEnabled && (
-            <Alert type="warning" showIcon message="Sign-in options are not configured for this email domain." />
-          )}
+            {passwordLoginAllowed && (
+              <>
+                {ssoInfo?.ssoEnabled && (
+                  <Divider plain style={{ margin: '8px 0 16px' }}>
+                    <Text type="secondary" style={{ fontSize: 12 }}>or use password</Text>
+                  </Divider>
+                )}
+                <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Enter your password' }]}>
+                  <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+                </Form.Item>
+                <Form.Item style={{ marginBottom: 0 }}>
+                  <Button type="primary" htmlType="submit" block loading={isLoading} size="large">
+                    Sign In
+                  </Button>
+                </Form.Item>
+              </>
+            )}
 
-          {error && <Alert message={error} type="warning" showIcon style={{ marginBottom: 16 }} />}
-        </Form>
+            {!passwordLoginAllowed && !ssoInfo?.ssoEnabled && (
+              <Alert type="warning" showIcon message="Sign-in options are not configured for this email domain." />
+            )}
 
-        <Divider style={{ margin: '0 0 16px' }}>
-          <Text type="secondary" style={{ fontSize: 12 }}>Dev Mode — Quick Login</Text>
-        </Divider>
-        <Space direction="vertical" style={{ width: '100%' }} size={10}>
-          <Button
-            block icon={<CrownOutlined />}
-            onClick={() => loginDev('ADMIN')}
-            style={{ borderColor: '#0891B2', color: '#0891B2' }}
-          >
-            Dev: Login as Admin
-          </Button>
-          <Button
-            block icon={<TeamOutlined />}
-            onClick={() => loginDev('USER')}
-            style={{ borderColor: '#16A34A', color: '#16A34A' }}
-          >
-            Dev: Login as Normal User
-          </Button>
-        </Space>
-        <div style={{ textAlign: 'center', marginTop: 12 }}>
-          <Tag color="orange">Dev Mode — Quick login bypasses auth</Tag>
+            {error && <Alert message={error} type="warning" showIcon style={{ marginTop: 16 }} />}
+          </Form>
+
+          <Divider style={{ margin: '24px 0 16px' }}>
+            <Text type="secondary" style={{ fontSize: 12 }}>Dev Mode — Quick Login</Text>
+          </Divider>
+          <Space direction="vertical" style={{ width: '100%' }} size={10}>
+            <Button
+              block
+              icon={<CrownOutlined />}
+              onClick={() => loginDev('ADMIN')}
+              style={{ borderColor: '#0891B2', color: '#0891B2' }}
+            >
+              Dev: Login as Admin
+            </Button>
+            <Button
+              block
+              icon={<TeamOutlined />}
+              onClick={() => loginDev('USER')}
+              style={{ borderColor: '#16A34A', color: '#16A34A' }}
+            >
+              Dev: Login as Normal User
+            </Button>
+          </Space>
+          <div style={{ textAlign: 'center', marginTop: 12 }}>
+            <Tag color="orange">Dev Mode — Quick login bypasses auth</Tag>
+          </div>
         </div>
-      </Card>
+      </section>
     </div>
   );
 };
