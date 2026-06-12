@@ -10,18 +10,17 @@ import { getApiBaseUrl, getOpenApiUrl } from '../config/api';
 
 const { Title, Paragraph, Text } = Typography;
 
-const OPENAPI_URL = getOpenApiUrl();
-
 const ApiDocsPage: React.FC = () => {
   const accessToken = useAppSelector((s) => s.auth.accessToken);
   const [specStatus, setSpecStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [retryKey, setRetryKey] = useState(0);
+  const openApiUrl = getOpenApiUrl();
 
   useEffect(() => {
     let cancelled = false;
     setSpecStatus('loading');
 
-    fetch(OPENAPI_URL)
+    fetch(openApiUrl, { mode: 'cors' })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
@@ -30,7 +29,7 @@ const ApiDocsPage: React.FC = () => {
       .catch(() => { if (!cancelled) setSpecStatus('error'); });
 
     return () => { cancelled = true; };
-  }, [retryKey]);
+  }, [retryKey, openApiUrl]);
 
   return (
     <div>
@@ -91,7 +90,7 @@ const ApiDocsPage: React.FC = () => {
                 <Space direction="vertical" size={8}>
                   <Text type="secondary">
                     Could not reach the OpenAPI spec at{' '}
-                    <Text code>{OPENAPI_URL}</Text>. Confirm the API is running (
+                    <Text code>{openApiUrl}</Text>. Confirm the API is running (
                     <Text code>{getApiBaseUrl()}</Text>), then retry.
                   </Text>
                   <Button
@@ -111,7 +110,7 @@ const ApiDocsPage: React.FC = () => {
           <div className="mst-swagger-ui swagger-docs-wrap" style={{ padding: '0 16px 16px' }}>
             <SwaggerUI
               key={retryKey}
-              url={OPENAPI_URL}
+              url={openApiUrl}
               docExpansion="list"
               defaultModelsExpandDepth={1}
               displayRequestDuration

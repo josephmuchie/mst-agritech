@@ -63,3 +63,4 @@ logs/
 # ── Test reports ──────────────────────────────────────────────
 surefire-reports/
 test-results/
+.vercel

@@ -1,4 +1,4 @@
-const DEFAULT_PRODUCTION_API_ORIGIN = 'https://mst-agritech-api-production.up.railway.app';
+const DEFAULT_PRODUCTION_API_ORIGIN = 'https://agritech-api.mst.co.zw';
 
 /** REST base path including /api/v1 */
 export function getApiBaseUrl(): string {

@@ -5,8 +5,8 @@
   "installCommand": "cd frontend && npm ci",
   "framework": null,
   "env": {
-    "VITE_API_BASE_URL": "https://mst-agritech-api-production.up.railway.app/api/v1",
-    "VITE_OPENAPI_URL": "https://mst-agritech-api-production.up.railway.app/api-docs"
+    "VITE_API_BASE_URL": "https://agritech-api.mst.co.zw/api/v1",
+    "VITE_OPENAPI_URL": "https://agritech-api.mst.co.zw/api-docs"
   },
   "rewrites": [
     { "source": "/((?!assets/).*)", "destination": "/index.html" }

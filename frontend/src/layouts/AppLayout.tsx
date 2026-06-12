@@ -67,18 +67,23 @@ const AppLayout: React.FC = () => {
   const { user } = useAppSelector((s) => s.auth);
 
   const isAdmin = user?.roles.includes('ADMIN') ?? false;
-  const [openKeys, setOpenKeys] = useState<string[]>(isAdmin ? ['admin'] : []);
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
   const { siderWidth, onResizeStart } = useResizableSider(collapsed);
 
   const menuItems = isAdmin ? allMenuItems : allMenuItems.filter((item) => item.key !== 'admin');
   const mobileItems = isAdmin ? mobileMenuItems : mobileMenuItems.filter((item) => item.key !== 'admin');
 
   useEffect(() => {
-    setOpenKeys((keys) => {
-      if (isAdmin) return keys.includes('admin') ? keys : [...keys, 'admin'];
-      return keys.filter((key) => key !== 'admin');
-    });
-  }, [isAdmin]);
+    if (location.pathname.startsWith('/admin')) {
+      setOpenKeys(['admin']);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (collapsed) {
+      setOpenKeys([]);
+    }
+  }, [collapsed]);
 
   useEffect(() => {
     setDrawerOpen(false);
@@ -123,12 +128,18 @@ const AppLayout: React.FC = () => {
     ],
   };
 
+  const handleOpenChange = (keys: string[]) => {
+    if (!isMobile && collapsed) return;
+    setOpenKeys(keys);
+  };
+
   const menuProps = {
     theme: 'dark' as const,
     mode: 'inline' as const,
     selectedKeys: [location.pathname],
-    openKeys,
-    onOpenChange: setOpenKeys,
+    openKeys: !isMobile && collapsed ? [] : openKeys,
+    inlineCollapsed: !isMobile && collapsed,
+    onOpenChange: handleOpenChange,
     items: isMobile ? mobileItems : menuItems,
     onClick: ({ key }: { key: string }) => handleNavigate(key),
     style: { borderRight: 0, paddingTop: 8, flex: 1, overflowY: 'auto' as const },

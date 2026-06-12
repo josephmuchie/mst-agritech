@@ -34,6 +34,11 @@ body {
   display: inline;
 }
 
+/* Collapsed sider: submenu items only appear in the flyout popup, not inline */
+.ant-layout-sider-collapsed .ant-menu-inline .ant-menu-sub.ant-menu-inline {
+  display: none;
+}
+
 @media (max-width: 767px) {
   .app-content {
     margin: 12px;
