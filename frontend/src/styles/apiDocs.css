@@ -1,0 +1,656 @@
+/* MST Agritech — API Documentation page */
+
+.api-docs-page {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* ── Hero ──────────────────────────────────────────────────── */
+
+.api-docs-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, #0C4A6E 0%, #075985 42%, #0891B2 100%);
+  color: #FFFFFF;
+}
+
+.api-docs-hero::after {
+  content: '';
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  right: -100px;
+  top: -120px;
+  background: radial-gradient(circle, rgba(224, 242, 254, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.api-docs-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.api-docs-hero-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.api-docs-hero-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.api-docs-hero-lockup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.api-docs-hero-title.ant-typography {
+  margin: 0 !important;
+  color: #FFFFFF !important;
+  font-size: 22px !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2 !important;
+  white-space: nowrap;
+}
+
+.api-docs-hero-logo-img {
+  flex-shrink: 0;
+  width: 28px !important;
+  height: 28px !important;
+  max-width: 28px !important;
+  max-height: 28px !important;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+.api-docs-hero-details {
+  min-width: 0;
+  padding-left: 38px; /* 28px icon + 10px gap */
+}
+
+.api-docs-hero-subtitle {
+  display: block;
+  color: #BAE6FD;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 640px;
+}
+
+.api-docs-hero-spec-title {
+  display: block;
+  margin-top: 4px;
+  color: #E0F2FE;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.api-docs-hero-actions {
+  flex-shrink: 0;
+}
+
+.api-docs-hero-actions .ant-btn {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.api-docs-hero-actions .ant-btn:hover {
+  border-color: #FFFFFF !important;
+  color: #0C4A6E !important;
+  background: #FFFFFF !important;
+}
+
+.api-docs-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.api-docs-meta .ant-tag {
+  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  color: #E0F2FE;
+  font-size: 12px;
+  padding: 2px 10px;
+}
+
+.api-docs-meta .ant-tag.api-docs-meta-tag--highlight {
+  background: rgba(255, 255, 255, 0.92);
+  color: #0C4A6E;
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.api-docs-endpoints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+
+.api-docs-endpoint {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.api-docs-endpoint-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7DD3FC;
+  font-weight: 600;
+}
+
+.api-docs-endpoint-value {
+  font-size: 13px;
+  color: #F0F9FF;
+  word-break: break-all;
+}
+
+.api-docs-endpoint-value code {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.api-docs-auth-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.api-docs-auth-banner .anticon {
+  color: #7DD3FC;
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+.api-docs-auth-banner-text {
+  color: #E0F2FE;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.api-docs-auth-banner-text strong {
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ── Explorer shell ────────────────────────────────────────── */
+
+.api-docs-explorer {
+  border-radius: 12px;
+  border: 1px solid #BAE6FD;
+  background: #FFFFFF;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(12, 74, 110, 0.06);
+}
+
+.api-docs-explorer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 12px 16px;
+  background: #F0F9FF;
+  border-bottom: 1px solid #BAE6FD;
+}
+
+.api-docs-explorer-toolbar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0C4A6E;
+}
+
+.api-docs-explorer-toolbar-hint {
+  font-size: 12px;
+  color: #64748B;
+}
+
+.api-docs-explorer-body {
+  min-height: 320px;
+}
+
+.api-docs-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  padding: 48px 24px;
+}
+
+.api-docs-state--error {
+  align-items: stretch;
+  padding: 24px;
+}
+
+.api-docs-error-panel {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.api-docs-error-panel .ant-alert {
+  border-radius: 8px;
+}
+
+.api-docs-error-body {
+  width: 100%;
+}
+
+/* Swagger sits inside explorer — hide duplicate info block */
+.api-docs-explorer .mst-swagger-ui .swagger-ui .info {
+  display: none;
+}
+
+.api-docs-explorer .mst-swagger-ui .swagger-ui .scheme-container {
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid #E2E8F0;
+  border-radius: 0;
+  background: #F8FAFC;
+  padding: 12px 16px;
+  box-shadow: none;
+}
+
+.api-docs-explorer .mst-swagger-ui .swagger-ui .filter-container {
+  padding: 12px 16px 0;
+}
+
+.api-docs-explorer .mst-swagger-ui .swagger-ui .filter-container input[type='text'] {
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid #BAE6FD;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.api-docs-explorer .mst-swagger-ui .swagger-ui .filter-container input[type='text']:focus {
+  border-color: #0891B2;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.12);
+}
+
+.api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-tag-section {
+  padding: 0 12px;
+}
+
+.api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-tag {
+  border-radius: 8px 8px 0 0;
+  margin-top: 8px;
+  padding: 10px 14px;
+}
+
+.api-docs-explorer .swagger-docs-wrap {
+  padding: 0 0 16px;
+}
+
+/* ── Mobile ────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .api-docs-page--mobile {
+    margin: 0;
+    width: 100%;
+  }
+
+  /* Break out of app-content padding for true edge-to-edge */
+  .app-content .api-docs-page--mobile {
+    margin-left: -12px;
+    margin-right: -12px;
+    width: calc(100% + 24px);
+  }
+
+  .api-docs-page--mobile .api-docs-hero {
+    border-radius: 0;
+    margin: 0 0 0;
+    padding: 16px 14px 18px;
+  }
+
+  .api-docs-page--mobile .api-docs-hero::after {
+    width: 200px;
+    height: 200px;
+    right: -60px;
+    top: -80px;
+  }
+
+  .api-docs-page--mobile .api-docs-hero-inner {
+    gap: 12px;
+  }
+
+  .api-docs-page--mobile .api-docs-hero-top {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .api-docs-page--mobile .api-docs-hero-brand {
+    gap: 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-hero-lockup {
+    gap: 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-hero-logo-img {
+    width: 22px !important;
+    height: 22px !important;
+    max-width: 22px !important;
+    max-height: 22px !important;
+  }
+
+  .api-docs-page--mobile .api-docs-hero-title.ant-typography {
+    font-size: 17px !important;
+    white-space: normal;
+  }
+
+  .api-docs-page--mobile .api-docs-hero-details {
+    padding-left: 30px; /* 22px icon + 8px gap */
+  }
+
+  .api-docs-page--mobile .api-docs-hero-spec-title {
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  .api-docs-page--mobile .api-docs-hero-subtitle--mobile {
+    font-size: 13px;
+    line-height: 1.45;
+    color: #BAE6FD;
+    display: block;
+  }
+
+  .api-docs-page--mobile .api-docs-hero-actions {
+    width: 100%;
+  }
+
+  .api-docs-page--mobile .api-docs-meta {
+    gap: 6px;
+  }
+
+  .api-docs-page--mobile .api-docs-meta .ant-tag {
+    font-size: 11px;
+    padding: 1px 8px;
+    line-height: 20px;
+  }
+
+  .api-docs-page--mobile .api-docs-endpoints {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-endpoint {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .api-docs-page--mobile .api-docs-endpoint-label {
+    font-size: 10px;
+  }
+
+  .api-docs-page--mobile .api-docs-endpoint-value {
+    font-size: 12px;
+  }
+
+  .api-docs-page--mobile .api-docs-endpoint-value code {
+    font-size: 11px;
+    padding: 2px 6px;
+    display: inline-block;
+    max-width: 100%;
+    word-break: break-all;
+  }
+
+  .api-docs-page--mobile .api-docs-auth-banner {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-auth-banner .anticon {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .api-docs-page--mobile .api-docs-auth-banner-text {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 10px 12px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer-toolbar-title {
+    font-size: 13px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer-toolbar-hint {
+    font-size: 11px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer-body {
+    min-height: 240px;
+  }
+
+  .api-docs-page--mobile .api-docs-state {
+    min-height: 220px;
+    padding: 28px 14px;
+  }
+
+  .api-docs-page--mobile .api-docs-state--error {
+    padding: 14px;
+  }
+
+  .api-docs-page--mobile .api-docs-error-panel {
+    max-width: none;
+  }
+
+  /* Swagger UI — mobile explorer */
+  .api-docs-page--mobile .swagger-docs-wrap {
+    overflow-x: hidden;
+    padding: 0 0 12px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .wrapper {
+    padding: 0;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .scheme-container {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 10px 12px;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .scheme-container .schemes {
+    width: 100%;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .btn.authorize {
+    width: 100%;
+    min-height: 40px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .filter-container {
+    padding: 10px 12px 4px;
+    box-sizing: border-box;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .filter-container input[type='text'] {
+    min-height: 40px;
+    font-size: 16px; /* prevents iOS zoom */
+    padding: 8px 12px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-tag-section {
+    padding: 0 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-tag {
+    font-size: 14px;
+    padding: 10px 12px;
+    margin-top: 6px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 8px;
+    border-radius: 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 10px;
+    min-height: 44px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary-method {
+    min-width: 52px;
+    font-size: 11px;
+    padding: 4px 6px;
+    flex-shrink: 0;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary-path {
+    font-size: 12px;
+    word-break: break-all;
+    flex: 1 1 100%;
+    max-width: 100%;
+    padding-right: 0;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary-path a {
+    word-break: break-all;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary-description {
+    width: 100%;
+    font-size: 11px;
+    padding: 0;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-body {
+    padding: 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .btn.try-out__btn,
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .btn.execute,
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .btn.cancel {
+    width: 100%;
+    min-height: 40px;
+    margin: 0 0 8px;
+    font-size: 13px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 12px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .parameters-col_description input[type='text'],
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .parameters-col_description select,
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .parameters-col_description textarea {
+    width: 100% !important;
+    max-width: 100%;
+    font-size: 16px;
+    min-height: 40px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-body pre {
+    font-size: 11px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .responses-inner,
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .response-col_description {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui section.models {
+    margin: 8px;
+    border-radius: 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .dialog-ux .modal-ux {
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    margin: 10px auto;
+    max-height: calc(100dvh - 20px);
+    overflow-y: auto;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .auth-btn-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .auth-btn-wrapper .btn {
+    width: 100%;
+    min-height: 40px;
+  }
+}

@@ -661,32 +661,6 @@ body {
   padding: 0;
 }
 
-.page-card--flush .api-docs-card-bar {
-  padding: 12px 16px;
-  border-bottom: 1px solid #BAE6FD;
-  background: #F0F9FF;
-}
-
-.api-docs-base-path {
-  font-size: 13px;
-}
-
-.api-docs-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 240px;
-  padding: 32px 16px;
-}
-
-.api-docs-state--error {
-  align-items: stretch;
-}
-
-.api-docs-error-body {
-  width: 100%;
-}
-
 .page-result {
   display: flex;
   flex-direction: column;
@@ -822,19 +796,6 @@ body {
 
   .page-card .ant-card-body {
     padding: 12px;
-  }
-
-  .page-card--flush .api-docs-card-bar {
-    padding: 10px 12px;
-  }
-
-  .api-docs-base-path {
-    display: block;
-    width: 100%;
-  }
-
-  .page-root--api-docs .swagger-docs-wrap {
-    padding: 0 4px 12px;
   }
 
   .analytics-stats-row .ant-col + .ant-col,
