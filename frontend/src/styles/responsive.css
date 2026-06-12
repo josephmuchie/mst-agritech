@@ -57,6 +57,31 @@ body {
   }
 }
 
+/* Mobile header — menu + logo on the left */
+.app-header-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.app-header-logo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.app-header-logo-btn:active {
+  background: rgba(8, 145, 178, 0.1);
+}
+
 /* Mobile nav drawer */
 .mobile-nav-drawer .ant-drawer-body {
   padding: 0 !important;
@@ -69,9 +94,45 @@ body {
   height: 72px;
   display: flex;
   align-items: center;
+  gap: 12px;
   padding: 0 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Ensure menu icons stay visible on the left in mobile drawer */
+.mobile-nav-menu.ant-menu-dark {
+  background: #0C4A6E;
+}
+
+.mobile-nav-menu .ant-menu-item,
+.mobile-nav-menu .ant-menu-submenu-title {
+  display: flex;
+  align-items: center;
+  padding-inline: 16px !important;
+}
+
+.mobile-nav-menu .ant-menu-item-icon,
+.mobile-nav-menu .ant-menu-submenu-title .ant-menu-item-icon {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px !important;
+  margin-inline-end: 12px !important;
+  font-size: 20px !important;
+  color: #BAE6FD !important;
+  opacity: 1 !important;
+  flex-shrink: 0;
+}
+
+.mobile-nav-menu .ant-menu-item-selected .ant-menu-item-icon,
+.mobile-nav-menu .ant-menu-submenu-selected > .ant-menu-submenu-title .ant-menu-item-icon {
+  color: #FFFFFF !important;
+}
+
+.mobile-nav-menu .ant-menu-submenu-arrow {
+  color: #BAE6FD !important;
 }
 
 /* ── Login / auth pages ────────────────────────────────────── */

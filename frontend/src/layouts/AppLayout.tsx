@@ -17,8 +17,7 @@ import { useIsMobile } from '../hooks/useIsMobile';
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
-const iconStyle = { fontSize: 26 };
-const mobileIconStyle = { fontSize: 22 };
+const iconStyle = { fontSize: 22 };
 
 const allMenuItems = [
   { key: '/', icon: <DashboardOutlined style={iconStyle} />, label: 'Dashboard' },
@@ -44,19 +43,6 @@ const allMenuItems = [
   },
 ];
 
-const mobileMenuItems = allMenuItems.map((item) => ({
-  ...item,
-  icon: React.isValidElement(item.icon)
-    ? React.cloneElement(item.icon as React.ReactElement<{ style?: React.CSSProperties }>, { style: mobileIconStyle })
-    : item.icon,
-  children: item.children?.map((child) => ({
-    ...child,
-    icon: React.isValidElement(child.icon)
-      ? React.cloneElement(child.icon as React.ReactElement<{ style?: React.CSSProperties }>, { style: mobileIconStyle })
-      : child.icon,
-  })),
-}));
-
 const AppLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -71,7 +57,6 @@ const AppLayout: React.FC = () => {
   const { siderWidth, onResizeStart } = useResizableSider(collapsed);
 
   const menuItems = isAdmin ? allMenuItems : allMenuItems.filter((item) => item.key !== 'admin');
-  const mobileItems = isAdmin ? mobileMenuItems : mobileMenuItems.filter((item) => item.key !== 'admin');
 
   useEffect(() => {
     setOpenKeys((keys) => {
@@ -129,8 +114,9 @@ const AppLayout: React.FC = () => {
     selectedKeys: [location.pathname],
     openKeys,
     onOpenChange: setOpenKeys,
-    items: isMobile ? mobileItems : menuItems,
+    items: menuItems,
     onClick: ({ key }: { key: string }) => handleNavigate(key),
+    className: isMobile ? 'mobile-nav-menu' : undefined,
     style: { borderRight: 0, paddingTop: 8, flex: 1, overflowY: 'auto' as const },
   };
 
@@ -199,9 +185,10 @@ const AppLayout: React.FC = () => {
           styles={{ body: { padding: 0 } }}
         >
           <div className="mobile-nav-logo" onClick={() => handleNavigate('/')}>
-            <BrandLogo variant="primary-white" height={48} style={{ width: '100%' }} />
+            <BrandLogo variant="icon-white" height={40} />
+            <BrandLogo variant="primary-white" height={36} style={{ flex: 1, maxWidth: 180 }} />
           </div>
-          <Menu {...menuProps} />
+          <Menu {...menuProps} inlineIndent={16} />
         </Drawer>
       )}
 
@@ -211,13 +198,25 @@ const AppLayout: React.FC = () => {
           display: 'flex', alignItems: 'center',
           justifyContent: 'space-between', boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
         }}>
-          <Button
-            type="text"
-            aria-label={isMobile ? 'Open navigation menu' : collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            icon={isMobile || collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => (isMobile ? setDrawerOpen(true) : setCollapsed(!collapsed))}
-            style={{ fontSize: 18, color: '#0C4A6E' }}
-          />
+          <div className="app-header-left">
+            <Button
+              type="text"
+              aria-label={isMobile ? 'Open navigation menu' : collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              icon={isMobile || collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => (isMobile ? setDrawerOpen(true) : setCollapsed(!collapsed))}
+              style={{ fontSize: 20, color: '#0C4A6E' }}
+            />
+            {isMobile && (
+              <button
+                type="button"
+                className="app-header-logo-btn"
+                onClick={() => navigate('/')}
+                aria-label="Go to dashboard"
+              >
+                <BrandLogo variant="icon-cyan" height={32} />
+              </button>
+            )}
+          </div>
           <Space size={isMobile ? 8 : 16}>
             <Badge count={3} size="small">
               <Button type="text" icon={<BellOutlined style={{ fontSize: 18 }} />} aria-label="Notifications" />

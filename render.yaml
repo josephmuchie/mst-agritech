@@ -1,0 +1,66 @@
+# Render Blueprint — deploy backend + managed Postgres + Redis
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Deploy: Render Dashboard → New → Blueprint → connect this repo
+
+databases:
+  - name: mst-agritech-db
+    databaseName: agritech_db
+    user: agritech
+    plan: free
+
+services:
+  - type: redis
+    name: mst-agritech-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+  - type: web
+    name: mst-agritech-api
+    runtime: docker
+    dockerfilePath: ./backend/core-api/Dockerfile
+    dockerContext: ./backend/core-api
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: "8081"
+      - key: DB_HOST
+        fromDatabase:
+          name: mst-agritech-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: mst-agritech-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: mst-agritech-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: mst-agritech-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: mst-agritech-db
+          property: password
+      - key: REDIS_HOST
+        fromService:
+          name: mst-agritech-redis
+          type: redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: mst-agritech-redis
+          type: redis
+          property: port
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JASYPT_PASSWORD
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: API_BASE_URL
+        sync: false
