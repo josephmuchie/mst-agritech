@@ -3,7 +3,7 @@ set -euo pipefail
 
 API="${API:-https://agritech-api.mst.co.zw}"
 CURL="/usr/bin/curl"
-EMAIL="${ADMIN_EMAIL:-admin@mstagritech.co.zw}"
+EMAIL="${ADMIN_EMAIL:-info@mst.co.zw}"
 PASSWORD="${ADMIN_PASSWORD:?Set ADMIN_PASSWORD}"
 
 TOKEN=$("$CURL" -s -X POST "$API/api/v1/auth/login" \

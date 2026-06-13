@@ -3,7 +3,7 @@ set -euo pipefail
 
 API="${API:-http://localhost:8081}"
 CURL="/usr/bin/curl"
-EMAIL="${ADMIN_EMAIL:-admin@mstagritech.co.zw}"
+EMAIL="${ADMIN_EMAIL:-info@mst.co.zw}"
 PASSWORD="${ADMIN_PASSWORD:?Set ADMIN_PASSWORD env var}"
 
 login() {

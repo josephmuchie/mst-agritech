@@ -34,7 +34,7 @@ services:
     container_name: agritech-pgadmin
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@mstagritech.co.zw}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-info@mst.co.zw}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-pgadmin_pass}
     ports:
       - "5050:80"

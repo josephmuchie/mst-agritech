@@ -170,7 +170,7 @@ const LoginPage: React.FC = () => {
       accessToken: 'dev-token',
       refreshToken: 'dev-refresh',
       user: role === 'ADMIN'
-        ? { id: 1, email: 'admin@mstagritech.co.zw', fullName: 'Admin User', roles: ['ADMIN'] }
+        ? { id: 1, email: 'info@mst.co.zw', fullName: 'Admin User', roles: ['ADMIN'] }
         : { id: 2, email: 'farmer@mstagritech.co.zw', fullName: 'Jane Farmer', roles: ['USER'] },
     }));
     navigate(from, { replace: true });

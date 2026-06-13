@@ -95,7 +95,7 @@ const authSlice = createSlice({
         ...state.user,
         roles: isAdmin ? ['USER'] : ['ADMIN'],
         fullName: isAdmin ? 'Jane Farmer' : 'Admin User',
-        email: isAdmin ? 'farmer@mstagritech.co.zw' : 'admin@mstagritech.co.zw',
+        email: isAdmin ? 'farmer@mstagritech.co.zw' : 'info@mst.co.zw',
       };
       persistUser(state.user);
     },
