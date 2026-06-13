@@ -6,6 +6,8 @@ import {
   useUpdateIntegrationSettingsMutation,
   useGetTenantSsoConfigQuery,
   useUpdateTenantSsoConfigMutation,
+  useGetAppSettingsQuery,
+  useUpdateAppSettingsMutation,
 } from '../../app/apiSlice';
 
 const { Title } = Typography;
@@ -18,6 +20,20 @@ const AppSettingsPage: React.FC = () => {
   const [updateIntegrationSettings, { isLoading: savingIntegration }] = useUpdateIntegrationSettingsMutation();
   const { data: ssoConfig, isLoading: loadingSso } = useGetTenantSsoConfigQuery();
   const [updateSsoConfig, { isLoading: savingSso }] = useUpdateTenantSsoConfigMutation();
+  const { data: appSettings, isLoading: loadingAppSettings } = useGetAppSettingsQuery();
+  const [updateAppSettings, { isLoading: savingAppSettings }] = useUpdateAppSettingsMutation();
+
+  useEffect(() => {
+    if (appSettings) {
+      form.setFieldsValue({
+        platformName: appSettings.platformName,
+        supportEmail: appSettings.supportEmail,
+        defaultCurrency: appSettings.defaultCurrency,
+        maintenanceMode: appSettings.maintenanceMode,
+        maxOrderValueUsd: appSettings.maxOrderValueUsd,
+      });
+    }
+  }, [appSettings, form]);
 
   useEffect(() => {
     if (integrationSettings) {
@@ -45,8 +61,20 @@ const AppSettingsPage: React.FC = () => {
     }
   }, [ssoConfig, ssoForm]);
 
-  const onFinishGeneral = () => {
-    message.success('General settings saved (demo — wire to app settings API when ready)');
+  const onFinishGeneral = async () => {
+    try {
+      const values = await form.validateFields();
+      await updateAppSettings({
+        platformName: values.platformName,
+        supportEmail: values.supportEmail,
+        defaultCurrency: values.defaultCurrency,
+        maxOrderValueUsd: String(values.maxOrderValueUsd),
+        maintenanceMode: values.maintenanceMode,
+      }).unwrap();
+      message.success('General settings saved');
+    } catch {
+      message.error('Failed to save general settings');
+    }
   };
 
   const onFinishIntegration = async () => {
@@ -73,17 +101,12 @@ const AppSettingsPage: React.FC = () => {
     <div className="page-root">
     <Space direction="vertical" size={16} style={{ width: '100%' }}>
       <Card title={<Space><SettingOutlined /><Title level={4} style={{ margin: 0 }}>App Settings</Title></Space>}>
+        {loadingAppSettings ? (
+          <Spin />
+        ) : (
         <Form
           form={form}
           layout="vertical"
-          initialValues={{
-            platformName: 'MST Agritech',
-            supportEmail: 'support@mstagritech.co.zw',
-            defaultCurrency: 'USD',
-            maintenanceMode: false,
-            registrationOpen: true,
-            maxOrderValueUsd: 500000,
-          }}
           onFinish={onFinishGeneral}
           style={{ maxWidth: 600 }}
         >
@@ -102,17 +125,15 @@ const AppSettingsPage: React.FC = () => {
           <Form.Item label="Max Order Value (USD)" name="maxOrderValueUsd">
             <Input type="number" style={{ width: 200 }} addonBefore="$" />
           </Form.Item>
-          <Form.Item label="Open Registration" name="registrationOpen" valuePropName="checked">
-            <Switch />
-          </Form.Item>
           <Form.Item label="Maintenance Mode" name="maintenanceMode" valuePropName="checked">
             <Switch />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">Save General Settings</Button>
+            <Button type="primary" htmlType="submit" loading={savingAppSettings}>Save General Settings</Button>
           </Form.Item>
         </Form>
+        )}
       </Card>
 
       <Card title={<Space><ApiOutlined /><Title level={4} style={{ margin: 0 }}>Integration Settings</Title></Space>}>

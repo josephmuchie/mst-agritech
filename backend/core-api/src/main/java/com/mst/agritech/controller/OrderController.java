@@ -1,6 +1,9 @@
 package com.mst.agritech.controller;
 
+import com.mst.agritech.dto.oracle.OrderLineDto;
+import com.mst.agritech.dto.oracle.OracleCollectionResponse;
 import com.mst.agritech.dto.response.OrderResponse;
+import com.mst.agritech.service.AnalyticsService;
 import com.mst.agritech.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderService orderService;
+    private final AnalyticsService analyticsService;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','ANALYST')")
@@ -56,5 +60,15 @@ public class OrderController {
             @Parameter(description = "Order ID", example = "1") @PathVariable Long id,
             @Parameter(description = "New status value", example = "SHIPPED", required = true) @RequestParam String status) {
         return ResponseEntity.ok(orderService.updateStatus(id, status));
+    }
+
+    @GetMapping("/{id}/child/orderLines")
+    @PreAuthorize("hasAnyRole('ADMIN','FARMER','BUYER','ANALYST')")
+    @Operation(
+            summary = "List order lines for an order",
+            description = "Child collection with Oracle-standard order line fields (ItemDescription, OrderedQuantity, UnitSellingPrice, etc.)")
+    public ResponseEntity<OracleCollectionResponse<OrderLineDto>> listOrderLines(
+            @Parameter(description = "Order ID", example = "1") @PathVariable Long id) {
+        return ResponseEntity.ok(analyticsService.getOrderLines(id));
     }
 }

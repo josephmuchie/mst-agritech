@@ -32,5 +32,6 @@ public class MarketPrice {
     private String priceSource;
 
     @Column(name = "recorded_at", nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime recordedAt = LocalDateTime.now();
 }

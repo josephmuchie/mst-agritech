@@ -36,12 +36,14 @@ JWT_SECRET="${JWT_SECRET:-$(openssl rand -hex 32)}"
 JASYPT_PASSWORD="${JASYPT_PASSWORD:-$(openssl rand -hex 32)}"
 FRONTEND_URL="${FRONTEND_URL:-https://agritech.mst.co.zw}"
 API_BASE_URL="${API_BASE_URL:-https://agritech-api.mst.co.zw}"
+API_PUBLIC_URL="${API_PUBLIC_URL:-https://agritech-api.mst.co.zw}"
 
 railway variable set \
   JWT_SECRET="$JWT_SECRET" \
   JASYPT_PASSWORD="$JASYPT_PASSWORD" \
   FRONTEND_URL="$FRONTEND_URL" \
   API_BASE_URL="$API_BASE_URL" \
+  API_PUBLIC_URL="$API_PUBLIC_URL" \
   'DB_HOST=${{mst-agritech-db.PGHOST}}' \
   'DB_PORT=${{mst-agritech-db.PGPORT}}' \
   'DB_NAME=${{mst-agritech-db.PGDATABASE}}' \

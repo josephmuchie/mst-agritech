@@ -138,6 +138,56 @@
   font-weight: 600;
 }
 
+.api-docs-endpoints-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.api-docs-endpoint-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.api-docs-endpoint-inline .api-docs-endpoint-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7DD3FC;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.api-docs-endpoint-inline code {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  white-space: nowrap;
+}
+
+.api-docs-endpoint-sep {
+  color: rgba(186, 230, 253, 0.6);
+  font-weight: 600;
+  user-select: none;
+}
+
+.api-docs-auth-banner--warning {
+  background: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.api-docs-auth-banner--warning .anticon {
+  color: #FCD34D;
+}
+
 .api-docs-endpoints {
   display: flex;
   flex-wrap: wrap;
@@ -277,6 +327,30 @@
   background: #F8FAFC;
   padding: 12px 16px;
   box-shadow: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.api-docs-explorer .mst-swagger-ui .swagger-ui .scheme-container .schemes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.api-docs-explorer .mst-swagger-ui .swagger-ui .scheme-container .btn.authorize {
+  margin: 0;
+  flex-shrink: 0;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .api-docs-explorer .mst-swagger-ui .swagger-ui .filter-container {
@@ -399,6 +473,19 @@
     line-height: 20px;
   }
 
+  .api-docs-page--mobile .api-docs-endpoints-inline {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 8px;
+    padding-bottom: 2px;
+  }
+
+  .api-docs-page--mobile .api-docs-endpoint-inline code {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+
   .api-docs-page--mobile .api-docs-endpoints {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -484,9 +571,10 @@
     max-width: none;
   }
 
-  /* Swagger UI — mobile explorer */
+  /* Swagger UI — mobile: desktop-like layout, scaled down */
   .api-docs-page--mobile .swagger-docs-wrap {
-    overflow-x: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 0 0 12px;
   }
 
@@ -495,27 +583,39 @@
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .scheme-container {
-    position: sticky;
-    top: 0;
-    z-index: 5;
     padding: 10px 12px;
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .scheme-container .schemes {
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .scheme-container .schemes > label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .scheme-container select {
+    max-width: 100%;
+    font-size: 13px;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .btn.authorize {
-    width: 100%;
-    min-height: 40px;
+    width: auto;
+    min-height: 32px;
     margin: 0;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    flex-shrink: 0;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .filter-container {
@@ -524,8 +624,8 @@
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .filter-container input[type='text'] {
-    min-height: 40px;
-    font-size: 16px; /* prevents iOS zoom */
+    min-height: 38px;
+    font-size: 16px;
     padding: 8px 12px;
   }
 
@@ -534,29 +634,28 @@
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-tag {
-    font-size: 14px;
-    padding: 10px 12px;
+    font-size: 13px;
+    padding: 8px 12px;
     margin-top: 6px;
-    border-radius: 8px 8px 0 0;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock {
     margin-left: 0;
     margin-right: 0;
     margin-bottom: 8px;
-    border-radius: 8px;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary {
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 10px 10px;
-    min-height: 44px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    min-height: 40px;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary-method {
-    min-width: 52px;
+    min-width: 48px;
     font-size: 11px;
     padding: 4px 6px;
     flex-shrink: 0;
@@ -564,20 +663,19 @@
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary-path {
     font-size: 12px;
-    word-break: break-all;
-    flex: 1 1 100%;
-    max-width: 100%;
-    padding-right: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    word-break: break-word;
+    padding-right: 4px;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary-path a {
-    word-break: break-all;
+    word-break: break-word;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-summary-description {
-    width: 100%;
-    font-size: 11px;
-    padding: 0;
+    display: none;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-body {
@@ -585,19 +683,51 @@
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-section-header {
-    flex-direction: column;
-    align-items: stretch;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
     gap: 8px;
-    padding: 8px;
+    padding: 8px 10px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-section-header h4 {
+    margin: 0;
+    font-size: 13px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .opblock-section-header > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .btn.try-out__btn,
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .btn.execute,
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .btn.cancel {
-    width: 100%;
-    min-height: 40px;
-    margin: 0 0 8px;
-    font-size: 13px;
+    width: auto;
+    min-height: 32px;
+    margin: 0;
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .execute-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui table {
@@ -645,12 +775,33 @@
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .auth-btn-wrapper {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: stretch;
     gap: 8px;
   }
 
   .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .auth-btn-wrapper .btn {
-    width: 100%;
+    flex: 1 1 calc(50% - 4px);
+    min-width: 120px;
+    width: auto;
     min-height: 40px;
+    margin: 0;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .dialog-ux .modal-ux {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  .api-docs-page--mobile .api-docs-explorer .mst-swagger-ui .swagger-ui .auth-container .wrapper > label {
+    width: 100%;
+  }
+
+  /* Override global responsive swagger rules inside API docs explorer */
+  .api-docs-page--mobile .api-docs-explorer .swagger-docs-wrap .swagger-ui .btn.try-out__btn,
+  .api-docs-page--mobile .api-docs-explorer .swagger-docs-wrap .swagger-ui .btn.authorize {
+    width: auto;
+    margin-bottom: 0;
   }
 }

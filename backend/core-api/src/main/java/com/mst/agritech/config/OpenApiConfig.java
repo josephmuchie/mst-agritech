@@ -9,16 +9,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI openAPI(@Value("${app.api-base-url:http://localhost:8081}") String apiBaseUrl) {
-        String serverUrl = apiBaseUrl.endsWith("/")
-                ? apiBaseUrl.substring(0, apiBaseUrl.length() - 1)
-                : apiBaseUrl;
+    public OpenAPI openAPI(
+            @Value("${app.public-api-url:https://agritech-api.mst.co.zw}") String publicApiUrl) {
+        String serverUrl = publicApiUrl.endsWith("/")
+                ? publicApiUrl.substring(0, publicApiUrl.length() - 1)
+                : publicApiUrl;
+
+        List<Server> servers = new ArrayList<>();
+        servers.add(new Server().url(serverUrl).description("MST Agritech API"));
+        servers.add(new Server().url("http://localhost:8081").description("Local development"));
 
         return new OpenAPI()
                 .info(new Info()
@@ -41,15 +47,22 @@ public class OpenApiConfig {
                         .contact(new Contact()
                                 .name("MST Agritech")
                                 .email("dev@mstagritech.co.zw")))
-                .servers(List.of(
-                        new Server().url(serverUrl).description("API server"),
-                        new Server().url("http://localhost:8081").description("Local development")))
+                .servers(servers)
                 .tags(List.of(
                         new Tag().name("Authentication").description("Login, registration, and JWT token issuance"),
                         new Tag().name("Dashboard").description("KPI snapshots and real-time SSE streams"),
                         new Tag().name("Farmers").description("Farmer profiles, verification, and farm details"),
                         new Tag().name("Buyers").description("Buyer companies and verification"),
                         new Tag().name("Orders").description("Order lifecycle from quote to delivery"),
+                        new Tag().name("Invoices").description("Oracle Fusion-compatible invoice headers, lines, and distributions"),
+                        new Tag().name("Payments").description("Payment transactions and reconciliation"),
+                        new Tag().name("Shipments").description("Cold-chain logistics and shipment tracking"),
+                        new Tag().name("Analytics").description("Revenue, product, and market analytics"),
+                        new Tag().name("Marketplace").description("Product listings for international buyers"),
+                        new Tag().name("Logistics").description("Freight and logistics company directory"),
+                        new Tag().name("Reports").description("Report catalog and exports"),
+                        new Tag().name("Settings").description("General platform configuration"),
+                        new Tag().name("Data Ingestion").description("Excel and API bulk data import"),
                         new Tag().name("Users").description("Platform user administration"),
                         new Tag().name("Roles").description("Role definitions and permissions"),
                         new Tag().name("Master Data").description("Countries, currencies, and product categories"),

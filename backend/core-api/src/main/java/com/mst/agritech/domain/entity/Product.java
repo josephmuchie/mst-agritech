@@ -29,11 +29,14 @@ public class Product {
     private String hsCode;
 
     @Column(name = "requires_cold_chain", nullable = false)
+    @Builder.Default
     private boolean requiresColdChain = false;
 
     @Column(name = "is_active", nullable = false)
+    @Builder.Default
     private boolean active = true;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 }

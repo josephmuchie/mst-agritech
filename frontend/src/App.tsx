@@ -24,6 +24,7 @@ import LogisticsPage from './pages/admin/LogisticsPage';
 import IntegrationsPage from './pages/admin/IntegrationsPage';
 import AuditLogsPage from './pages/admin/AuditLogsPage';
 import AppSettingsPage from './pages/admin/AppSettingsPage';
+import DataIngestionPage from './pages/admin/DataIngestionPage';
 import ApiDocsPage from './pages/ApiDocsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ForbiddenPage from './pages/ForbiddenPage';
@@ -55,6 +56,7 @@ const App: React.FC = () => (
               <Route path="admin/integrations" element={<RequireAuth allowedRoles={['ADMIN']}><IntegrationsPage /></RequireAuth>} />
               <Route path="admin/audit-logs" element={<RequireAuth allowedRoles={['ADMIN']}><AuditLogsPage /></RequireAuth>} />
               <Route path="admin/settings" element={<RequireAuth allowedRoles={['ADMIN']}><AppSettingsPage /></RequireAuth>} />
+              <Route path="admin/config/ingestion" element={<DataIngestionPage />} />
             </Route>
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

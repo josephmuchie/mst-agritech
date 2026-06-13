@@ -1,7 +1,8 @@
 import React from 'react';
-import { Row, Col, Card, Statistic, Badge, Typography, Table, Tag } from 'antd';
-import { ArrowUpOutlined, ShoppingCartOutlined, TeamOutlined, DollarOutlined, CarOutlined } from '@ant-design/icons';
+import { Row, Col, Card, Statistic, Badge, Typography, Table, Tag, Spin } from 'antd';
+import { ShoppingCartOutlined, TeamOutlined, DollarOutlined, CarOutlined } from '@ant-design/icons';
 import { useSSE } from '../hooks/useSSE';
+import { useGetOrdersQuery } from '../app/apiSlice';
 import { TABLE_SCROLL } from '../utils/table';
 
 const { Title, Text } = Typography;
@@ -13,31 +14,34 @@ interface KpiData {
   activeShipments: number;
 }
 
-const recentOrders = [
-  { key: 1, id: 'ORD-001', buyer: 'Woolworths SA', product: 'Fresh Roses', amount: '$4,200', status: 'SHIPPED' },
-  { key: 2, id: 'ORD-002', buyer: 'Al Ain Farms UAE', product: 'Beef Cuts', amount: '$12,800', status: 'IN_PRODUCTION' },
-  { key: 3, id: 'ORD-003', buyer: 'Tesco UK', product: 'Tobacco Leaf', amount: '$31,500', status: 'QUOTED' },
-  { key: 4, id: 'ORD-004', buyer: 'Carrefour France', product: 'Baby Corn', amount: '$2,100', status: 'DELIVERED' },
-];
-
 const statusColors: Record<string, string> = {
   QUOTED: 'blue', ACCEPTED: 'cyan', IN_PRODUCTION: 'orange',
   SHIPPED: 'purple', DELIVERED: 'green', CANCELLED: 'red',
 };
 
-const columns = [
-  { title: 'Order ID', dataIndex: 'id', key: 'id' },
-  { title: 'Buyer', dataIndex: 'buyer', key: 'buyer' },
-  { title: 'Product', dataIndex: 'product', key: 'product' },
-  { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-  {
-    title: 'Status', dataIndex: 'status', key: 'status',
-    render: (s: string) => <Tag color={statusColors[s] || 'default'}>{s.replace('_', ' ')}</Tag>,
-  },
-];
-
 const DashboardPage: React.FC = () => {
   const { data: kpi, connected } = useSSE<KpiData>('/stream/dashboard/kpis');
+  const { data: ordersData, isLoading } = useGetOrdersQuery({ page: 0, size: 5 });
+
+  const recentOrders = (ordersData?.content ?? []).map((o) => ({
+    key: o.id,
+    id: o.reference,
+    buyer: o.buyerCompanyName,
+    product: o.notes?.split(' ').slice(0, 2).join(' ') || '—',
+    amount: o.totalAmount != null ? `${o.currencyCode ?? 'USD'} ${Number(o.totalAmount).toLocaleString()}` : '—',
+    status: o.status,
+  }));
+
+  const columns = [
+    { title: 'Order ID', dataIndex: 'id', key: 'id' },
+    { title: 'Buyer', dataIndex: 'buyer', key: 'buyer' },
+    { title: 'Product', dataIndex: 'product', key: 'product' },
+    { title: 'Amount', dataIndex: 'amount', key: 'amount' },
+    {
+      title: 'Status', dataIndex: 'status', key: 'status',
+      render: (s: string) => <Tag color={statusColors[s] || 'default'}>{s.replace('_', ' ')}</Tag>,
+    },
+  ];
 
   return (
     <div className="page-root">
@@ -54,9 +58,8 @@ const DashboardPage: React.FC = () => {
           <Card>
             <Statistic
               title="Total Orders"
-              value={kpi?.totalOrders ?? 148}
+              value={kpi?.totalOrders ?? 0}
               prefix={<ShoppingCartOutlined style={{ color: '#0891B2' }} />}
-              suffix={<Text type="success" style={{ fontSize: 12 }}><ArrowUpOutlined /> 12%</Text>}
               valueStyle={{ color: '#0C4A6E' }}
             />
           </Card>
@@ -65,7 +68,7 @@ const DashboardPage: React.FC = () => {
           <Card>
             <Statistic
               title="Active Farmers"
-              value={kpi?.activeFarmers ?? 63}
+              value={kpi?.activeFarmers ?? 0}
               prefix={<TeamOutlined style={{ color: '#16A34A' }} />}
               valueStyle={{ color: '#0C4A6E' }}
             />
@@ -75,7 +78,7 @@ const DashboardPage: React.FC = () => {
           <Card>
             <Statistic
               title="Revenue (USD)"
-              value={kpi?.revenueUsd ?? 284500}
+              value={kpi?.revenueUsd ?? 0}
               prefix={<DollarOutlined style={{ color: '#D97706' }} />}
               precision={0}
               formatter={(v) => `$${Number(v).toLocaleString()}`}
@@ -87,7 +90,7 @@ const DashboardPage: React.FC = () => {
           <Card>
             <Statistic
               title="Active Shipments"
-              value={kpi?.activeShipments ?? 21}
+              value={kpi?.activeShipments ?? 0}
               prefix={<CarOutlined style={{ color: '#7C3AED' }} />}
               valueStyle={{ color: '#0C4A6E' }}
             />
@@ -95,8 +98,19 @@ const DashboardPage: React.FC = () => {
         </Col>
       </Row>
 
-      <Card title="Recent Orders" extra={<Text type="secondary">Auto-updating</Text>}>
-        <Table dataSource={recentOrders} columns={columns} pagination={false} size="small" scroll={TABLE_SCROLL} className="responsive-table" />
+      <Card title="Recent Orders" extra={<Text type="secondary">Live data</Text>}>
+        {isLoading ? (
+          <Spin />
+        ) : (
+          <Table
+            dataSource={recentOrders}
+            columns={columns}
+            pagination={false}
+            size="small"
+            scroll={TABLE_SCROLL}
+            className="responsive-table"
+          />
+        )}
       </Card>
     </div>
   );

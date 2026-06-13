@@ -978,8 +978,8 @@ body {
     gap: 8px;
   }
 
-  .swagger-docs-wrap .swagger-ui .btn.try-out__btn,
-  .swagger-docs-wrap .swagger-ui .btn.authorize {
+  .swagger-docs-wrap:not(.api-docs-explorer .swagger-docs-wrap) .swagger-ui .btn.try-out__btn,
+  .swagger-docs-wrap:not(.api-docs-explorer .swagger-docs-wrap) .swagger-ui .btn.authorize {
     width: 100%;
     margin-bottom: 8px;
   }

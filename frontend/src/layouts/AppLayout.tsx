@@ -6,10 +6,12 @@ import {
   AuditOutlined, GlobalOutlined, BellOutlined, LogoutOutlined,
   UserOutlined, MenuFoldOutlined, MenuUnfoldOutlined, ApiOutlined,
   FileTextOutlined, SafetyOutlined, BuildOutlined, SwapOutlined,
+  DatabaseOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/store';
 import { clearCredentials, switchRole } from '../features/auth/authSlice';
+import { useGetIngestionAccessQuery } from '../app/apiSlice';
 import BrandLogo from '../components/BrandLogo';
 import { useResizableSider } from '../hooks/useResizableSider';
 import { useIsMobile } from '../hooks/useIsMobile';
@@ -65,13 +67,60 @@ const AppLayout: React.FC = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((s) => s.auth);
+  const { data: ingestionAccess } = useGetIngestionAccessQuery();
 
   const isAdmin = user?.roles.includes('ADMIN') ?? false;
+  const canIngest = ingestionAccess?.allowed ?? false;
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const { siderWidth, onResizeStart } = useResizableSider(collapsed);
 
-  const menuItems = isAdmin ? allMenuItems : allMenuItems.filter((item) => item.key !== 'admin');
-  const mobileItems = isAdmin ? mobileMenuItems : mobileMenuItems.filter((item) => item.key !== 'admin');
+  const ingestionMenuItem = canIngest ? [{
+    key: '/admin/config/ingestion',
+    icon: <DatabaseOutlined style={iconStyle} />,
+    label: 'Data Ingestion',
+  }] : [];
+
+  const adminChildren = [
+    { key: '/admin/users', icon: <UserOutlined style={iconStyle} />, label: 'Users' },
+    { key: '/admin/roles', icon: <SafetyOutlined style={iconStyle} />, label: 'Roles & Permissions' },
+    { key: '/admin/master-data', icon: <BuildOutlined style={iconStyle} />, label: 'Master Data' },
+    { key: '/admin/logistics', icon: <CarOutlined style={iconStyle} />, label: 'Logistics Companies' },
+    { key: '/admin/integrations', icon: <ApiOutlined style={iconStyle} />, label: 'Integrations' },
+    { key: '/admin/audit-logs', icon: <AuditOutlined style={iconStyle} />, label: 'Audit Logs' },
+    ...ingestionMenuItem,
+    { key: '/admin/settings', icon: <SettingOutlined style={iconStyle} />, label: 'App Settings' },
+  ];
+
+  const desktopMenu = [
+    ...allMenuItems.filter((item) => item.key !== 'admin'),
+    ...(isAdmin ? [{
+      key: 'admin', icon: <SettingOutlined style={iconStyle} />, label: 'Administration',
+      children: adminChildren,
+    }] : ingestionMenuItem),
+  ];
+
+  const mobileAdminChildren = adminChildren.map((child) => ({
+    ...child,
+    icon: React.isValidElement(child.icon)
+      ? React.cloneElement(child.icon as React.ReactElement<{ style?: React.CSSProperties }>, { style: mobileIconStyle })
+      : child.icon,
+  }));
+
+  const mobileDesktopMenu = [
+    ...mobileMenuItems.filter((item) => item.key !== 'admin'),
+    ...(isAdmin ? [{
+      key: 'admin', icon: <SettingOutlined style={mobileIconStyle} />, label: 'Administration',
+      children: mobileAdminChildren,
+    }] : ingestionMenuItem.map((item) => ({
+      ...item,
+      icon: React.isValidElement(item.icon)
+        ? React.cloneElement(item.icon as React.ReactElement<{ style?: React.CSSProperties }>, { style: mobileIconStyle })
+        : item.icon,
+    }))),
+  ];
+
+  const menuItems = isAdmin || canIngest ? desktopMenu : allMenuItems.filter((item) => item.key !== 'admin');
+  const mobileItems = isAdmin || canIngest ? mobileDesktopMenu : mobileMenuItems.filter((item) => item.key !== 'admin');
 
   useEffect(() => {
     if (location.pathname.startsWith('/admin')) {

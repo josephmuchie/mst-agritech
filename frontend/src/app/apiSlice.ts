@@ -34,7 +34,36 @@ export interface AuditLogResponse {
   id: number; userId: number; action: string; entityType: string; entityId: string;
   ipAddress: string; responseStatus: number; createdAt: string;
 }
-export interface RoleResponse { id: number; name: string; description: string; }
+export interface RoleResponse { id: number; name: string; description: string; permissions: string[]; }
+export interface LogisticsCompanyResponse {
+  id: number; name: string; type: string; trackingUrl: string | null;
+  countries: string[]; active: boolean;
+}
+export interface MarketplaceProductResponse {
+  id: number; name: string; category: string; farmer: string; country: string;
+  priceUsd: number; unit: string; stock: number; available: boolean;
+}
+export interface ReportDefinitionResponse {
+  id: string; title: string; description: string; category: string; format: string;
+}
+export interface AppSettingsResponse {
+  platformName: string; defaultCurrency: string; supportEmail: string;
+  maxOrderValueUsd: string; maintenanceMode: boolean;
+}
+export interface DataImportJobResponse {
+  id: number; importType: string; source: string; fileName: string | null;
+  status: string; recordsTotal: number; recordsSuccess: number; recordsFailed: number;
+  errorSummary: string | null; createdByEmail: string | null;
+  startedAt: string; completedAt: string | null;
+}
+export interface DataImportTypeInfoResponse {
+  type: string; label: string; description: string; columns: string[];
+}
+export interface DataIngestionAccessResponse { allowed: boolean; }
+export interface ApiIngestionRequest {
+  importType: string;
+  records: Array<Record<string, string>>;
+}
 export interface CountryResponse { id: number; isoCode: string; name: string; region: string; active: boolean; }
 export interface CurrencyResponse { id: number; code: string; name: string; symbol: string; active: boolean; }
 export interface ProductCategoryResponse { id: number; name: string; description: string; active: boolean; }
@@ -51,6 +80,27 @@ export interface IntegrationSyncRunResponse {
   id: number; integrationConfigId: number; flowType: string; triggerType: string;
   status: string; recordsProcessed: number; errorMessage: string | null;
   startedAt: string; completedAt: string | null;
+}
+export interface PaymentListResponse {
+  id: number; reference: string; orderRef: string; amount: number;
+  currencyCode: string; gateway: string; status: string; createdAt: string;
+}
+export interface PaymentSummaryResponse {
+  totalReceivedUsd: number; pendingCount: number; completedCount: number; failedCount: number;
+}
+export interface ShipmentListResponse {
+  id: number; trackingNo: string; carrier: string; origin: string;
+  destination: string; status: string; eta: string | null;
+}
+export interface AnalyticsSummaryResponse {
+  ytdRevenueUsd: number; totalOrdersYtd: number;
+  avgOrderValueUsd: number; avgFulfillmentDays: number;
+}
+export interface TopProductResponse {
+  rank: number; name: string; category: string; revenueUsd: number; orders: number;
+}
+export interface TopMarketResponse {
+  country: string; code: string; revenue: number; share: number;
 }
 export interface ExternalInvoiceResponse {
   id: number; integrationConfigId: number; externalId: string; invoiceNumber: string;
@@ -212,6 +262,36 @@ export const apiSlice = createApi({
       invalidatesTags: ['Order'],
     }),
 
+    // Payments
+    getPayments: builder.query<PageResponse<PaymentListResponse>, { page?: number; size?: number }>({
+      query: ({ page = 0, size = 20 } = {}) => `/payments?page=${page}&size=${size}`,
+      providesTags: ['Payment'],
+    }),
+    getPaymentSummary: builder.query<PaymentSummaryResponse, void>({
+      query: () => '/payments/summary',
+      providesTags: ['Payment'],
+    }),
+
+    // Shipments
+    getShipments: builder.query<PageResponse<ShipmentListResponse>, { page?: number; size?: number }>({
+      query: ({ page = 0, size = 20 } = {}) => `/shipments?page=${page}&size=${size}`,
+      providesTags: ['Shipment'],
+    }),
+
+    // Analytics
+    getAnalyticsSummary: builder.query<AnalyticsSummaryResponse, void>({
+      query: () => '/analytics/summary',
+      providesTags: ['Report'],
+    }),
+    getTopProducts: builder.query<TopProductResponse[], void>({
+      query: () => '/analytics/top-products',
+      providesTags: ['Report'],
+    }),
+    getTopMarkets: builder.query<TopMarketResponse[], void>({
+      query: () => '/analytics/top-markets',
+      providesTags: ['Report'],
+    }),
+
     // Audit Logs
     getAuditLogs: builder.query<PageResponse<AuditLogResponse>, { page?: number; size?: number }>({
       query: ({ page = 0, size = 20 } = {}) => `/audit-logs?page=${page}&size=${size}`,
@@ -222,6 +302,83 @@ export const apiSlice = createApi({
     getRoles: builder.query<RoleResponse[], void>({
       query: () => '/roles',
       providesTags: ['Role'],
+    }),
+
+    // Logistics
+    getLogisticsCompanies: builder.query<LogisticsCompanyResponse[], void>({
+      query: () => '/logistics/companies',
+      providesTags: ['LogisticsCompany'],
+    }),
+
+    // Marketplace
+    getMarketplaceProducts: builder.query<MarketplaceProductResponse[], { search?: string; category?: string }>({
+      query: ({ search, category } = {}) => {
+        const params = new URLSearchParams();
+        if (search) params.set('search', search);
+        if (category && category !== 'All') params.set('category', category);
+        const qs = params.toString();
+        return `/marketplace/products${qs ? `?${qs}` : ''}`;
+      },
+      providesTags: ['Product'],
+    }),
+    getMarketplaceCategories: builder.query<string[], void>({
+      query: () => '/marketplace/categories',
+    }),
+
+    // Reports
+    getReports: builder.query<ReportDefinitionResponse[], void>({
+      query: () => '/reports',
+      providesTags: ['Report'],
+    }),
+
+    // App settings
+    getAppSettings: builder.query<AppSettingsResponse, void>({
+      query: () => '/settings/general',
+      providesTags: ['AppSetting'],
+    }),
+    updateAppSettings: builder.mutation<AppSettingsResponse, Partial<AppSettingsResponse>>({
+      query: (body) => ({
+        url: '/settings/general',
+        method: 'PUT',
+        body: {
+          platformName: body.platformName,
+          defaultCurrency: body.defaultCurrency,
+          supportEmail: body.supportEmail,
+          maxOrderValueUsd: body.maxOrderValueUsd,
+          maintenanceMode: body.maintenanceMode,
+        },
+      }),
+      invalidatesTags: ['AppSetting'],
+    }),
+
+    // Data ingestion
+    getIngestionAccess: builder.query<DataIngestionAccessResponse, void>({
+      query: () => '/config/ingestion/access',
+    }),
+    getIngestionTypes: builder.query<DataImportTypeInfoResponse[], void>({
+      query: () => '/config/ingestion/types',
+    }),
+    getIngestionJobs: builder.query<PageResponse<DataImportJobResponse>, { page?: number; size?: number }>({
+      query: ({ page = 0, size = 20 } = {}) => `/config/ingestion/jobs?page=${page}&size=${size}`,
+    }),
+    uploadIngestionExcel: builder.mutation<DataImportJobResponse, { importType: string; file: File }>({
+      query: ({ importType, file }) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('importType', importType);
+        return {
+          url: '/config/ingestion/excel',
+          method: 'POST',
+          body: formData,
+        };
+      },
+    }),
+    uploadIngestionApi: builder.mutation<DataImportJobResponse, ApiIngestionRequest>({
+      query: (body) => ({
+        url: '/config/ingestion/api',
+        method: 'POST',
+        body,
+      }),
     }),
 
     // Master data
@@ -298,8 +455,17 @@ export const {
   useGetFarmersQuery, useVerifyFarmerMutation,
   useGetBuyersQuery,
   useGetOrdersQuery, useUpdateOrderStatusMutation,
+  useGetPaymentsQuery, useGetPaymentSummaryQuery,
+  useGetShipmentsQuery,
+  useGetAnalyticsSummaryQuery, useGetTopProductsQuery, useGetTopMarketsQuery,
   useGetAuditLogsQuery,
   useGetRolesQuery,
+  useGetLogisticsCompaniesQuery,
+  useGetMarketplaceProductsQuery, useGetMarketplaceCategoriesQuery,
+  useGetReportsQuery,
+  useGetAppSettingsQuery, useUpdateAppSettingsMutation,
+  useGetIngestionAccessQuery, useGetIngestionTypesQuery, useGetIngestionJobsQuery,
+  useUploadIngestionExcelMutation, useUploadIngestionApiMutation,
   useGetCountriesQuery, useGetCurrenciesQuery, useGetProductCategoriesQuery,
   useGetIntegrationsQuery, useUpdateIntegrationMutation, useInvokeIntegrationMutation,
   useGetIntegrationRunsQuery, useGetIntegrationInvoicesQuery,

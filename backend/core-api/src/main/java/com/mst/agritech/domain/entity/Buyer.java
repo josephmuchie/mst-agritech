@@ -38,12 +38,15 @@ public class Buyer {
     private String contactPhone;
 
     @Column(name = "is_verified", nullable = false)
+    @Builder.Default
     private boolean verified = false;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at", nullable = false)
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PreUpdate

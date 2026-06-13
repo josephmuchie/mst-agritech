@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Typography, Alert, Tag, Spin, Button } from 'antd';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Typography, Alert, Tag, Spin, Button, message } from 'antd';
 import {
   ApiOutlined,
   ReloadOutlined,
@@ -13,7 +13,12 @@ import '../styles/swaggerTheme.css';
 import '../styles/apiDocs.css';
 import { useAppSelector } from '../app/store';
 import BrandLogo from '../components/BrandLogo';
-import { getApiBaseUrl, getOpenApiUrl } from '../config/api';
+import {
+  getApiBaseUrl,
+  getDisplayApiHost,
+  getOpenApiUrl,
+  patchOpenApiSpec,
+} from '../config/api';
 import { useIsMobile } from '../hooks/useIsMobile';
 
 const { Text, Title } = Typography;
@@ -24,28 +29,38 @@ interface SpecMeta {
   description?: string;
 }
 
+type SwaggerSystem = {
+  authActions?: {
+    authorize: (auth: Record<string, { value: string }>) => void;
+  };
+};
+
 const ApiDocsPage: React.FC = () => {
   const accessToken = useAppSelector((s) => s.auth.accessToken);
   const isMobile = useIsMobile();
   const [specStatus, setSpecStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [specMeta, setSpecMeta] = useState<SpecMeta | null>(null);
+  const [openApiSpec, setOpenApiSpec] = useState<Record<string, unknown> | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const openApiUrl = getOpenApiUrl();
-  const apiBaseUrl = getApiBaseUrl();
+  const displayApiHost = getDisplayApiHost();
+  const hasToken = Boolean(accessToken);
 
   useEffect(() => {
     let cancelled = false;
     setSpecStatus('loading');
     setSpecMeta(null);
+    setOpenApiSpec(null);
 
     fetch(openApiUrl)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then((json: { info?: SpecMeta }) => {
+      .then((json: Record<string, unknown> & { info?: SpecMeta }) => {
         if (cancelled) return;
         setSpecMeta(json.info ?? null);
+        setOpenApiSpec(patchOpenApiSpec(json));
         setSpecStatus('ready');
       })
       .catch(() => {
@@ -55,9 +70,40 @@ const ApiDocsPage: React.FC = () => {
     return () => { cancelled = true; };
   }, [retryKey, openApiUrl]);
 
-  const displayApiOrigin = apiBaseUrl.startsWith('http')
-    ? apiBaseUrl.replace(/\/api\/v1\/?$/, '')
-    : (import.meta.env.DEV ? 'localhost:8081' : 'agritech-api.mst.co.zw');
+  const applySwaggerAuth = useCallback((system: SwaggerSystem) => {
+    if (!accessToken || !system.authActions?.authorize) return;
+    system.authActions.authorize({
+      bearerAuth: { value: accessToken },
+    });
+  }, [accessToken]);
+
+  const requestInterceptor = useCallback((req: { headers?: Record<string, string>; url?: string }) => {
+    if (!accessToken) {
+      message.error('Sign in required — API requests need an active session token.');
+      throw new Error('Authentication required');
+    }
+    req.headers = { ...req.headers, Authorization: `Bearer ${accessToken}` };
+    return req;
+  }, [accessToken]);
+
+  const responseInterceptor = useCallback((res: { text?: string; data?: string; body?: unknown }) => {
+    const raw = res.text ?? res.data;
+    if (typeof raw === 'string' && raw.trim().startsWith('{')) {
+      try {
+        const formatted = JSON.stringify(JSON.parse(raw), null, 2);
+        if (res.text !== undefined) res.text = formatted;
+        if (res.data !== undefined) res.data = formatted;
+      } catch {
+        /* keep original */
+      }
+    }
+    return res;
+  }, []);
+
+  const swaggerKey = useMemo(
+    () => `${retryKey}-${accessToken ?? 'anon'}-${isMobile ? 'm' : 'd'}`,
+    [retryKey, accessToken, isMobile],
+  );
 
   return (
     <div className={`api-docs-page${isMobile ? ' api-docs-page--mobile' : ''}`}>
@@ -112,42 +158,44 @@ const ApiDocsPage: React.FC = () => {
               OpenAPI 3.0
             </Tag>
             <Tag icon={<ApiOutlined />}>REST v1</Tag>
-            <Tag icon={<SafetyOutlined />}>Bearer JWT</Tag>
-            {specStatus === 'ready' && <Tag color="success">Ready</Tag>}
             {specStatus === 'loading' && <Tag color="processing">Loading…</Tag>}
             {specStatus === 'error' && <Tag color="error">Unavailable</Tag>}
           </div>
 
-          <div className="api-docs-endpoints">
-            <div className="api-docs-endpoint">
+          <div className="api-docs-endpoints-inline">
+            <span className="api-docs-endpoint-inline">
               <span className="api-docs-endpoint-label">Base path</span>
-              <span className="api-docs-endpoint-value"><code>/api/v1</code></span>
-            </div>
-            <div className="api-docs-endpoint">
+              <code>/api/v1</code>
+            </span>
+            <span className="api-docs-endpoint-sep" aria-hidden>·</span>
+            <span className="api-docs-endpoint-inline">
               <span className="api-docs-endpoint-label">API host</span>
-              <span className="api-docs-endpoint-value">
-                <code>{displayApiOrigin}</code>
-              </span>
-            </div>
+              <code>{displayApiHost}</code>
+            </span>
             {!isMobile && (
-              <div className="api-docs-endpoint">
-                <span className="api-docs-endpoint-label">OpenAPI spec</span>
-                <span className="api-docs-endpoint-value">
+              <>
+                <span className="api-docs-endpoint-sep" aria-hidden>·</span>
+                <span className="api-docs-endpoint-inline">
+                  <span className="api-docs-endpoint-label">Spec</span>
                   <code>{openApiUrl}</code>
                 </span>
-              </div>
+              </>
             )}
           </div>
 
-          <div className="api-docs-auth-banner">
+          <div className={`api-docs-auth-banner${hasToken ? '' : ' api-docs-auth-banner--warning'}`}>
             <SafetyOutlined />
             <span className="api-docs-auth-banner-text">
-              {isMobile ? (
-                <>Session token attached automatically. Tap <strong>Authorize</strong> below to override.</>
+              {!hasToken ? (
+                <>
+                  <strong>Not signed in.</strong> Sign in to the app first — your session token is required for Try it out requests.
+                </>
+              ) : isMobile ? (
+                <>Session token attached automatically on every request.</>
               ) : (
                 <>
                   Your session token is sent automatically on every <strong>Try it out</strong> request.
-                  Use the <strong>Authorize</strong> control below to override the bearer token.
+                  Use <strong>Authorize</strong> below only if you need to override it.
                 </>
               )}
             </span>
@@ -205,22 +253,20 @@ const ApiDocsPage: React.FC = () => {
             </div>
           )}
 
-          {specStatus === 'ready' && (
+          {specStatus === 'ready' && openApiSpec && (
             <div className="mst-swagger-ui swagger-docs-wrap">
               <SwaggerUI
-                key={`${retryKey}-${isMobile ? 'm' : 'd'}`}
-                url={openApiUrl}
-                docExpansion={isMobile ? 'none' : 'list'}
+                key={swaggerKey}
+                spec={openApiSpec}
+                docExpansion="list"
                 defaultModelsExpandDepth={0}
+                defaultModelRendering="example"
                 displayRequestDuration
-                tryItOutEnabled
+                tryItOutEnabled={hasToken}
                 persistAuthorization
-                requestInterceptor={(req) => {
-                  if (accessToken) {
-                    req.headers = { ...req.headers, Authorization: `Bearer ${accessToken}` };
-                  }
-                  return req;
-                }}
+                requestInterceptor={requestInterceptor}
+                responseInterceptor={responseInterceptor}
+                onComplete={applySwaggerAuth}
                 deepLinking={!isMobile}
                 filter
               />

@@ -43,6 +43,37 @@
   border-radius: 6px;
   box-shadow: none;
   padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mst-swagger-ui .swagger-ui .scheme-container .schemes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.mst-swagger-ui .swagger-ui .scheme-container .schemes > label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.mst-swagger-ui .swagger-ui .scheme-container .btn.authorize {
+  margin: 0;
+  min-height: 36px;
+  padding: 4px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .mst-swagger-ui .swagger-ui .opblock-tag {
@@ -115,6 +146,58 @@
   border-radius: 4px;
 }
 
+/* Swagger model example — pretty-printed JSON */
+.mst-swagger-ui .swagger-ui .model-box,
+.mst-swagger-ui .swagger-ui section.models .model-container {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.mst-swagger-ui .swagger-ui .model .property.primitive,
+.mst-swagger-ui .swagger-ui .model-example,
+.mst-swagger-ui .swagger-ui .model .property-row {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.mst-swagger-ui .swagger-ui section.models pre {
+  white-space: pre !important;
+  word-break: normal !important;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #0C4A6E;
+}
+
+.mst-swagger-ui .swagger-ui .responses-table .response-col_description pre {
+  white-space: pre-wrap !important;
+  background: #F8FAFC;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.mst-swagger-ui .swagger-ui .opblock-body pre.microlight {
+  white-space: pre !important;
+  line-height: 1.5;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.mst-swagger-ui .swagger-ui .highlight-code > pre,
+.mst-swagger-ui .swagger-ui .response .language-json pre,
+.mst-swagger-ui .swagger-ui .model-example pre,
+.mst-swagger-ui .swagger-ui .body-param__example pre,
+.mst-swagger-ui .swagger-ui .example-value pre {
+  white-space: pre !important;
+  word-break: normal !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  tab-size: 2;
+  line-height: 1.5;
+}
+
 .mst-swagger-ui .swagger-ui .btn.authorize {
   border-color: #0891B2;
   color: #0891B2;
@@ -178,6 +261,86 @@
 .mst-swagger-ui .swagger-ui .model-title,
 .mst-swagger-ui .swagger-ui .model {
   color: #0F172A;
+}
+
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux {
+  border-radius: 8px;
+  max-width: 520px;
+  width: calc(100% - 32px);
+}
+
+.mst-swagger-ui .swagger-ui .dialog-ux .modal-ux-content {
+  padding: 16px 20px 20px;
+}
+
+.mst-swagger-ui .swagger-ui .auth-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+}
+
+.mst-swagger-ui .swagger-ui .auth-container h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0C4A6E;
+}
+
+.mst-swagger-ui .swagger-ui .auth-container .wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.mst-swagger-ui .swagger-ui .auth-container .wrapper > label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+}
+
+.mst-swagger-ui .swagger-ui .auth-container input[type='text'],
+.mst-swagger-ui .swagger-ui .auth-container input[type='password'] {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  margin: 0;
+}
+
+.mst-swagger-ui .swagger-ui .auth-container code {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #F1F5F9;
+}
+
+.mst-swagger-ui .swagger-ui .auth-btn-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #E2E8F0;
+}
+
+.mst-swagger-ui .swagger-ui .auth-btn-wrapper .btn {
+  width: auto;
+  min-width: 110px;
+  min-height: 36px;
+  margin: 0;
+  padding: 4px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mst-swagger-ui .swagger-ui .auth-wrapper .btn.modal-btn.auth,
@@ -283,11 +446,15 @@
 
   .mst-swagger-ui .swagger-ui .auth-btn-wrapper {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
   }
 
   .mst-swagger-ui .swagger-ui .auth-btn-wrapper .btn {
-    width: 100%;
+    width: auto;
+    min-width: 110px;
+    flex: 0 0 auto;
   }
 }

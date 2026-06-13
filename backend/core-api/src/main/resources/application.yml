@@ -35,6 +35,10 @@ spring:
     jdbc:
       initialize-schema: always
 
+  jackson:
+    serialization:
+      indent-output: true
+
 server:
   # Railway/Render inject PORT; SERVER_PORT kept for local Docker
   port: ${PORT:${SERVER_PORT:8081}}
@@ -44,6 +48,7 @@ server:
 app:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   api-base-url: ${API_BASE_URL:http://localhost:${server.port}}
+  public-api-url: ${API_PUBLIC_URL:https://agritech-api.mst.co.zw}
 
 security:
   jwt:
@@ -58,6 +63,8 @@ springdoc:
     path: /swagger-ui.html
     tags-sorter: alpha
     operations-sorter: alpha
+    default-model-rendering: example
+  writer-with-order-by-keys: true
   info:
     title: MST Agritech API
     description: REST API for the MST Agritech Agricultural Trading Platform
