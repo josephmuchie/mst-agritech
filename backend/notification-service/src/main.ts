@@ -7,7 +7,9 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173',
       'http://localhost:3000',
+      /mst\.co\.zw$/,
       /mstagritech\.co\.zw$/,
+      /vercel\.app$/,
     ],
     credentials: true,
   });

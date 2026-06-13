@@ -7,6 +7,16 @@ const DEV_OPENAPI_PROXY = '/__backend/openapi'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: 'globalThis',
+      },
+    },
+  },
   server: {
     proxy: {
       // Do NOT proxy /api — it matches the SPA route /api-docs and breaks client routing

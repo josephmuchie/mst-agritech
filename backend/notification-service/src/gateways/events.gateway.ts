@@ -13,7 +13,13 @@ import Redis from 'ioredis';
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      /^https:\/\/.*\.mst\.co\.zw$/,
+      /^https:\/\/.*\.mstagritech\.co\.zw$/,
+      /^https:\/\/.*\.vercel\.app$/,
+    ],
     credentials: true,
   },
 })
@@ -35,6 +41,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect, 
       'order-events',
       'shipment-events',
       'payment-events',
+      'notification-events',
       (err) => {
         if (err) this.logger.error('Redis subscribe error', err);
         else this.logger.log('Subscribed to Redis channels');
@@ -42,7 +49,15 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect, 
     );
 
     this.redisSubscriber.on('message', (channel: string, message: string) => {
-      this.server.emit(channel, JSON.parse(message));
+      try {
+        const payload = JSON.parse(message);
+        this.server.emit(channel, payload);
+        if (channel !== 'notification-events') {
+          this.server.emit('notification-events', payload);
+        }
+      } catch (err) {
+        this.logger.warn(`Failed to forward Redis message on ${channel}`, err);
+      }
     });
   }
 

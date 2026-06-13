@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Menu, Avatar, Dropdown, Badge, Typography, Space, Button, Tag, Drawer } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, Typography, Space, Button, Tag, Drawer } from 'antd';
 import {
   DashboardOutlined, TeamOutlined, ShopOutlined, ShoppingCartOutlined,
   CarOutlined, DollarOutlined, BarChartOutlined, SettingOutlined,
-  AuditOutlined, GlobalOutlined, BellOutlined, LogoutOutlined,
+  AuditOutlined, GlobalOutlined, LogoutOutlined,
   UserOutlined, MenuFoldOutlined, MenuUnfoldOutlined, ApiOutlined,
   FileTextOutlined, SafetyOutlined, BuildOutlined, SwapOutlined,
   DatabaseOutlined,
@@ -13,6 +13,7 @@ import { useAppSelector, useAppDispatch } from '../app/store';
 import { clearCredentials, switchRole } from '../features/auth/authSlice';
 import { useGetIngestionAccessQuery } from '../app/apiSlice';
 import BrandLogo from '../components/BrandLogo';
+import NotificationBell from '../components/NotificationBell';
 import { useResizableSider } from '../hooks/useResizableSider';
 import { useIsMobile } from '../hooks/useIsMobile';
 
@@ -265,27 +266,36 @@ const AppLayout: React.FC = () => {
         </Drawer>
       )}
 
-      <Layout style={{ marginLeft: contentMargin, transition: !isMobile && collapsed ? 'margin-left 0.2s' : undefined, background: '#F0F9FF' }}>
+      <Layout
+        className="app-main"
+        style={{
+          marginLeft: contentMargin,
+          width: isMobile ? '100%' : `calc(100% - ${contentMargin}px)`,
+          maxWidth: isMobile ? '100%' : `calc(100% - ${contentMargin}px)`,
+          transition: !isMobile && collapsed ? 'margin-left 0.2s, width 0.2s, max-width 0.2s' : undefined,
+          background: '#F0F9FF',
+        }}
+      >
         <Header className="app-header" style={{
-          position: 'sticky', top: 0, zIndex: 99, background: '#FFFFFF',
+          background: '#FFFFFF',
           display: 'flex', alignItems: 'center',
           justifyContent: 'space-between', boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+          padding: 0,
         }}>
           <Button
             type="text"
+            className="app-header-menu-btn"
             aria-label={isMobile ? 'Open navigation menu' : collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             icon={isMobile || collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => (isMobile ? setDrawerOpen(true) : setCollapsed(!collapsed))}
-            style={{ fontSize: 18, color: '#0C4A6E' }}
+            style={{ color: '#0C4A6E' }}
           />
-          <Space size={isMobile ? 8 : 16}>
-            <Badge count={3} size="small">
-              <Button type="text" icon={<BellOutlined style={{ fontSize: 18 }} />} aria-label="Notifications" />
-            </Badge>
+          <Space size={isMobile ? 8 : 16} align="center">
+            <NotificationBell userId={user?.id} />
             <Dropdown menu={userMenu} placement="bottomRight" trigger={['click']}>
               <Space style={{ cursor: 'pointer' }} aria-label="User menu">
                 <Avatar
-                  size={isMobile ? 36 : 40}
+                  size={40}
                   style={{ backgroundColor: isAdmin ? '#0891B2' : '#16A34A' }}
                   src="/Assets/SVG/icon white.svg"
                   alt={user?.fullName || 'User'}

@@ -67,6 +67,22 @@ export interface ApiIngestionRequest {
 export interface CountryResponse { id: number; isoCode: string; name: string; region: string; active: boolean; }
 export interface CurrencyResponse { id: number; code: string; name: string; symbol: string; active: boolean; }
 export interface ProductCategoryResponse { id: number; name: string; description: string; active: boolean; }
+export interface AdminProductResponse {
+  id: number; name: string; categoryId: number; categoryName: string;
+  unitOfMeasure: string; description: string; hsCode: string;
+  requiresColdChain: boolean; active: boolean; createdAt: string;
+}
+export interface MarketPriceResponse {
+  id: number; productId: number; productName: string; countryId: number | null;
+  countryName: string | null; price: number; currencyCode: string;
+  priceSource: string; recordedAt: string;
+}
+export interface CreateUserRequest {
+  email: string; fullName: string; password: string; roles: string[];
+}
+export interface UpdateUserRequest {
+  fullName?: string; password?: string; active?: boolean; roles?: string[];
+}
 export interface IntegrationConfigResponse {
   id: number; systemType: string; displayName: string; endpointUrl: string | null;
   active: boolean; configured: boolean; environment: string; dataFlows: string[];
@@ -153,6 +169,19 @@ export interface TenantSsoConfigResponse {
   defaultRoleName: string;
   emailDomains?: string;
 }
+export interface NotificationResponse {
+  id: number;
+  title: string;
+  message: string;
+  notificationType: string;
+  entityType: string | null;
+  entityId: string | null;
+  read: boolean;
+  createdAt: string;
+}
+export interface UnreadCountResponse {
+  count: number;
+}
 
 export const apiSlice = createApi({
   reducerPath: 'api',
@@ -174,7 +203,7 @@ export const apiSlice = createApi({
     'SubscriptionPlan', 'Subscription', 'AppSetting', 'IntegrationConfig',
     'MarketPrice', 'Report',
     'IntegrationConfig', 'IntegrationSyncRun', 'ExternalInvoice', 'IntegrationSettings',
-    'TenantSso',
+    'TenantSso', 'Notification',
   ],
   endpoints: (builder) => ({
     // Auth
@@ -230,8 +259,24 @@ export const apiSlice = createApi({
       query: ({ page = 0, size = 20 } = {}) => `/users?page=${page}&size=${size}`,
       providesTags: ['User'],
     }),
+    createUser: builder.mutation<UserResponse, CreateUserRequest>({
+      query: (body) => ({ url: '/users', method: 'POST', body }),
+      invalidatesTags: ['User'],
+    }),
+    updateUser: builder.mutation<UserResponse, { id: number; body: UpdateUserRequest }>({
+      query: ({ id, body }) => ({ url: `/users/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['User'],
+    }),
     deactivateUser: builder.mutation<void, number>({
       query: (id) => ({ url: `/users/${id}/deactivate`, method: 'PATCH' }),
+      invalidatesTags: ['User'],
+    }),
+    reactivateUser: builder.mutation<void, number>({
+      query: (id) => ({ url: `/users/${id}/reactivate`, method: 'PATCH' }),
+      invalidatesTags: ['User'],
+    }),
+    deleteUser: builder.mutation<void, number>({
+      query: (id) => ({ url: `/users/${id}`, method: 'DELETE' }),
       invalidatesTags: ['User'],
     }),
 
@@ -382,17 +427,117 @@ export const apiSlice = createApi({
     }),
 
     // Master data
-    getCountries: builder.query<CountryResponse[], void>({
-      query: () => '/master-data/countries',
+    getCountries: builder.query<CountryResponse[], { activeOnly?: boolean } | void>({
+      query: (arg) => `/master-data/countries?activeOnly=${arg?.activeOnly ?? true}`,
       providesTags: ['Country'],
     }),
-    getCurrencies: builder.query<CurrencyResponse[], void>({
-      query: () => '/master-data/currencies',
+    createCountry: builder.mutation<CountryResponse, { isoCode: string; name: string; region?: string; active?: boolean }>({
+      query: (body) => ({ url: '/master-data/countries', method: 'POST', body }),
+      invalidatesTags: ['Country'],
+    }),
+    updateCountry: builder.mutation<CountryResponse, { id: number; body: { isoCode: string; name: string; region?: string; active?: boolean } }>({
+      query: ({ id, body }) => ({ url: `/master-data/countries/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['Country'],
+    }),
+    deleteCountry: builder.mutation<void, number>({
+      query: (id) => ({ url: `/master-data/countries/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Country'],
+    }),
+    getCurrencies: builder.query<CurrencyResponse[], { activeOnly?: boolean } | void>({
+      query: (arg) => `/master-data/currencies?activeOnly=${arg?.activeOnly ?? true}`,
       providesTags: ['Currency'],
     }),
-    getProductCategories: builder.query<ProductCategoryResponse[], void>({
-      query: () => '/master-data/product-categories',
+    createCurrency: builder.mutation<CurrencyResponse, { code: string; name: string; symbol: string; active?: boolean }>({
+      query: (body) => ({ url: '/master-data/currencies', method: 'POST', body }),
+      invalidatesTags: ['Currency'],
+    }),
+    updateCurrency: builder.mutation<CurrencyResponse, { id: number; body: { code: string; name: string; symbol: string; active?: boolean } }>({
+      query: ({ id, body }) => ({ url: `/master-data/currencies/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['Currency'],
+    }),
+    deleteCurrency: builder.mutation<void, number>({
+      query: (id) => ({ url: `/master-data/currencies/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Currency'],
+    }),
+    getProductCategories: builder.query<ProductCategoryResponse[], { activeOnly?: boolean } | void>({
+      query: (arg) => `/master-data/product-categories?activeOnly=${arg?.activeOnly ?? true}`,
       providesTags: ['ProductCategory'],
+    }),
+    createProductCategory: builder.mutation<ProductCategoryResponse, { name: string; description?: string; active?: boolean }>({
+      query: (body) => ({ url: '/master-data/product-categories', method: 'POST', body }),
+      invalidatesTags: ['ProductCategory'],
+    }),
+    updateProductCategory: builder.mutation<ProductCategoryResponse, { id: number; body: { name: string; description?: string; active?: boolean } }>({
+      query: ({ id, body }) => ({ url: `/master-data/product-categories/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['ProductCategory'],
+    }),
+    deleteProductCategory: builder.mutation<void, number>({
+      query: (id) => ({ url: `/master-data/product-categories/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['ProductCategory'],
+    }),
+    getAdminProducts: builder.query<AdminProductResponse[], { activeOnly?: boolean } | void>({
+      query: (arg) => `/master-data/products?activeOnly=${arg?.activeOnly ?? false}`,
+      providesTags: ['Product'],
+    }),
+    createProduct: builder.mutation<AdminProductResponse, {
+      name: string; categoryId: number; unitOfMeasure: string;
+      description?: string; requiresColdChain?: boolean; active?: boolean;
+    }>({
+      query: (body) => ({ url: '/master-data/products', method: 'POST', body }),
+      invalidatesTags: ['Product', 'MarketPrice'],
+    }),
+    updateProduct: builder.mutation<AdminProductResponse, {
+      id: number; body: {
+        name: string; categoryId: number; unitOfMeasure: string;
+        description?: string; requiresColdChain?: boolean; active?: boolean;
+      };
+    }>({
+      query: ({ id, body }) => ({ url: `/master-data/products/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['Product', 'MarketPrice'],
+    }),
+    deleteProduct: builder.mutation<void, number>({
+      query: (id) => ({ url: `/master-data/products/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Product', 'MarketPrice'],
+    }),
+    getMarketPrices: builder.query<MarketPriceResponse[], void>({
+      query: () => '/master-data/market-prices',
+      providesTags: ['MarketPrice'],
+    }),
+    createMarketPrice: builder.mutation<MarketPriceResponse, {
+      productId: number; countryId?: number; price: number; currencyCode: string; priceSource?: string;
+    }>({
+      query: (body) => ({ url: '/master-data/market-prices', method: 'POST', body }),
+      invalidatesTags: ['MarketPrice', 'Product'],
+    }),
+    updateMarketPrice: builder.mutation<MarketPriceResponse, {
+      id: number; body: {
+        productId: number; countryId?: number; price: number; currencyCode: string; priceSource?: string;
+      };
+    }>({
+      query: ({ id, body }) => ({ url: `/master-data/market-prices/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['MarketPrice', 'Product'],
+    }),
+    deleteMarketPrice: builder.mutation<void, number>({
+      query: (id) => ({ url: `/master-data/market-prices/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['MarketPrice', 'Product'],
+    }),
+
+    // Notifications
+    getNotifications: builder.query<PageResponse<NotificationResponse>, { page?: number; size?: number }>({
+      query: ({ page = 0, size = 20 } = {}) => `/notifications?page=${page}&size=${size}`,
+      providesTags: ['Notification'],
+    }),
+    getUnreadNotificationCount: builder.query<UnreadCountResponse, void>({
+      query: () => '/notifications/unread-count',
+      providesTags: ['Notification'],
+    }),
+    markNotificationRead: builder.mutation<NotificationResponse, number>({
+      query: (id) => ({ url: `/notifications/${id}/read`, method: 'PATCH' }),
+      invalidatesTags: ['Notification'],
+    }),
+    markAllNotificationsRead: builder.mutation<void, void>({
+      query: () => ({ url: '/notifications/read-all', method: 'PATCH' }),
+      invalidatesTags: ['Notification'],
     }),
 
     // Integrations
@@ -451,7 +596,8 @@ export const {
   useDiscoverSsoQuery, useLazyGetSsoAuthorizeQuery, useSsoCallbackMutation,
   useGetTenantSsoConfigQuery, useUpdateTenantSsoConfigMutation,
   useGetKpisQuery,
-  useGetUsersQuery, useDeactivateUserMutation,
+  useGetUsersQuery, useCreateUserMutation, useUpdateUserMutation,
+  useDeactivateUserMutation, useReactivateUserMutation, useDeleteUserMutation,
   useGetFarmersQuery, useVerifyFarmerMutation,
   useGetBuyersQuery,
   useGetOrdersQuery, useUpdateOrderStatusMutation,
@@ -466,7 +612,13 @@ export const {
   useGetAppSettingsQuery, useUpdateAppSettingsMutation,
   useGetIngestionAccessQuery, useGetIngestionTypesQuery, useGetIngestionJobsQuery,
   useUploadIngestionExcelMutation, useUploadIngestionApiMutation,
-  useGetCountriesQuery, useGetCurrenciesQuery, useGetProductCategoriesQuery,
+  useGetCountriesQuery, useCreateCountryMutation, useUpdateCountryMutation, useDeleteCountryMutation,
+  useGetCurrenciesQuery, useCreateCurrencyMutation, useUpdateCurrencyMutation, useDeleteCurrencyMutation,
+  useGetProductCategoriesQuery, useCreateProductCategoryMutation, useUpdateProductCategoryMutation, useDeleteProductCategoryMutation,
+  useGetAdminProductsQuery, useCreateProductMutation, useUpdateProductMutation, useDeleteProductMutation,
+  useGetMarketPricesQuery, useCreateMarketPriceMutation, useUpdateMarketPriceMutation, useDeleteMarketPriceMutation,
+  useGetNotificationsQuery, useGetUnreadNotificationCountQuery,
+  useMarkNotificationReadMutation, useMarkAllNotificationsReadMutation,
   useGetIntegrationsQuery, useUpdateIntegrationMutation, useInvokeIntegrationMutation,
   useGetIntegrationRunsQuery, useGetIntegrationInvoicesQuery,
   useGetIntegrationSettingsQuery, useUpdateIntegrationSettingsMutation,

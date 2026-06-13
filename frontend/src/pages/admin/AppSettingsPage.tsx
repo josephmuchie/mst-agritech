@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { Card, Form, Input, Switch, Button, Divider, Typography, Space, message, Spin, Alert, Select } from 'antd';
-import { SettingOutlined, ApiOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import { Card, Form, Input, Switch, Button, Typography, Space, message, Spin, Alert, Select, Tabs, Row, Col } from 'antd';
+import { SettingOutlined, ApiOutlined, SafetyCertificateOutlined, ToolOutlined } from '@ant-design/icons';
 import {
   useGetIntegrationSettingsQuery,
   useUpdateIntegrationSettingsMutation,
@@ -9,13 +9,16 @@ import {
   useGetAppSettingsQuery,
   useUpdateAppSettingsMutation,
 } from '../../app/apiSlice';
+import { getApiErrorMessage } from '../../utils/apiError';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const AppSettingsPage: React.FC = () => {
-  const [form] = Form.useForm();
+  const [generalForm] = Form.useForm();
+  const [opsForm] = Form.useForm();
   const [integrationForm] = Form.useForm();
   const [ssoForm] = Form.useForm();
+
   const { data: integrationSettings, isLoading: loadingIntegration } = useGetIntegrationSettingsQuery();
   const [updateIntegrationSettings, { isLoading: savingIntegration }] = useUpdateIntegrationSettingsMutation();
   const { data: ssoConfig, isLoading: loadingSso } = useGetTenantSsoConfigQuery();
@@ -25,20 +28,20 @@ const AppSettingsPage: React.FC = () => {
 
   useEffect(() => {
     if (appSettings) {
-      form.setFieldsValue({
+      generalForm.setFieldsValue({
         platformName: appSettings.platformName,
         supportEmail: appSettings.supportEmail,
         defaultCurrency: appSettings.defaultCurrency,
+      });
+      opsForm.setFieldsValue({
         maintenanceMode: appSettings.maintenanceMode,
         maxOrderValueUsd: appSettings.maxOrderValueUsd,
       });
     }
-  }, [appSettings, form]);
+  }, [appSettings, generalForm, opsForm]);
 
   useEffect(() => {
-    if (integrationSettings) {
-      integrationForm.setFieldsValue(integrationSettings);
-    }
+    if (integrationSettings) integrationForm.setFieldsValue(integrationSettings);
   }, [integrationSettings, integrationForm]);
 
   useEffect(() => {
@@ -61,233 +64,179 @@ const AppSettingsPage: React.FC = () => {
     }
   }, [ssoConfig, ssoForm]);
 
-  const onFinishGeneral = async () => {
+  const saveGeneral = async () => {
     try {
-      const values = await form.validateFields();
+      const general = await generalForm.validateFields();
+      const ops = await opsForm.validateFields();
       await updateAppSettings({
-        platformName: values.platformName,
-        supportEmail: values.supportEmail,
-        defaultCurrency: values.defaultCurrency,
-        maxOrderValueUsd: String(values.maxOrderValueUsd),
-        maintenanceMode: values.maintenanceMode,
+        platformName: general.platformName,
+        supportEmail: general.supportEmail,
+        defaultCurrency: general.defaultCurrency,
+        maxOrderValueUsd: String(ops.maxOrderValueUsd),
+        maintenanceMode: ops.maintenanceMode,
       }).unwrap();
-      message.success('General settings saved');
-    } catch {
-      message.error('Failed to save general settings');
+      message.success('Platform settings saved');
+    } catch (err) {
+      message.error(getApiErrorMessage(err, 'Failed to save platform settings'));
     }
   };
 
-  const onFinishIntegration = async () => {
+  const saveIntegration = async () => {
     try {
-      const values = await integrationForm.validateFields();
-      await updateIntegrationSettings(values).unwrap();
+      await updateIntegrationSettings(await integrationForm.validateFields()).unwrap();
       message.success('Integration settings saved');
-    } catch {
-      message.error('Failed to save integration settings');
+    } catch (err) {
+      message.error(getApiErrorMessage(err, 'Failed to save integration settings'));
     }
   };
 
-  const onFinishSso = async () => {
+  const saveSso = async () => {
     try {
-      const values = await ssoForm.validateFields();
-      await updateSsoConfig(values).unwrap();
-      message.success('SSO settings saved — all users in your organization can sign in accordingly');
-    } catch {
-      message.error('Failed to save SSO settings');
+      await updateSsoConfig(await ssoForm.validateFields()).unwrap();
+      message.success('SSO settings saved');
+    } catch (err) {
+      message.error(getApiErrorMessage(err, 'Failed to save SSO settings'));
     }
   };
+
+  if (loadingAppSettings) {
+    return <div className="page-root"><Card><Spin /></Card></div>;
+  }
+
+  const tabItems = [
+    {
+      key: 'platform',
+      label: <Space><SettingOutlined />Platform</Space>,
+      children: (
+        <Row gutter={[24, 0]}>
+          <Col xs={24} lg={12}>
+            <Title level={5}>Branding & contact</Title>
+            <Form form={generalForm} layout="vertical">
+              <Form.Item label="Platform Name" name="platformName" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="Support Email" name="supportEmail" rules={[{ required: true, type: 'email' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="Default Currency" name="defaultCurrency">
+                <Input style={{ maxWidth: 120 }} />
+              </Form.Item>
+            </Form>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Title level={5}>Operations</Title>
+            <Form form={opsForm} layout="vertical">
+              <Form.Item label="Max Order Value (USD)" name="maxOrderValueUsd">
+                <Input type="number" style={{ maxWidth: 200 }} addonBefore="$" />
+              </Form.Item>
+              <Form.Item label="Maintenance Mode" name="maintenanceMode" valuePropName="checked"
+                extra="When enabled, non-admin users cannot access the platform">
+                <Switch />
+              </Form.Item>
+            </Form>
+          </Col>
+          <Col span={24}>
+            <Button type="primary" onClick={() => void saveGeneral()} loading={savingAppSettings}>
+              Save Platform Settings
+            </Button>
+          </Col>
+        </Row>
+      ),
+    },
+    {
+      key: 'integrations',
+      label: <Space><ApiOutlined />Integrations</Space>,
+      children: loadingIntegration ? <Spin /> : (
+        <>
+          <Alert type="info" showIcon style={{ marginBottom: 16 }}
+            message="Global integration policy"
+            description="Per-connector credentials are managed under Administration → Integrations." />
+          <Form form={integrationForm} layout="vertical" style={{ maxWidth: 520 }}>
+            <Form.Item label="Enable Oracle ERP Connector" name="oracleEnabled" valuePropName="checked">
+              <Switch />
+            </Form.Item>
+            <Form.Item label="Auto-sync Enabled" name="autoSyncEnabled" valuePropName="checked">
+              <Switch />
+            </Form.Item>
+            <Form.Item label="Default Retry Count" name="defaultRetryCount" rules={[{ required: true }]}>
+              <Input type="number" min={0} max={10} style={{ width: 120 }} />
+            </Form.Item>
+            <Button type="primary" onClick={() => void saveIntegration()} loading={savingIntegration}>
+              Save Integration Settings
+            </Button>
+          </Form>
+        </>
+      ),
+    },
+    {
+      key: 'sso',
+      label: <Space><SafetyCertificateOutlined />SSO</Space>,
+      children: loadingSso ? <Spin /> : (
+        <>
+          <Alert type="info" showIcon style={{ marginBottom: 16 }}
+            message="Organization-wide sign-in"
+            description={ssoConfig ? `Tenant: ${ssoConfig.tenantName} (${ssoConfig.tenantSlug})` : undefined} />
+          <Form form={ssoForm} layout="vertical">
+            <Row gutter={[24, 0]}>
+              <Col xs={24} lg={12}>
+                <Title level={5}>Provider</Title>
+                <Form.Item label="Enable SSO" name="enabled" valuePropName="checked"><Switch /></Form.Item>
+                <Form.Item label="Button label" name="providerLabel" rules={[{ required: true }]}><Input /></Form.Item>
+                <Form.Item label="Provider type" name="providerType" rules={[{ required: true }]}>
+                  <Select options={[
+                    { value: 'MOCK', label: 'Mock (development)' },
+                    { value: 'OIDC', label: 'OpenID Connect' },
+                  ]} />
+                </Form.Item>
+                <Form.Item label="Authorized email domains" name="emailDomains" rules={[{ required: true }]}>
+                  <Input placeholder="mst.co.zw, mstagritech.co.zw" />
+                </Form.Item>
+              </Col>
+              <Col xs={24} lg={12}>
+                <Title level={5}>Access policy</Title>
+                <Form.Item label="Auto-provision users" name="autoProvisionUsers" valuePropName="checked"><Switch /></Form.Item>
+                <Form.Item label="Allow password login" name="allowPasswordLogin" valuePropName="checked"><Switch /></Form.Item>
+                <Form.Item label="Default role for new SSO users" name="defaultRoleName">
+                  <Select options={['FARMER', 'BUYER', 'LOGISTICS', 'ANALYST', 'ADMIN'].map((v) => ({ value: v, label: v }))} />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Title level={5}>OIDC endpoints</Title>
+              </Col>
+              <Col xs={24} lg={12}>
+                <Form.Item label="Issuer URI" name="issuerUri"><Input /></Form.Item>
+                <Form.Item label="Client ID" name="clientId"><Input /></Form.Item>
+                <Form.Item label="Client secret" name="clientSecret"
+                  extra={ssoConfig?.hasClientSecret ? 'Leave blank to keep existing secret' : undefined}>
+                  <Input.Password />
+                </Form.Item>
+              </Col>
+              <Col xs={24} lg={12}>
+                <Form.Item label="Authorization URI" name="authorizationUri"><Input /></Form.Item>
+                <Form.Item label="Token URI" name="tokenUri"><Input /></Form.Item>
+                <Form.Item label="Userinfo URI" name="userinfoUri"><Input /></Form.Item>
+                <Form.Item label="Scopes" name="scopes"><Input placeholder="openid profile email" /></Form.Item>
+              </Col>
+              <Col span={24}>
+                <Button type="primary" onClick={() => void saveSso()} loading={savingSso}>Save SSO Settings</Button>
+              </Col>
+            </Row>
+          </Form>
+        </>
+      ),
+    },
+  ];
 
   return (
     <div className="page-root">
-    <Space direction="vertical" size={16} style={{ width: '100%' }}>
-      <Card title={<Space><SettingOutlined /><Title level={4} style={{ margin: 0 }}>App Settings</Title></Space>}>
-        {loadingAppSettings ? (
-          <Spin />
-        ) : (
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinishGeneral}
-          style={{ maxWidth: 600 }}
-        >
-          <Divider orientation="left">General</Divider>
-          <Form.Item label="Platform Name" name="platformName" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="Support Email" name="supportEmail" rules={[{ required: true, type: 'email' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="Default Currency" name="defaultCurrency">
-            <Input style={{ width: 120 }} />
-          </Form.Item>
-
-          <Divider orientation="left">Operational</Divider>
-          <Form.Item label="Max Order Value (USD)" name="maxOrderValueUsd">
-            <Input type="number" style={{ width: 200 }} addonBefore="$" />
-          </Form.Item>
-          <Form.Item label="Maintenance Mode" name="maintenanceMode" valuePropName="checked">
-            <Switch />
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={savingAppSettings}>Save General Settings</Button>
-          </Form.Item>
-        </Form>
-        )}
+      <Card className="page-card" title={
+        <Space><ToolOutlined /><Title level={4} style={{ margin: 0 }}>App Settings</Title></Space>
+      }>
+        <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
+          Configure platform, integrations, and authentication in grouped sections.
+        </Text>
+        <Tabs items={tabItems} />
       </Card>
-
-      <Card title={<Space><ApiOutlined /><Title level={4} style={{ margin: 0 }}>Integration Settings</Title></Space>}>
-        <Alert
-          type="info"
-          showIcon
-          style={{ marginBottom: 16 }}
-          message="Global integration policy"
-          description="Control whether connectors can run and how retries are handled. Per-connector endpoints and credentials are configured under Administration → Integrations."
-        />
-        {loadingIntegration ? (
-          <Spin />
-        ) : (
-          <Form
-            form={integrationForm}
-            layout="vertical"
-            onFinish={onFinishIntegration}
-            style={{ maxWidth: 600 }}
-          >
-            <Form.Item
-              label="Enable Oracle ERP Connector"
-              name="oracleEnabled"
-              valuePropName="checked"
-              extra="Allows Oracle invoice sync to be configured and invoked"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
-              label="Auto-sync Enabled"
-              name="autoSyncEnabled"
-              valuePropName="checked"
-              extra="When enabled, active connectors with autoSyncEnabled in their config will run on schedule"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
-              label="Default Retry Count"
-              name="defaultRetryCount"
-              rules={[{ required: true }]}
-            >
-              <Input type="number" min={0} max={10} style={{ width: 120 }} />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={savingIntegration}>
-                Save Integration Settings
-              </Button>
-            </Form.Item>
-          </Form>
-        )}
-      </Card>
-
-      <Card title={<Space><SafetyCertificateOutlined /><Title level={4} style={{ margin: 0 }}>Single Sign-On (SSO)</Title></Space>}>
-        <Alert
-          type="info"
-          showIcon
-          style={{ marginBottom: 16 }}
-          message="Organization-wide sign-in"
-          description="When enabled, users with matching email domains can sign in through your corporate identity provider. All users under the same tenant inherit this configuration."
-        />
-        {loadingSso ? (
-          <Spin />
-        ) : (
-          <Form
-            form={ssoForm}
-            layout="vertical"
-            onFinish={onFinishSso}
-            style={{ maxWidth: 640 }}
-          >
-            <Form.Item
-              label="Enable SSO for this organization"
-              name="enabled"
-              valuePropName="checked"
-              extra={ssoConfig ? `Tenant: ${ssoConfig.tenantName} (${ssoConfig.tenantSlug})` : undefined}
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item label="Button label on login page" name="providerLabel" rules={[{ required: true }]}>
-              <Input placeholder="e.g. Sign in with Acme Corp" />
-            </Form.Item>
-            <Form.Item label="Provider type" name="providerType" rules={[{ required: true }]}>
-              <Select options={[
-                { value: 'MOCK', label: 'Mock (development / demo)' },
-                { value: 'OIDC', label: 'OpenID Connect (Azure AD, Okta, Google, etc.)' },
-              ]} />
-            </Form.Item>
-            <Form.Item
-              label="Authorized email domains"
-              name="emailDomains"
-              extra="Comma-separated domains, e.g. acme.com, acme.co.zw"
-              rules={[{ required: true }]}
-            >
-              <Input placeholder="mstagritech.co.zw" />
-            </Form.Item>
-            <Divider orientation="left">OIDC endpoints</Divider>
-            <Form.Item label="Issuer URI" name="issuerUri" extra="Used to auto-discover endpoints via /.well-known/openid-configuration">
-              <Input placeholder="https://login.microsoftonline.com/{tenant}/v2.0" />
-            </Form.Item>
-            <Form.Item label="Client ID" name="clientId">
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Client secret"
-              name="clientSecret"
-              extra={ssoConfig?.hasClientSecret ? 'A secret is already stored — leave blank to keep it' : 'Required for production OIDC providers'}
-            >
-              <Input.Password placeholder="Enter new client secret" />
-            </Form.Item>
-            <Form.Item label="Authorization URI (optional override)" name="authorizationUri">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Token URI (optional override)" name="tokenUri">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Userinfo URI (optional override)" name="userinfoUri">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Scopes" name="scopes">
-              <Input placeholder="openid profile email" />
-            </Form.Item>
-            <Divider orientation="left">Access policy</Divider>
-            <Form.Item
-              label="Auto-provision new users"
-              name="autoProvisionUsers"
-              valuePropName="checked"
-              extra="Create platform accounts automatically on first SSO login"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
-              label="Allow password login"
-              name="allowPasswordLogin"
-              valuePropName="checked"
-              extra="When disabled, users must use company SSO"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item label="Default role for new SSO users" name="defaultRoleName">
-              <Select options={[
-                { value: 'FARMER', label: 'Farmer' },
-                { value: 'BUYER', label: 'Buyer' },
-                { value: 'LOGISTICS', label: 'Logistics' },
-                { value: 'ANALYST', label: 'Analyst' },
-                { value: 'ADMIN', label: 'Admin' },
-              ]} />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={savingSso}>
-                Save SSO Settings
-              </Button>
-            </Form.Item>
-          </Form>
-        )}
-      </Card>
-    </Space>
     </div>
   );
 };

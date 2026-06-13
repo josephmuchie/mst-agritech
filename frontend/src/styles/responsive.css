@@ -18,12 +18,14 @@ body {
 /* ── App shell ─────────────────────────────────────────────── */
 
 .app-content {
-  margin: 24px;
-  min-height: calc(100vh - 64px - 48px);
-  min-height: calc(100dvh - 64px - 48px);
+  margin: 0;
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+  min-height: calc(100dvh - 64px);
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  min-width: 0;
+  overflow-x: auto;
 }
 
 .app-header {
@@ -41,8 +43,8 @@ body {
 
 @media (max-width: 767px) {
   .app-content {
-    margin: 12px;
-    min-height: calc(100dvh - 56px - 24px);
+    padding: 12px;
+    min-height: calc(100dvh - 56px);
   }
 
   .app-header {
@@ -56,9 +58,34 @@ body {
     display: none !important;
   }
 
-  .ant-layout-header .ant-btn {
-    min-width: 40px;
-    min-height: 40px;
+  /* Uniform header controls — burger, bell, and avatar */
+  .app-header-menu-btn.ant-btn,
+  .app-header-bell-btn.ant-btn {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .app-header-menu-btn .anticon,
+  .app-header-bell-btn .anticon {
+    font-size: 26px !important;
+    line-height: 1 !important;
+  }
+
+  .app-header-bell-wrap .ant-badge-count {
+    top: 4px !important;
+    right: 2px !important;
+  }
+
+  .app-header .ant-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    line-height: 40px !important;
   }
 }
 

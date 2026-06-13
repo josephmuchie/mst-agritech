@@ -1,0 +1,142 @@
+/* App shell — prevent content overlapping fixed sidebar / sticky header */
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  isolation: isolate;
+}
+
+.app-header {
+  flex: 0 0 auto;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+}
+
+.app-header-menu-btn.ant-btn,
+.app-header-bell-btn.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-header-menu-btn .anticon,
+.app-header-bell-btn .anticon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.app-header-bell-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.app-header-bell-wrap .ant-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-header-bell-wrap .ant-badge-count {
+  box-shadow: 0 0 0 1px #fff;
+  font-size: 10px;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  padding: 0 4px;
+}
+
+.app-header-notifications {
+  width: 320px;
+  max-width: min(320px, calc(100vw - 32px));
+}
+
+.app-header-notifications__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.app-header-notifications__loading {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.app-header-notifications__item {
+  cursor: pointer;
+  padding-inline: 4px !important;
+}
+
+.app-header-notifications__item.is-unread {
+  background: #f0f9ff;
+  border-radius: 6px;
+}
+
+.app-header-notifications-popover .ant-popover-inner {
+  padding: 12px;
+}
+
+.app-content {
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 24px;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.ant-layout-sider {
+  overflow: hidden;
+}
+
+.ant-layout-sider .ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.page-root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.page-root > .ant-card,
+.page-root > .ant-space {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.page-root .ant-tabs,
+.page-root .ant-table-wrapper {
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .app-content {
+    padding: 12px;
+  }
+}

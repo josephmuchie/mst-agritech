@@ -1,5 +1,6 @@
 package com.mst.agritech.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +20,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<Map<String, Object>> handleConflict(ConflictException ex) {
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
+        String message = "Data conflict — a record with this value may already exist";
+        if (ex.getMessage() != null) {
+            if (ex.getMessage().contains("users_email_key") || ex.getMessage().contains("email")) {
+                message = "Email already registered";
+            } else if (ex.getMessage().contains("iso_code") || ex.getMessage().contains("countries")) {
+                message = "Country ISO code already exists";
+            } else if (ex.getMessage().contains("currencies") || ex.getMessage().contains("code")) {
+                message = "Currency code already exists";
+            }
+        }
+        return buildError(HttpStatus.CONFLICT, message);
     }
 
     @ExceptionHandler(AccessDeniedException.class)

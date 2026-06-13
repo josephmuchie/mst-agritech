@@ -17,6 +17,7 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final NotificationService notificationService;
 
     public Page<OrderResponse> findAll(Pageable pageable) {
         return orderRepository.findAll(pageable).map(this::toResponse);
@@ -36,7 +37,14 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", id));
         order.setStatus(newStatus);
-        return toResponse(orderRepository.save(order));
+        Order saved = orderRepository.save(order);
+        notificationService.notifyAdmins(
+                "Order " + saved.getReference(),
+                "Order status changed to " + newStatus,
+                "ORDER",
+                "Order",
+                String.valueOf(saved.getId()));
+        return toResponse(saved);
     }
 
     public long count() { return orderRepository.count(); }
