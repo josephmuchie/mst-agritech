@@ -66,6 +66,7 @@ public class SecurityConfig {
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:5173",
                 "http://localhost:3000",
+                "https://*.mst.co.zw",
                 "https://*.mstagritech.co.zw",
                 "https://*.vercel.app"
         ));
