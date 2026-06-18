@@ -43,6 +43,10 @@ public class SecurityConfig {
             "/ws/**",
             "/api/v1/shipping/webhooks/**",
             "/api/v1/payments/webhooks/**",
+            // PunchOut / OCI / SOAP procurement integration (authenticated by shared secret, not JWT)
+            "/api/v1/punchout/**",
+            "/api/v1/oci/**",
+            "/soap/**",
     };
 
     @Bean

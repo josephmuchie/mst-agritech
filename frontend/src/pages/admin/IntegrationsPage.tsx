@@ -19,6 +19,7 @@ import {
   type ExternalInvoiceResponse,
 } from '../../app/apiSlice';
 import { TABLE_SCROLL } from '../../utils/table';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -30,6 +31,7 @@ const IntegrationsPage: React.FC = () => {
   const { data: integrations, isLoading, isError } = useGetIntegrationsQuery();
   const [updateIntegration, { isLoading: saving }] = useUpdateIntegrationMutation();
   const [invokeIntegration, { isLoading: invoking }] = useInvokeIntegrationMutation();
+  const isMobile = useIsMobile();
 
   const [configTarget, setConfigTarget] = useState<IntegrationConfigResponse | null>(null);
   const [detailTarget, setDetailTarget] = useState<IntegrationConfigResponse | null>(null);
@@ -133,6 +135,98 @@ const IntegrationsPage: React.FC = () => {
     },
   ];
 
+  const statusIcon = (item: IntegrationConfigResponse) => (
+    <Tooltip title={item.active ? 'Active' : 'Inactive'}>
+      {item.active
+        ? <CheckCircleOutlined style={{ color: '#52c41a', fontSize: 20 }} />
+        : <CloseCircleOutlined style={{ color: '#ff4d4f', fontSize: 20 }} />}
+    </Tooltip>
+  );
+
+  const configureBtn = (item: IntegrationConfigResponse, block?: boolean) => (
+    <Button size="small" block={block} icon={<SettingOutlined />} onClick={() => openConfigure(item)}>
+      Configure
+    </Button>
+  );
+  const invokeBtn = (item: IntegrationConfigResponse, block?: boolean) => (
+    <Button
+      size="small" block={block} type="primary" icon={<PlayCircleOutlined />}
+      loading={invoking} disabled={!item.active} onClick={() => handleInvoke(item)}
+    >
+      Invoke Invoices
+    </Button>
+  );
+  const historyBtn = (item: IntegrationConfigResponse, block?: boolean) => (
+    <Button size="small" block={block} icon={<SyncOutlined />} onClick={() => setDetailTarget(item)}>
+      History
+    </Button>
+  );
+
+  const renderMobileItem = (item: IntegrationConfigResponse) => (
+    <List.Item className="integration-item-mobile">
+      <div style={{ width: '100%' }}>
+        <Space style={{ width: '100%', justifyContent: 'space-between' }} align="start">
+          <Space align="center">
+            <ApiOutlined style={{ fontSize: 22, color: '#0891B2' }} />
+            <Text strong>{item.displayName}</Text>
+          </Space>
+          {statusIcon(item)}
+        </Space>
+        <Space size={4} wrap style={{ marginTop: 8 }}>
+          <Tag color="cyan">{item.systemType}</Tag>
+          <Tag color={ENV_COLOR[item.environment] ?? 'default'}>{item.environment}</Tag>
+          {item.dataFlows?.map((f) => <Tag key={f}>{f}</Tag>)}
+        </Space>
+        <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>
+          {item.description || 'ERP data connector'}
+        </Text>
+        {item.lastSyncAt && (
+          <Text type="secondary" style={{ fontSize: 12 }}>
+            Last sync: {new Date(item.lastSyncAt).toLocaleString()}
+          </Text>
+        )}
+        <div className="integration-actions-mobile">
+          {invokeBtn(item, true)}
+          {configureBtn(item, true)}
+          {historyBtn(item, true)}
+        </div>
+      </div>
+    </List.Item>
+  );
+
+  const renderDesktopItem = (item: IntegrationConfigResponse) => (
+    <List.Item
+      actions={[
+        <Tag key="env" color={ENV_COLOR[item.environment] ?? 'default'}>{item.environment}</Tag>,
+        <span key="status">{statusIcon(item)}</span>,
+        <span key="configure">{configureBtn(item)}</span>,
+        <span key="invoke">{invokeBtn(item)}</span>,
+        <span key="details">{historyBtn(item)}</span>,
+      ]}
+    >
+      <List.Item.Meta
+        avatar={<ApiOutlined style={{ fontSize: 28, color: '#0891B2' }} />}
+        title={
+          <Space wrap>
+            {item.displayName}
+            <Tag color="cyan">{item.systemType}</Tag>
+            {item.dataFlows?.map((f) => <Tag key={f}>{f}</Tag>)}
+          </Space>
+        }
+        description={
+          <Space direction="vertical" size={0}>
+            <Text type="secondary">{item.description || 'ERP data connector'}</Text>
+            {item.lastSyncAt && (
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                Last sync: {new Date(item.lastSyncAt).toLocaleString()}
+              </Text>
+            )}
+          </Space>
+        }
+      />
+    </List.Item>
+  );
+
   if (isLoading) return <Spin size="large" style={{ display: 'block', margin: '80px auto' }} />;
 
   return (
@@ -156,60 +250,14 @@ const IntegrationsPage: React.FC = () => {
         />
       )}
 
-      <Card title={<Space><ApiOutlined /><Title level={4} style={{ margin: 0 }}>External Integrations</Title></Space>}>
+      <Card
+        className="integration-card"
+        title={<Space><ApiOutlined /><Title level={4} style={{ margin: 0 }}>External Integrations</Title></Space>}
+      >
         <List
           dataSource={integrations ?? []}
           locale={{ emptyText: 'No connectors found. Run database migrations to seed Oracle ERP.' }}
-          renderItem={(item) => (
-            <List.Item
-              actions={[
-                <Tag key="env" color={ENV_COLOR[item.environment] ?? 'default'}>{item.environment}</Tag>,
-                <Tooltip key="status" title={item.active ? 'Active' : 'Inactive'}>
-                  {item.active
-                    ? <CheckCircleOutlined style={{ color: '#52c41a', fontSize: 20 }} />
-                    : <CloseCircleOutlined style={{ color: '#ff4d4f', fontSize: 20 }} />}
-                </Tooltip>,
-                <Button key="configure" size="small" icon={<SettingOutlined />} onClick={() => openConfigure(item)}>
-                  Configure
-                </Button>,
-                <Button
-                  key="invoke"
-                  size="small"
-                  type="primary"
-                  icon={<PlayCircleOutlined />}
-                  loading={invoking}
-                  disabled={!item.active}
-                  onClick={() => handleInvoke(item)}
-                >
-                  Invoke Invoices
-                </Button>,
-                <Button key="details" size="small" icon={<SyncOutlined />} onClick={() => setDetailTarget(item)}>
-                  History
-                </Button>,
-              ]}
-            >
-              <List.Item.Meta
-                avatar={<ApiOutlined style={{ fontSize: 28, color: '#0891B2' }} />}
-                title={
-                  <Space>
-                    {item.displayName}
-                    <Tag color="cyan">{item.systemType}</Tag>
-                    {item.dataFlows?.map((f) => <Tag key={f}>{f}</Tag>)}
-                  </Space>
-                }
-                description={
-                  <Space direction="vertical" size={0}>
-                    <Text type="secondary">{item.description || 'ERP data connector'}</Text>
-                    {item.lastSyncAt && (
-                      <Text type="secondary" style={{ fontSize: 12 }}>
-                        Last sync: {new Date(item.lastSyncAt).toLocaleString()}
-                      </Text>
-                    )}
-                  </Space>
-                }
-              />
-            </List.Item>
-          )}
+          renderItem={(item) => (isMobile ? renderMobileItem(item) : renderDesktopItem(item))}
         />
       </Card>
 

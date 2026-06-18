@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://mst.co.zw/agritech/catalog"
+           targetNamespace="http://mst.co.zw/agritech/catalog"
+           elementFormDefault="qualified">
+
+    <xs:element name="GetProductsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="search" type="xs:string" minOccurs="0"/>
+                <xs:element name="category" type="xs:string" minOccurs="0"/>
+                <xs:element name="username" type="xs:string" minOccurs="0"/>
+                <xs:element name="password" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetProductsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="product" type="tns:Product" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetProductRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="sku" type="xs:string"/>
+                <xs:element name="username" type="xs:string" minOccurs="0"/>
+                <xs:element name="password" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetProductResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="product" type="tns:Product" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Product">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" minOccurs="0"/>
+            <xs:element name="sku" type="xs:string" minOccurs="0"/>
+            <xs:element name="name" type="xs:string" minOccurs="0"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="category" type="xs:string" minOccurs="0"/>
+            <xs:element name="supplier" type="xs:string" minOccurs="0"/>
+            <xs:element name="country" type="xs:string" minOccurs="0"/>
+            <xs:element name="originRegion" type="xs:string" minOccurs="0"/>
+            <xs:element name="imageUrl" type="xs:string" minOccurs="0"/>
+            <xs:element name="priceUsd" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="currency" type="xs:string" minOccurs="0"/>
+            <xs:element name="unit" type="xs:string" minOccurs="0"/>
+            <xs:element name="stock" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="available" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="minOrderQuantity" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="leadTimeDays" type="xs:int" minOccurs="0"/>
+            <xs:element name="incoterms" type="xs:string" minOccurs="0"/>
+            <xs:element name="packaging" type="xs:string" minOccurs="0"/>
+            <xs:element name="certifications" type="xs:string" minOccurs="0"/>
+            <xs:element name="hsCode" type="xs:string" minOccurs="0"/>
+            <xs:element name="unspscCode" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

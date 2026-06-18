@@ -40,8 +40,34 @@ export interface LogisticsCompanyResponse {
   countries: string[]; active: boolean;
 }
 export interface MarketplaceProductResponse {
-  id: number; name: string; category: string; farmer: string; country: string;
-  priceUsd: number; unit: string; stock: number; available: boolean;
+  id: number; sku?: string; name: string; description?: string; category: string;
+  supplier: string; country: string; originRegion?: string; imageUrl?: string;
+  priceUsd: number; currency?: string; unit: string; stock: number; available: boolean;
+  minOrderQuantity?: number; leadTimeDays?: number; incoterms?: string;
+  packaging?: string; certifications?: string; shelfLifeDays?: number;
+  hsCode?: string; unspscCode?: string; requiresColdChain?: boolean;
+}
+export interface PunchoutSessionResponse {
+  token: string; protocol: string; status: string; buyerName?: string; operation?: string;
+}
+export interface PunchoutCheckoutResponse {
+  protocol: string; postUrl: string; method: string; fields: Record<string, string>;
+}
+export interface PunchoutCheckoutItem { productId?: number; sku?: string; quantity: number; }
+export interface PunchoutCredentialResponse {
+  id: number; buyerName: string; domain: string; identity: string;
+  protocol: string; active: boolean; hasSecret: boolean; createdAt?: string;
+}
+export interface PunchoutCredentialRequest {
+  buyerName?: string; domain?: string; identity?: string;
+  sharedSecret?: string; protocol?: string; active?: boolean;
+}
+export interface ProcurementSettingsResponse {
+  restEnabled: boolean; cxmlEnabled: boolean; ociEnabled: boolean; soapEnabled: boolean;
+  supplierDomain: string; supplierIdentity: string;
+  publicApiUrl: string; restCatalogUrl: string; restProductUrl: string;
+  cxmlSetupUrl: string; ociStartUrl: string; soapEndpointUrl: string; wsdlUrl: string;
+  marketplaceLandingUrl: string;
 }
 export interface ReportDefinitionResponse {
   id: string; title: string; description: string; category: string; format: string;
@@ -204,6 +230,7 @@ export const apiSlice = createApi({
     'MarketPrice', 'Report',
     'IntegrationConfig', 'IntegrationSyncRun', 'ExternalInvoice', 'IntegrationSettings',
     'TenantSso', 'Notification',
+    'PunchoutCredential', 'ProcurementSettings',
   ],
   endpoints: (builder) => ({
     // Auth
@@ -366,8 +393,62 @@ export const apiSlice = createApi({
       },
       providesTags: ['Product'],
     }),
+    getMarketplaceProduct: builder.query<MarketplaceProductResponse, number>({
+      query: (id) => `/marketplace/products/${id}`,
+      providesTags: ['Product'],
+    }),
     getMarketplaceCategories: builder.query<string[], void>({
       query: () => '/marketplace/categories',
+    }),
+
+    // PunchOut (procurement landing session — no JWT required)
+    getPunchoutSession: builder.query<PunchoutSessionResponse, string>({
+      query: (token) => `/punchout/session/${token}`,
+    }),
+    getPunchoutProducts: builder.query<MarketplaceProductResponse[], { token: string; search?: string; category?: string }>({
+      query: ({ token, search, category }) => {
+        const params = new URLSearchParams();
+        if (search) params.set('search', search);
+        if (category && category !== 'All') params.set('category', category);
+        const qs = params.toString();
+        return `/punchout/session/${token}/products${qs ? `?${qs}` : ''}`;
+      },
+    }),
+    getPunchoutCategories: builder.query<string[], string>({
+      query: (token) => `/punchout/session/${token}/categories`,
+    }),
+    punchoutCheckout: builder.mutation<PunchoutCheckoutResponse, { token: string; items: PunchoutCheckoutItem[] }>({
+      query: ({ token, items }) => ({
+        url: `/punchout/session/${token}/checkout`,
+        method: 'POST',
+        body: { items },
+      }),
+    }),
+
+    // Procurement admin (settings + buyer credentials)
+    getProcurementSettings: builder.query<ProcurementSettingsResponse, void>({
+      query: () => '/admin/procurement/settings',
+      providesTags: ['ProcurementSettings'],
+    }),
+    updateProcurementSettings: builder.mutation<ProcurementSettingsResponse, Partial<ProcurementSettingsResponse>>({
+      query: (body) => ({ url: '/admin/procurement/settings', method: 'PUT', body }),
+      invalidatesTags: ['ProcurementSettings'],
+    }),
+    getPunchoutCredentials: builder.query<PunchoutCredentialResponse[], void>({
+      query: () => '/admin/procurement/credentials',
+      providesTags: ['PunchoutCredential'],
+    }),
+    createPunchoutCredential: builder.mutation<PunchoutCredentialResponse, PunchoutCredentialRequest>({
+      query: (body) => ({ url: '/admin/procurement/credentials', method: 'POST', body }),
+      invalidatesTags: ['PunchoutCredential'],
+    }),
+    updatePunchoutCredential: builder.mutation<PunchoutCredentialResponse, { id: number; body: PunchoutCredentialRequest }>({
+      query: ({ id, body }) => ({ url: `/admin/procurement/credentials/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['PunchoutCredential'],
+    }),
+    deletePunchoutCredential: builder.mutation<void, number>({
+      query: (id) => ({ url: `/admin/procurement/credentials/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['PunchoutCredential'],
     }),
 
     // Reports
@@ -607,7 +688,12 @@ export const {
   useGetAuditLogsQuery,
   useGetRolesQuery,
   useGetLogisticsCompaniesQuery,
-  useGetMarketplaceProductsQuery, useGetMarketplaceCategoriesQuery,
+  useGetMarketplaceProductsQuery, useGetMarketplaceProductQuery, useGetMarketplaceCategoriesQuery,
+  useGetPunchoutSessionQuery, useGetPunchoutProductsQuery, useGetPunchoutCategoriesQuery,
+  usePunchoutCheckoutMutation,
+  useGetProcurementSettingsQuery, useUpdateProcurementSettingsMutation,
+  useGetPunchoutCredentialsQuery, useCreatePunchoutCredentialMutation,
+  useUpdatePunchoutCredentialMutation, useDeletePunchoutCredentialMutation,
   useGetReportsQuery,
   useGetAppSettingsQuery, useUpdateAppSettingsMutation,
   useGetIngestionAccessQuery, useGetIngestionTypesQuery, useGetIngestionJobsQuery,

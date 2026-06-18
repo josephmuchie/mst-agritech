@@ -6,7 +6,7 @@ import {
   AuditOutlined, GlobalOutlined, LogoutOutlined,
   UserOutlined, MenuFoldOutlined, MenuUnfoldOutlined, ApiOutlined,
   FileTextOutlined, SafetyOutlined, BuildOutlined, SwapOutlined,
-  DatabaseOutlined,
+  DatabaseOutlined, FileProtectOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../app/store';
@@ -41,6 +41,7 @@ const allMenuItems = [
       { key: '/admin/master-data', icon: <BuildOutlined style={iconStyle} />, label: 'Master Data' },
       { key: '/admin/logistics', icon: <CarOutlined style={iconStyle} />, label: 'Logistics Companies' },
       { key: '/admin/integrations', icon: <ApiOutlined style={iconStyle} />, label: 'Integrations' },
+      { key: '/admin/procurement', icon: <FileProtectOutlined style={iconStyle} />, label: 'Procurement & API' },
       { key: '/admin/audit-logs', icon: <AuditOutlined style={iconStyle} />, label: 'Audit Logs' },
       { key: '/admin/settings', icon: <SettingOutlined style={iconStyle} />, label: 'App Settings' },
     ],
@@ -87,6 +88,7 @@ const AppLayout: React.FC = () => {
     { key: '/admin/master-data', icon: <BuildOutlined style={iconStyle} />, label: 'Master Data' },
     { key: '/admin/logistics', icon: <CarOutlined style={iconStyle} />, label: 'Logistics Companies' },
     { key: '/admin/integrations', icon: <ApiOutlined style={iconStyle} />, label: 'Integrations' },
+    { key: '/admin/procurement', icon: <FileProtectOutlined style={iconStyle} />, label: 'Procurement & API' },
     { key: '/admin/audit-logs', icon: <AuditOutlined style={iconStyle} />, label: 'Audit Logs' },
     ...ingestionMenuItem,
     { key: '/admin/settings', icon: <SettingOutlined style={iconStyle} />, label: 'App Settings' },
@@ -130,10 +132,13 @@ const AppLayout: React.FC = () => {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (collapsed) {
+    // Only collapse-driven clearing on desktop. On mobile the drawer is always
+    // expanded inline, so keeping submenus (e.g. Administration) open lets their
+    // items like App Settings stay reachable.
+    if (!isMobile && collapsed) {
       setOpenKeys([]);
     }
-  }, [collapsed]);
+  }, [collapsed, isMobile]);
 
   useEffect(() => {
     setDrawerOpen(false);
@@ -150,6 +155,15 @@ const AppLayout: React.FC = () => {
     if (isMobile) {
       setDrawerOpen(false);
     }
+  };
+
+  const openMobileDrawer = () => {
+    // Pre-expand the Administration submenu so nested items (App Settings,
+    // Integrations, etc.) are immediately tappable without an extra step.
+    if (isAdmin) {
+      setOpenKeys((prev) => (prev.includes('admin') ? prev : [...prev, 'admin']));
+    }
+    setDrawerOpen(true);
   };
 
   const userMenu = {
@@ -287,7 +301,7 @@ const AppLayout: React.FC = () => {
             className="app-header-menu-btn"
             aria-label={isMobile ? 'Open navigation menu' : collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             icon={isMobile || collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => (isMobile ? setDrawerOpen(true) : setCollapsed(!collapsed))}
+            onClick={() => (isMobile ? openMobileDrawer() : setCollapsed(!collapsed))}
             style={{ color: '#0C4A6E' }}
           />
           <Space size={isMobile ? 8 : 16} align="center">

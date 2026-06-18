@@ -776,6 +776,50 @@ body {
   width: 100%;
 }
 
+.marketplace-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.marketplace-card .ant-card-body {
+  flex: 1;
+}
+
+.marketplace-card-cover {
+  height: 170px;
+  overflow: hidden;
+  background: #e6f4f1;
+  cursor: pointer;
+}
+
+.marketplace-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.marketplace-card:hover .marketplace-card-cover img {
+  transform: scale(1.05);
+}
+
+/* Integrations page — mobile connector cards */
+.integration-actions-mobile {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.integration-actions-mobile > .ant-btn:first-child {
+  grid-column: 1 / -1;
+}
+
+.integration-item-mobile {
+  padding: 14px 4px;
+}
+
 /* Analytics responsive columns */
 .analytics-stats-row .ant-col,
 .analytics-tables-row .ant-col {
@@ -830,8 +874,43 @@ body {
     margin-top: 12px;
   }
 
+  /* Marketplace: 2 compact tiles per row on mobile */
   .marketplace-grid .ant-card-body {
-    padding: 14px;
+    padding: 10px;
+  }
+
+  .marketplace-card-cover {
+    height: 110px;
+  }
+
+  .marketplace-card .ant-typography h5,
+  .marketplace-card h5.ant-typography {
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .marketplace-card .ant-tag {
+    font-size: 10px;
+    line-height: 16px;
+    padding: 0 5px;
+    margin-right: 2px;
+  }
+
+  .marketplace-grid .ant-card-actions .ant-btn {
+    font-size: 12px;
+    padding: 0 6px;
+  }
+
+  /* Ribbon a touch smaller so it doesn't dominate the narrow tile */
+  .marketplace-grid .ant-ribbon {
+    font-size: 10px;
+    height: 20px;
+    line-height: 20px;
+  }
+
+  /* Hide the inline SKU on narrow tiles to avoid overlap */
+  .marketplace-card-sku {
+    display: none;
   }
 }
 

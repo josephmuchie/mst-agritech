@@ -6,7 +6,7 @@ export const BRAND = {
   primary: '/Assets/SVG/Primary logo.svg',
   primaryCyan: '/Assets/SVG/Primary logo cyan.svg',
   primaryBlack: '/Assets/SVG/Primary logo black.svg',
-  primaryWhite: '/Assets/PNG/Primary logo white .png',
+  primaryWhite: '/Assets/SVG/Secondary logo white.svg',
   secondary: '/Assets/SVG/secondary logo.svg',
   secondaryPng: '/Assets/PNG/secondary logo.png',
   secondaryWhite: '/Assets/SVG/Secondary logo white.svg',

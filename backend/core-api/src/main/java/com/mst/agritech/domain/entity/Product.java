@@ -28,6 +28,36 @@ public class Product {
     @Column(name = "hs_code")
     private String hsCode;
 
+    @Column(name = "sku")
+    private String sku;
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "origin_region")
+    private String originRegion;
+
+    @Column(name = "packaging")
+    private String packaging;
+
+    @Column(name = "certifications")
+    private String certifications;
+
+    @Column(name = "incoterms")
+    private String incoterms;
+
+    @Column(name = "min_order_quantity", precision = 12, scale = 2)
+    private java.math.BigDecimal minOrderQuantity;
+
+    @Column(name = "lead_time_days")
+    private Integer leadTimeDays;
+
+    @Column(name = "shelf_life_days")
+    private Integer shelfLifeDays;
+
+    @Column(name = "unspsc_code")
+    private String unspscCode;
+
     @Column(name = "requires_cold_chain", nullable = false)
     @Builder.Default
     private boolean requiresColdChain = false;

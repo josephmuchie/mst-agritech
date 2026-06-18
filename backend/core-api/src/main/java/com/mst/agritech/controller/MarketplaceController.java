@@ -29,6 +29,13 @@ public class MarketplaceController {
         return ResponseEntity.ok(marketplaceService.listProducts(search, category));
     }
 
+    @GetMapping("/products/{id}")
+    @Operation(summary = "Get full marketplace product detail")
+    public ResponseEntity<MarketplaceProductResponse> getProduct(
+            @Parameter(description = "Product ID") @PathVariable Long id) {
+        return ResponseEntity.ok(marketplaceService.getProduct(id));
+    }
+
     @GetMapping("/categories")
     @Operation(summary = "List product categories available in marketplace")
     public ResponseEntity<List<String>> listCategories() {

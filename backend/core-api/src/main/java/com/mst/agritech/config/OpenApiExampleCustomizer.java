@@ -115,9 +115,10 @@ public class OpenApiExampleCustomizer implements OpenApiCustomizer {
 
         map.put("MarketplaceProductResponse", Map.of(
                 "id", 1,
+                "sku", "MST-00001",
                 "name", "Premium Roses",
                 "category", "Flowers",
-                "farmer", "Moyo Fresh Farms",
+                "supplier", "Moyo Fresh Farms",
                 "country", "ZW",
                 "priceUsd", new BigDecimal("4.50"),
                 "unit", "STEM",
