@@ -13,6 +13,7 @@ import { useAppSelector, useAppDispatch } from '../app/store';
 import { clearCredentials, switchRole } from '../features/auth/authSlice';
 import { useGetIngestionAccessQuery } from '../app/apiSlice';
 import BrandLogo from '../components/BrandLogo';
+import BrandLockup from '../components/BrandLockup';
 import NotificationBell from '../components/NotificationBell';
 import { useResizableSider } from '../hooks/useResizableSider';
 import { useIsMobile } from '../hooks/useIsMobile';
@@ -233,11 +234,9 @@ const AppLayout: React.FC = () => {
             }}
             onClick={() => navigate('/')}
           >
-            <BrandLogo
-              variant={collapsed ? 'icon-white' : 'primary-white'}
-              height={collapsed ? 52 : 56}
-              style={collapsed ? undefined : { width: '100%' }}
-            />
+            {collapsed
+              ? <BrandLogo variant="icon-white" height={48} />
+              : <BrandLockup iconHeight={46} />}
           </div>
           <Menu {...menuProps} />
           {!collapsed && (
@@ -274,7 +273,7 @@ const AppLayout: React.FC = () => {
           styles={{ body: { padding: 0 } }}
         >
           <div className="mobile-nav-logo" onClick={() => handleNavigate('/')}>
-            <BrandLogo variant="primary-white" height={48} style={{ width: '100%' }} />
+            <BrandLockup iconHeight={40} />
           </div>
           <Menu {...menuProps} />
         </Drawer>
