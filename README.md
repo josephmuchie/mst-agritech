@@ -1,4 +1,4 @@
-# 🌿 MST Agritech Platform
+# MST Agritech Platform
 
 > **Zimbabwe's Global Agricultural Trade Platform** — connecting local farmers to international buyers for agricultural produce, flowers, and meat products.
 
