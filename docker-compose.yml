@@ -17,18 +17,6 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7-alpine
-    container_name: agritech-redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: agritech-pgadmin
@@ -54,7 +42,6 @@ services:
       DB_NAME: agritech_db
       DB_USER: agritech
       DB_PASSWORD: ${POSTGRES_PASSWORD:-agritech_dev_pass}
-      REDIS_HOST: redis
       JWT_SECRET: ${JWT_SECRET:-replace_me_with_a_very_long_secret_key_at_least_512_bits}
       JASYPT_ENCRYPTOR_PASSWORD: ${JASYPT_PASSWORD:-jasypt_dev_pass}
       SERVER_PORT: ${CORE_API_PORT:-8081}
@@ -62,8 +49,6 @@ services:
       - "${CORE_API_PORT:-8081}:${CORE_API_PORT:-8081}"
     depends_on:
       postgres:
-        condition: service_healthy
-      redis:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:${CORE_API_PORT:-8081}/actuator/health || exit 1"]

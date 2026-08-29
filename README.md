@@ -37,7 +37,6 @@ graph TB
 
     subgraph Data["Data Layer"]
         Postgres[("PostgreSQL 16\nagritech_db\nport 5433")]
-        Redis[("Redis 7\nCache + Pub/Sub\nport 6379")]
     end
 
     subgraph Integrations["External Integrations"]
@@ -73,7 +72,6 @@ graph TB
     Services --> Batch
     Services --> Flyway
     Services --> Postgres
-    Services --> Redis
 
     Services --> DHL
     Services --> Maersk
@@ -136,7 +134,6 @@ erDiagram
 | Frontend | React 19, TypeScript, Vite, Ant Design 5, Redux Toolkit, RTK Query |
 | Backend | Spring Boot 3.2, Java 17, Spring Security 6 (JWT), Flyway, Jasper Reports |
 | Database | PostgreSQL 16 |
-| Cache / Pub-Sub | Redis 7 |
 | Container | Docker Compose |
 | CI/CD (planned) | GitHub Actions |
 
@@ -151,7 +148,7 @@ erDiagram
 
 ### 1 — Start infrastructure
 ```bash
-docker compose up -d postgres redis pgadmin
+docker compose up -d postgres pgadmin
 ```
 
 ### 2 — Start backend
