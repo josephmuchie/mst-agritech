@@ -82,14 +82,11 @@ public class OracleErpConnector implements IntegrationConnector {
 
     private List<ExternalInvoice> fetchInvoices(IntegrationConfig config, Map<String, Object> extra) throws Exception {
         String baseUrl = config.getEndpointUrl();
-        if (baseUrl != null && !baseUrl.isBlank()) {
-            try {
-                return fetchFromOracleApi(config, extra, baseUrl);
-            } catch (Exception ex) {
-                log.warn("Oracle API unreachable ({}), falling back to sample invoices", ex.getMessage());
-            }
+        if (baseUrl == null || baseUrl.isBlank()) {
+            throw new IllegalStateException(
+                    "Oracle ERP integration has no endpoint URL configured — set one under Administration > Integrations before syncing");
         }
-        return buildSampleInvoices(config);
+        return fetchFromOracleApi(config, extra, baseUrl);
     }
 
     private List<ExternalInvoice> fetchFromOracleApi(
@@ -128,11 +125,11 @@ public class OracleErpConnector implements IntegrationConnector {
         JsonNode root = objectMapper.readTree(body);
         JsonNode items = root.has("items") ? root.get("items") : root;
 
-        List<ExternalInvoice> invoices = new ArrayList<>();
         if (!items.isArray()) {
-            return buildSampleInvoices(config);
+            throw new IllegalStateException("Unexpected Oracle ERP response shape — no invoice item array found");
         }
 
+        List<ExternalInvoice> invoices = new ArrayList<>();
         for (JsonNode item : items) {
             String externalId = item.path("InvoiceId").asText(item.path("invoiceId").asText(UUID.randomUUID().toString()));
             String invoiceNumber = item.path("InvoiceNumber").asText(item.path("invoiceNumber").asText(externalId));
@@ -158,36 +155,6 @@ public class OracleErpConnector implements IntegrationConnector {
                     .rawPayload(item.toString())
                     .build());
         }
-        return invoices.isEmpty() ? buildSampleInvoices(config) : invoices;
-    }
-
-    private List<ExternalInvoice> buildSampleInvoices(IntegrationConfig config) throws Exception {
-        List<ExternalInvoice> samples = new ArrayList<>();
-        String[][] data = {
-                {"ORC-INV-1001", "INV-2026-001", "Woolworths SA", "ORD-001", "4200.00", "USD"},
-                {"ORC-INV-1002", "INV-2026-002", "Tesco UK", "ORD-003", "31500.00", "USD"},
-                {"ORC-INV-1003", "INV-2026-003", "Al Ain Farms UAE", "ORD-002", "12800.00", "USD"},
-        };
-        for (String[] row : data) {
-            samples.add(ExternalInvoice.builder()
-                    .integrationConfig(config)
-                    .externalId(row[0])
-                    .invoiceNumber(row[1])
-                    .buyerName(row[2])
-                    .orderReference(row[3])
-                    .amount(new BigDecimal(row[4]))
-                    .currencyCode(row[5])
-                    .status("IMPORTED")
-                    .issueDate(LocalDate.now())
-                    .dueDate(LocalDate.now().plusDays(30))
-                    .rawPayload(objectMapper.writeValueAsString(Map.of(
-                            "source", "ORACLE_ERP",
-                            "mode", "sample",
-                            "externalId", row[0],
-                            "invoiceNumber", row[1]
-                    )))
-                    .build());
-        }
-        return samples;
+        return invoices;
     }
 }
