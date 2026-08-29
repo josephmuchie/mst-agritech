@@ -35,6 +35,9 @@ export interface AuditLogResponse {
   ipAddress: string; responseStatus: number; createdAt: string;
 }
 export interface RoleResponse { id: number; name: string; description: string; permissions: string[]; }
+export interface PermissionResponse { id: number; resource: string; action: string; }
+export interface CreateRoleRequest { name: string; description?: string; permissions?: string[]; }
+export interface UpdateRoleRequest { description?: string; permissions?: string[]; }
 export interface LogisticsCompanyResponse {
   id: number; name: string; type: string; trackingUrl: string | null;
   countries: string[]; active: boolean;
@@ -375,6 +378,22 @@ export const apiSlice = createApi({
       query: () => '/roles',
       providesTags: ['Role'],
     }),
+    getPermissions: builder.query<PermissionResponse[], void>({
+      query: () => '/roles/permissions',
+      providesTags: ['Permission'],
+    }),
+    createRole: builder.mutation<RoleResponse, CreateRoleRequest>({
+      query: (body) => ({ url: '/roles', method: 'POST', body }),
+      invalidatesTags: ['Role'],
+    }),
+    updateRole: builder.mutation<RoleResponse, { id: number; body: UpdateRoleRequest }>({
+      query: ({ id, body }) => ({ url: `/roles/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['Role'],
+    }),
+    deleteRole: builder.mutation<void, number>({
+      query: (id) => ({ url: `/roles/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Role'],
+    }),
 
     // Logistics
     getLogisticsCompanies: builder.query<LogisticsCompanyResponse[], void>({
@@ -686,7 +705,8 @@ export const {
   useGetShipmentsQuery,
   useGetAnalyticsSummaryQuery, useGetTopProductsQuery, useGetTopMarketsQuery,
   useGetAuditLogsQuery,
-  useGetRolesQuery,
+  useGetRolesQuery, useGetPermissionsQuery,
+  useCreateRoleMutation, useUpdateRoleMutation, useDeleteRoleMutation,
   useGetLogisticsCompaniesQuery,
   useGetMarketplaceProductsQuery, useGetMarketplaceProductQuery, useGetMarketplaceCategoriesQuery,
   useGetPunchoutSessionQuery, useGetPunchoutProductsQuery, useGetPunchoutCategoriesQuery,

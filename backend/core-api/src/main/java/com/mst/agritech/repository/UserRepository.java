@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             WHERE r.name = 'ADMIN' AND u.active = true
             """)
     List<User> findActiveAdmins();
+
+    long countByRolesId(Long roleId);
 }
