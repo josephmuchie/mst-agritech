@@ -22,7 +22,7 @@ graph TB
     end
 
     subgraph Gateway["API Gateway (nginx)"]
-        Nginx["nginx\n/api/* → core-api:8080\n/ws/*  → notification-service:3001\nSPA fallback"]
+        Nginx["nginx\n/api/* → core-api:8081\n/ws/*  → core-api:8081 (STOMP)\nSPA fallback"]
     end
 
     subgraph Backend["Backend — Spring Boot 3 / Java 17"]
@@ -33,12 +33,6 @@ graph TB
         Jasper["Jasper Reports\n(PDF / CSV)"]
         Batch["Spring Batch\n(Bulk imports)"]
         Flyway["Flyway Migrations\n(V1__init.sql)"]
-    end
-
-    subgraph Notifications["Notification Service — NestJS 10"]
-        NestGateway["Socket.io Gateway\nRoom-based subscriptions"]
-        BullQueue["Bull Queues\n(order-events\nshipment-events\npayment-events)"]
-        HealthCtrl["GET /health"]
     end
 
     subgraph Data["Data Layer"]
@@ -60,7 +54,6 @@ graph TB
     Browser --> Nginx
     Nginx --> Frontend
     Nginx --> Backend
-    Nginx --> Notifications
 
     Frontend --> AppLayout
     AppLayout --> Pages
@@ -70,7 +63,7 @@ graph TB
 
     RTKQuery -->|"REST /api/v1/*"| Backend
     SSE -->|"GET /api/v1/dashboard/kpis (SSE)"| Backend
-    WS -->|"STOMP /ws"| Notifications
+    WS -->|"STOMP /ws"| Backend
 
     Backend --> Security
     Security --> Controllers
@@ -81,13 +74,6 @@ graph TB
     Services --> Flyway
     Services --> Postgres
     Services --> Redis
-
-    Notifications --> NestGateway
-    Notifications --> BullQueue
-    BullQueue --> Redis
-
-    Backend -->|"Publish events"| Redis
-    Redis -->|"Subscribe"| BullQueue
 
     Services --> DHL
     Services --> Maersk
@@ -149,7 +135,6 @@ erDiagram
 |---|---|
 | Frontend | React 19, TypeScript, Vite, Ant Design 5, Redux Toolkit, RTK Query |
 | Backend | Spring Boot 3.2, Java 17, Spring Security 6 (JWT), Flyway, Jasper Reports |
-| Notifications | NestJS 10, Socket.io, Bull, ioredis |
 | Database | PostgreSQL 16 |
 | Cache / Pub-Sub | Redis 7 |
 | Container | Docker Compose |
@@ -172,18 +157,10 @@ docker compose up -d postgres redis pgadmin
 ### 2 — Start backend
 ```bash
 docker compose up -d core-api
-# Swagger UI → http://localhost:8080/swagger-ui.html
+# Swagger UI → http://localhost:8081/swagger-ui.html
 ```
 
-### 3 — Start notification service
-```bash
-cd backend/notification-service
-npm install
-npm run start:dev
-# Health → http://localhost:3001/health
-```
-
-### 4 — Start frontend dev server
+### 3 — Start frontend dev server
 ```bash
 cd frontend
 npm install
@@ -223,7 +200,6 @@ mst-agritech/
 │   │       ├── config/        # Security, OpenAPI, WebSocket config
 │   │       ├── audit/         # AOP audit logging
 │   │       └── exception/     # Global exception handler
-│   └── notification-service/  # NestJS real-time service
 └── docker-compose.yml
 ```
 
