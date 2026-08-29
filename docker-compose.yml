@@ -57,16 +57,16 @@ services:
       REDIS_HOST: redis
       JWT_SECRET: ${JWT_SECRET:-replace_me_with_a_very_long_secret_key_at_least_512_bits}
       JASYPT_ENCRYPTOR_PASSWORD: ${JASYPT_PASSWORD:-jasypt_dev_pass}
-      SERVER_PORT: 8081
+      SERVER_PORT: ${CORE_API_PORT:-8081}
     ports:
-      - "8081:8081"
+      - "${CORE_API_PORT:-8081}:${CORE_API_PORT:-8081}"
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:${CORE_API_PORT:-8081}/actuator/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -92,9 +92,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_BASE_URL: http://localhost:8080/api/v1
+        CORE_API_PORT: ${CORE_API_PORT:-8081}
+        VITE_API_BASE_URL: http://localhost:${CORE_API_PORT:-8081}/api/v1
     container_name: agritech-frontend
     restart: unless-stopped
+    environment:
+      CORE_API_PORT: ${CORE_API_PORT:-8081}
     ports:
       - "80:80"
     depends_on:
