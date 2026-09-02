@@ -64,3 +64,6 @@ logs/
 surefire-reports/
 test-results/
 .vercel
+
+# ── Local working notes ────────────────────────────────────────
+KNOWN_GAPS.md

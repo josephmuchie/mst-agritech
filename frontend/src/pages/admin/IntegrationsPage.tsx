@@ -65,13 +65,13 @@ const IntegrationsPage: React.FC = () => {
     if (!configTarget) return;
     try {
       const values = await form.validateFields();
+      const isOracle = configTarget.systemType === 'ORACLE_ERP';
       const extraConfig = JSON.stringify({
         environment: values.environment,
-        dataFlows: ['INVOICES'],
-        syncDirection: 'INBOUND',
-        invoiceEndpoint: values.invoiceEndpoint,
+        dataFlows: isOracle ? ['INVOICES'] : [],
+        ...(isOracle ? { syncDirection: 'INBOUND', invoiceEndpoint: values.invoiceEndpoint } : {}),
         autoSyncEnabled: false,
-        description: values.description || 'Share invoices from Oracle Financials into MST Agritech',
+        description: values.description || configTarget.description,
       });
       const credentialsJson = values.username
         ? JSON.stringify({ username: values.username, password: values.password ?? '' })
@@ -153,7 +153,7 @@ const IntegrationsPage: React.FC = () => {
       size="small" block={block} type="primary" icon={<PlayCircleOutlined />}
       loading={invoking} disabled={!item.active} onClick={() => handleInvoke(item)}
     >
-      Invoke Invoices
+      {item.systemType === 'ORACLE_ERP' ? 'Invoke Invoices' : 'Invoke'}
     </Button>
   );
   const historyBtn = (item: IntegrationConfigResponse, block?: boolean) => (
@@ -237,7 +237,7 @@ const IntegrationsPage: React.FC = () => {
         showIcon
         style={{ marginBottom: 16 }}
         message="Integration Connectors"
-        description="Configure ERP connectors in App Settings, then set endpoint credentials here. Use Invoke to manually pull invoices from Oracle ERP into the platform."
+        description="Set each connector's endpoint and credentials here, then Invoke to run it manually. Only Oracle ERP has a working integration today — the others are listed for when they're built."
       />
 
       {isError && (
@@ -272,19 +272,30 @@ const IntegrationsPage: React.FC = () => {
         okText="Save Connector"
       >
         <Form form={form} layout="vertical">
+          {configTarget && configTarget.systemType !== 'ORACLE_ERP' && (
+            <Alert
+              type="warning"
+              showIcon
+              style={{ marginBottom: 16 }}
+              message="Not yet implemented"
+              description="This connector has no working integration behind it yet — saving credentials here won't connect to anything. It's listed so the settings exist once it's built."
+            />
+          )}
           <Form.Item name="displayName" label="Display Name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item
             name="endpointUrl"
-            label="Oracle Base URL"
-            extra="e.g. https://your-instance.fa.us2.oraclecloud.com"
+            label="Base URL"
+            extra={configTarget?.systemType === 'ORACLE_ERP' ? 'e.g. https://your-instance.fa.us2.oraclecloud.com' : undefined}
           >
             <Input placeholder="https://..." />
           </Form.Item>
-          <Form.Item name="invoiceEndpoint" label="Invoice API Path">
-            <Input />
-          </Form.Item>
+          {configTarget?.systemType === 'ORACLE_ERP' && (
+            <Form.Item name="invoiceEndpoint" label="Invoice API Path">
+              <Input />
+            </Form.Item>
+          )}
           <Form.Item name="environment" label="Environment">
             <Select options={[
               { value: 'sandbox', label: 'Sandbox' },
@@ -293,10 +304,10 @@ const IntegrationsPage: React.FC = () => {
             ]} />
           </Form.Item>
           <Divider orientation="left" plain>Credentials</Divider>
-          <Form.Item name="username" label="Oracle Username">
+          <Form.Item name="username" label="API Username">
             <Input />
           </Form.Item>
-          <Form.Item name="password" label="Oracle Password">
+          <Form.Item name="password" label="API Password">
             <Input.Password />
           </Form.Item>
           <Form.Item name="description" label="Description">
