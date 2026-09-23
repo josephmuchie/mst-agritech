@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QIcon>
 #include <QMessageBox>
 #include <QStyleFactory>
 #include <cstdlib>
@@ -26,6 +27,7 @@ int main(int argc, char *argv[]) {
     if (QStyleFactory::keys().contains(QStringLiteral("Fusion"))) {
         QApplication::setStyle(QStringLiteral("Fusion"));
     }
+    app.setWindowIcon(QIcon(QStringLiteral(":/brand/icon-cyan.svg")));
 
     OfflineStore store;
     QString error;
@@ -43,6 +45,7 @@ int main(int argc, char *argv[]) {
     }
 
     MainWindow window(&store, nullptr, !smokeTest);
+    window.setWindowIcon(QIcon(QStringLiteral(":/brand/icon-cyan.svg")));
     window.show();
     return app.exec();
 }

@@ -67,6 +67,25 @@ If the app was built as a regular executable instead of a bundle, run:
 desktop/qt-client/build/MST\ Agritech
 ```
 
+### Deploy/package on macOS
+
+After a successful build, package the `.app` with the Qt frameworks and plugins:
+
+```bash
+"$HOME/Qt/6.11.2/macos/bin/macdeployqt" \
+  "desktop/qt-client/build/MST Agritech.app"
+```
+
+To create a DMG:
+
+```bash
+"$HOME/Qt/6.11.2/macos/bin/macdeployqt" \
+  "desktop/qt-client/build/MST Agritech.app" \
+  -dmg
+```
+
+If you installed a different Qt version, replace `6.11.2` with that version.
+
 ## Build on Windows
 
 Install:
