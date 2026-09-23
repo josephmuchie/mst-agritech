@@ -392,7 +392,7 @@ void MainWindow::applyTheme() {
 
     setStyleSheet(QStringLiteral(R"qss(
         QMainWindow, QWidget {
-            background: #F7F9FB;
+            background: #F6F8FB;
             color: #1F2937;
             font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
             font-size: 13px;
@@ -401,15 +401,18 @@ void MainWindow::applyTheme() {
             background: #FFFFFF;
             border-right: 1px solid #E5E7EB;
         }
+        QSplitter::handle {
+            background: #E5EAF0;
+        }
         QMenuBar {
             background: #FFFFFF;
             border-bottom: 1px solid #E5E7EB;
-            padding: 3px 8px;
+            padding: 4px 10px;
         }
         QMenuBar::item {
             background: transparent;
-            border-radius: 6px;
-            padding: 6px 10px;
+            border-radius: 8px;
+            padding: 7px 11px;
         }
         QMenuBar::item:selected {
             background: %3;
@@ -433,26 +436,35 @@ void MainWindow::applyTheme() {
             background: #FFFFFF;
             border: none;
             outline: 0;
+            padding-top: 4px;
         }
         QListWidget::item {
-            border-radius: 8px;
-            margin: 3px 0;
-            padding: 10px 12px;
-            color: #334155;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            margin: 4px 0;
+            padding: 11px 13px 11px 15px;
+            color: #475569;
+        }
+        QListWidget::item:hover {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            color: #0F172A;
         }
         QListWidget::item:selected {
-            background: %3;
-            color: %1;
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                                        stop:0 %3, stop:1 #FFFFFF);
+            color: #0F172A;
             font-weight: 700;
-            border-left: 4px solid %1;
+            border: 1px solid #B9F3FA;
+            border-left: 5px solid %1;
         }
         QLabel {
             background: transparent;
         }
         QFrame[frameShape="6"], QGroupBox, QTableView, QTabWidget::pane {
             background: #FFFFFF;
-            border: 1px solid #E5E7EB;
-            border-radius: 10px;
+            border: 1px solid #E6EAF0;
+            border-radius: 14px;
         }
         QTableView {
             gridline-color: #EEF2F7;
@@ -465,14 +477,14 @@ void MainWindow::applyTheme() {
             color: #475569;
             border: none;
             border-bottom: 1px solid #E5E7EB;
-            padding: 8px;
+            padding: 10px;
             font-weight: 700;
         }
         QPushButton {
             background: #FFFFFF;
             border: 1px solid #CBD5E1;
-            border-radius: 8px;
-            padding: 7px 12px;
+            border-radius: 10px;
+            padding: 8px 14px;
         }
         QPushButton:hover {
             border-color: %1;
@@ -485,21 +497,22 @@ void MainWindow::applyTheme() {
         }
         QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox {
             background: #FFFFFF;
-            border: 1px solid #CBD5E1;
-            border-radius: 7px;
-            padding: 7px;
+            border: 1px solid #D7DEE8;
+            border-radius: 10px;
+            padding: 8px;
         }
         QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QComboBox:focus {
             border: 1px solid %1;
+            background: #FFFFFF;
         }
         QTabBar::tab {
             background: #FFFFFF;
             border: 1px solid #E5E7EB;
             border-bottom: none;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            padding: 9px 14px;
-            margin-right: 3px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            padding: 10px 16px;
+            margin-right: 4px;
         }
         QTabBar::tab:selected {
             color: %2;
