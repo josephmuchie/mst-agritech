@@ -1,7 +1,6 @@
 {
   "name": "MST Agritech Platform",
   "user": "ubuntu",
-  "snapshot": "snapshot-20260923-c0e7b982-0713-445f-938a-74f9c386c4d0",
   "install": "bash .cursor/install.sh",
   "start": "bash .cursor/start.sh",
   "terminals": [

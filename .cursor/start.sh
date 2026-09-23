@@ -4,9 +4,10 @@
 set -euo pipefail
 
 PG_PORT=5433
+PG_VER="$(ls /etc/postgresql 2>/dev/null | sort -n | tail -1)"
 
-echo "==> Starting PostgreSQL"
-sudo pg_ctlcluster 16 main start 2>/dev/null || true
+echo "==> Starting PostgreSQL ${PG_VER}"
+sudo pg_ctlcluster "$PG_VER" main start 2>/dev/null || true
 for _ in $(seq 1 30); do
   if sudo -u postgres pg_isready -p "$PG_PORT" >/dev/null 2>&1; then
     echo "    PostgreSQL is ready on port ${PG_PORT}"
