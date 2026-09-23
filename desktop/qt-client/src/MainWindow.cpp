@@ -88,7 +88,7 @@ class BrandLockupWidget : public QWidget {
 public:
     explicit BrandLockupWidget(QWidget *parent = nullptr)
         : QWidget(parent),
-          m_icon(QStringLiteral(":/brand/icon-cyan.svg")) {
+          m_icon(QStringLiteral(":/brand/icon-white.svg")) {
         setMinimumSize(188, 58);
         setMaximumHeight(64);
     }
@@ -102,8 +102,8 @@ protected:
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing);
 
-        const QColor cyan(QStringLiteral("#00D3F3"));
-        const QColor teal(QStringLiteral("#71E6F4"));
+        const QColor cyan(QStringLiteral("#FFFFFF"));
+        const QColor teal(QStringLiteral("#E6FAFE"));
         const QColor text(QStringLiteral("#F8FAFC"));
 
         const QRectF iconRect(0, 7, 44, 44);
@@ -523,8 +523,8 @@ void MainWindow::applyTheme() {
             border-color: %1;
         }
         QFrame#NavPanel {
-            background: #0B1220;
-            border-right: 1px solid #050A12;
+            background: #0A8086;
+            border-right: 1px solid #07666B;
         }
         QSplitter::handle {
             background: #D8DEE6;
@@ -558,7 +558,7 @@ void MainWindow::applyTheme() {
             color: %2;
         }
         QListWidget {
-            background: #0B1220;
+            background: #0A8086;
             border: none;
             outline: 0;
             padding-top: 4px;
@@ -572,16 +572,16 @@ void MainWindow::applyTheme() {
             font-weight: 600;
         }
         QListWidget::item:hover {
-            background: #14243A;
+            background: #089199;
             border: 1px solid transparent;
             color: #FFFFFF;
         }
         QListWidget::item:selected {
-            background: #0A8086;
+            background: #07666B;
             color: #FFFFFF;
             font-weight: 700;
             border: none;
-            border-left: 4px solid %1;
+            border-left: 4px solid #FFFFFF;
             border-radius: 6px;
             padding-left: 15px;
         }
