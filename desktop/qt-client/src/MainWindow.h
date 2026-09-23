@@ -30,6 +30,9 @@ private:
     void updateStatusBar();
     void refreshSyncQueue();
     void applyTheme();
+    void buildMenus();
+    void selectPage(const QString &name);
+    void setTheme(const QString &theme);
 
     OfflineStore *m_store = nullptr;
     SyncManager *m_syncManager = nullptr;

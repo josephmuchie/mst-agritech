@@ -9,6 +9,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QListWidget>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QPixmap>
 #include <QPushButton>
@@ -83,7 +84,7 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     auto *navLayout = new QVBoxLayout(navPanel);
     navLayout->setContentsMargins(18, 18, 18, 18);
     m_logoLabel = new QLabel(navPanel);
-    QPixmap logo(QStringLiteral(":/brand/primary-logo-black.svg"));
+    QPixmap logo(QStringLiteral(":/brand/primary-logo-cyan.svg"));
     if (!logo.isNull()) {
         m_logoLabel->setPixmap(logo.scaledToWidth(168, Qt::SmoothTransformation));
     } else {
@@ -138,6 +139,7 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
 
     connect(m_navigation, &QListWidget::currentRowChanged, m_stack, &QStackedWidget::setCurrentIndex);
     m_navigation->setCurrentRow(0);
+    buildMenus();
 
     m_onlineLabel = new QLabel(this);
     m_pendingLabel = new QLabel(this);
@@ -300,11 +302,79 @@ void MainWindow::refreshSyncQueue() {
     }
 }
 
+void MainWindow::buildMenus() {
+    auto *fileMenu = menuBar()->addMenu(QStringLiteral("&File"));
+    fileMenu->addAction(QStringLiteral("Dashboard"), this, [this]() { selectPage(QStringLiteral("Dashboard")); });
+    fileMenu->addAction(QStringLiteral("Data Ingestion"), this, [this]() { selectPage(QStringLiteral("Data Ingestion")); });
+    fileMenu->addSeparator();
+    fileMenu->addAction(QStringLiteral("Sync Now"), m_syncManager, &SyncManager::syncNow);
+    fileMenu->addAction(QStringLiteral("Settings"), this, [this]() { selectPage(QStringLiteral("Settings")); });
+    fileMenu->addSeparator();
+    fileMenu->addAction(QStringLiteral("Quit"), this, &QWidget::close);
+
+    auto *dataMenu = menuBar()->addMenu(QStringLiteral("&Data"));
+    for (const QString &page : {
+             QStringLiteral("Farmers"),
+             QStringLiteral("Buyers"),
+             QStringLiteral("Orders"),
+             QStringLiteral("Payments"),
+             QStringLiteral("Shipments"),
+             QStringLiteral("Marketplace"),
+             QStringLiteral("Master Data"),
+         }) {
+        dataMenu->addAction(page, this, [this, page]() { selectPage(page); });
+    }
+    dataMenu->addSeparator();
+    dataMenu->addAction(QStringLiteral("Data Ingestion"), this, [this]() { selectPage(QStringLiteral("Data Ingestion")); });
+
+    auto *analyticsMenu = menuBar()->addMenu(QStringLiteral("&Analytics"));
+    analyticsMenu->addAction(QStringLiteral("Dashboard"), this, [this]() { selectPage(QStringLiteral("Dashboard")); });
+    analyticsMenu->addAction(QStringLiteral("Analytics && Reports"), this, [this]() { selectPage(QStringLiteral("Analytics & Reports")); });
+
+    auto *toolsMenu = menuBar()->addMenu(QStringLiteral("&Tools"));
+    toolsMenu->addAction(QStringLiteral("Check API Connection"), m_syncManager, &SyncManager::checkConnectivity);
+    toolsMenu->addAction(QStringLiteral("Sync Queue"), this, [this]() { selectPage(QStringLiteral("Sync Queue")); });
+    toolsMenu->addAction(QStringLiteral("Settings"), this, [this]() { selectPage(QStringLiteral("Settings")); });
+
+    auto *viewMenu = menuBar()->addMenu(QStringLiteral("&View"));
+    auto *themeMenu = viewMenu->addMenu(QStringLiteral("Theme"));
+    themeMenu->addAction(QStringLiteral("Mukuyu White"), this, [this]() { setTheme(QStringLiteral("mukuyu")); });
+    themeMenu->addAction(QStringLiteral("Bundles Blue"), this, [this]() { setTheme(QStringLiteral("bundles")); });
+    themeMenu->addAction(QStringLiteral("SAP Fiori"), this, [this]() { setTheme(QStringLiteral("sap")); });
+    themeMenu->addAction(QStringLiteral("Oracle Redwood"), this, [this]() { setTheme(QStringLiteral("oracle")); });
+
+    auto *helpMenu = menuBar()->addMenu(QStringLiteral("&Help"));
+    helpMenu->addAction(QStringLiteral("About MST Agritech Desktop"), this, [this]() {
+        QMessageBox::about(
+            this,
+            QStringLiteral("MST Agritech Desktop"),
+            QStringLiteral("MST Agritech Desktop\n\nOffline-first agricultural trade operations for macOS and Windows.\n\nUse the Data and Tools menus to manage records, ingestion, sync, and settings."));
+    });
+}
+
+void MainWindow::selectPage(const QString &name) {
+    const QList<QListWidgetItem *> matches = m_navigation->findItems(name, Qt::MatchExactly);
+    if (!matches.isEmpty()) {
+        m_navigation->setCurrentItem(matches.first());
+    }
+}
+
+void MainWindow::setTheme(const QString &theme) {
+    AppSettings settings = m_store->settings();
+    settings.desktopTheme = theme;
+    QString error;
+    if (!m_store->saveSettings(settings, &error)) {
+        QMessageBox::warning(this, QStringLiteral("Theme"), QStringLiteral("Could not save theme: %1").arg(error));
+        return;
+    }
+    applyTheme();
+}
+
 void MainWindow::applyTheme() {
     const QString theme = m_store->settings().desktopTheme;
-    QString accent = QStringLiteral("#0891B2");
-    QString accentDark = QStringLiteral("#0E7490");
-    QString soft = QStringLiteral("#E6F7FB");
+    QString accent = QStringLiteral("#00D3F3");
+    QString accentDark = QStringLiteral("#0891B2");
+    QString soft = QStringLiteral("#E6FAFE");
 
     if (theme == QStringLiteral("bundles")) {
         accent = QStringLiteral("#2563EB");
@@ -330,6 +400,34 @@ void MainWindow::applyTheme() {
         QFrame#NavPanel {
             background: #FFFFFF;
             border-right: 1px solid #E5E7EB;
+        }
+        QMenuBar {
+            background: #FFFFFF;
+            border-bottom: 1px solid #E5E7EB;
+            padding: 3px 8px;
+        }
+        QMenuBar::item {
+            background: transparent;
+            border-radius: 6px;
+            padding: 6px 10px;
+        }
+        QMenuBar::item:selected {
+            background: %3;
+            color: %2;
+        }
+        QMenu {
+            background: #FFFFFF;
+            border: 1px solid #DDE4EE;
+            border-radius: 8px;
+            padding: 6px;
+        }
+        QMenu::item {
+            border-radius: 6px;
+            padding: 7px 28px 7px 12px;
+        }
+        QMenu::item:selected {
+            background: %3;
+            color: %2;
         }
         QListWidget {
             background: #FFFFFF;
@@ -382,8 +480,8 @@ void MainWindow::applyTheme() {
             background: %3;
         }
         QPushButton:pressed {
-            background: %1;
-            color: white;
+            background: %2;
+            color: #FFFFFF;
         }
         QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox {
             background: #FFFFFF;

@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/brand">
         <file alias="primary-logo.svg">../../../frontend/public/Assets/SVG/Primary logo.svg</file>
+        <file alias="primary-logo-cyan.svg">../../../frontend/public/Assets/SVG/Primary logo cyan.svg</file>
         <file alias="primary-logo-black.svg">../../../frontend/public/Assets/SVG/Primary logo black.svg</file>
     </qresource>
 </RCC>
