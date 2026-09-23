@@ -523,8 +523,8 @@ void MainWindow::applyTheme() {
             border-color: %1;
         }
         QFrame#NavPanel {
-            background: #0C4A6E;
-            border-right: 1px solid #075985;
+            background: #075985;
+            border-right: 1px solid #0891B2;
         }
         QSplitter::handle {
             background: #D8DEE6;
@@ -558,22 +558,23 @@ void MainWindow::applyTheme() {
             color: %2;
         }
         QListWidget {
-            background: #0C4A6E;
+            background: #075985;
             border: none;
             outline: 0;
             padding-top: 4px;
         }
         QListWidget::item {
-            border: 1px solid transparent;
-            border-radius: 6px;
-            margin: 3px 0;
-            padding: 11px 12px 11px 15px;
-            color: #BAE6FD;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            margin: 0;
+            padding: 12px 14px;
+            color: #E0F2FE;
             font-weight: 600;
         }
         QListWidget::item:hover {
-            background: #075985;
-            border: 1px solid transparent;
+            background: #0891B2;
+            border: none;
             color: #FFFFFF;
         }
         QListWidget::item:selected {
@@ -582,8 +583,8 @@ void MainWindow::applyTheme() {
             font-weight: 700;
             border: none;
             border-left: 4px solid #E0F2FE;
-            border-radius: 6px;
-            padding-left: 15px;
+            border-radius: 0;
+            padding-left: 14px;
         }
         QLabel {
             background: transparent;
