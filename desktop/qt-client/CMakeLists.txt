@@ -64,8 +64,11 @@ qt_add_executable(MSTAgritechDesktop
     MACOSX_BUNDLE
     WIN32
     src/main.cpp
+    resources/resources.qrc
     src/DataModuleWidget.cpp
     src/DataModuleWidget.h
+    src/DataIngestionWidget.cpp
+    src/DataIngestionWidget.h
     src/MainWindow.cpp
     src/MainWindow.h
     src/OfflineStore.cpp

@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include "DataModuleWidget.h"
+#include "DataIngestionWidget.h"
 #include "SettingsWidget.h"
 
 #include <QFrame>
@@ -9,6 +10,7 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QMessageBox>
+#include <QPixmap>
 #include <QPushButton>
 #include <QSplitter>
 #include <QSqlTableModel>
@@ -76,8 +78,23 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     m_navigation->setMinimumWidth(190);
 
     m_stack = new QStackedWidget(this);
+    auto *navPanel = new QFrame(this);
+    navPanel->setObjectName(QStringLiteral("NavPanel"));
+    auto *navLayout = new QVBoxLayout(navPanel);
+    navLayout->setContentsMargins(18, 18, 18, 18);
+    m_logoLabel = new QLabel(navPanel);
+    QPixmap logo(QStringLiteral(":/brand/primary-logo-black.svg"));
+    if (!logo.isNull()) {
+        m_logoLabel->setPixmap(logo.scaledToWidth(168, Qt::SmoothTransformation));
+    } else {
+        m_logoLabel->setText(QStringLiteral("<b>MST Agritech</b>"));
+    }
+    navLayout->addWidget(m_logoLabel);
+    navLayout->addSpacing(12);
+    navLayout->addWidget(m_navigation, 1);
+
     auto *splitter = new QSplitter(this);
-    splitter->addWidget(m_navigation);
+    splitter->addWidget(navPanel);
     splitter->addWidget(m_stack);
     splitter->setStretchFactor(1, 1);
     setCentralWidget(splitter);
@@ -115,6 +132,7 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
         QStringLiteral("Master Data"),
         QStringLiteral("Manage countries, currencies, product categories, logistics companies, and other reference data."),
         statusOptionsFor(QStringLiteral("Master Data"))));
+    addPage(QStringLiteral("Data Ingestion"), new DataIngestionWidget(m_store, this));
     addPage(QStringLiteral("Settings"), new SettingsWidget(m_store, this));
     addPage(QStringLiteral("Sync Queue"), createSyncPage());
 
@@ -131,6 +149,7 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     connect(m_store, &OfflineStore::dataChanged, this, &MainWindow::updateDashboard);
     connect(m_store, &OfflineStore::queueChanged, this, &MainWindow::updateStatusBar);
     connect(m_store, &OfflineStore::queueChanged, this, &MainWindow::refreshSyncQueue);
+    connect(m_store, &OfflineStore::settingsChanged, this, &MainWindow::applyTheme);
     connect(m_syncManager, &SyncManager::onlineStateChanged, this, &MainWindow::updateStatusBar);
     connect(m_syncManager, &SyncManager::statusMessage, this, [this](const QString &message) {
         statusBar()->showMessage(message, 5000);
@@ -160,6 +179,7 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     updateDashboard();
     updateStatusBar();
     refreshSyncQueue();
+    applyTheme();
     if (enableBackgroundSync) {
         m_syncManager->checkConnectivity();
     }
@@ -278,4 +298,119 @@ void MainWindow::refreshSyncQueue() {
     if (m_queueModel) {
         m_queueModel->select();
     }
+}
+
+void MainWindow::applyTheme() {
+    const QString theme = m_store->settings().desktopTheme;
+    QString accent = QStringLiteral("#0891B2");
+    QString accentDark = QStringLiteral("#0E7490");
+    QString soft = QStringLiteral("#E6F7FB");
+
+    if (theme == QStringLiteral("bundles")) {
+        accent = QStringLiteral("#2563EB");
+        accentDark = QStringLiteral("#1D4ED8");
+        soft = QStringLiteral("#EFF6FF");
+    } else if (theme == QStringLiteral("sap")) {
+        accent = QStringLiteral("#0A6ED1");
+        accentDark = QStringLiteral("#0854A0");
+        soft = QStringLiteral("#F5FAFF");
+    } else if (theme == QStringLiteral("oracle")) {
+        accent = QStringLiteral("#C74634");
+        accentDark = QStringLiteral("#9E2F22");
+        soft = QStringLiteral("#FFF3EF");
+    }
+
+    setStyleSheet(QStringLiteral(R"qss(
+        QMainWindow, QWidget {
+            background: #F7F9FB;
+            color: #1F2937;
+            font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            font-size: 13px;
+        }
+        QFrame#NavPanel {
+            background: #FFFFFF;
+            border-right: 1px solid #E5E7EB;
+        }
+        QListWidget {
+            background: #FFFFFF;
+            border: none;
+            outline: 0;
+        }
+        QListWidget::item {
+            border-radius: 8px;
+            margin: 3px 0;
+            padding: 10px 12px;
+            color: #334155;
+        }
+        QListWidget::item:selected {
+            background: %3;
+            color: %1;
+            font-weight: 700;
+            border-left: 4px solid %1;
+        }
+        QLabel {
+            background: transparent;
+        }
+        QFrame[frameShape="6"], QGroupBox, QTableView, QTabWidget::pane {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+        }
+        QTableView {
+            gridline-color: #EEF2F7;
+            alternate-background-color: #FAFBFC;
+            selection-background-color: %3;
+            selection-color: #111827;
+        }
+        QHeaderView::section {
+            background: #F8FAFC;
+            color: #475569;
+            border: none;
+            border-bottom: 1px solid #E5E7EB;
+            padding: 8px;
+            font-weight: 700;
+        }
+        QPushButton {
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 8px;
+            padding: 7px 12px;
+        }
+        QPushButton:hover {
+            border-color: %1;
+            color: %1;
+            background: %3;
+        }
+        QPushButton:pressed {
+            background: %1;
+            color: white;
+        }
+        QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox {
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 7px;
+            padding: 7px;
+        }
+        QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QComboBox:focus {
+            border: 1px solid %1;
+        }
+        QTabBar::tab {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-bottom: none;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            padding: 9px 14px;
+            margin-right: 3px;
+        }
+        QTabBar::tab:selected {
+            color: %2;
+            background: %3;
+            font-weight: 700;
+        }
+        QStatusBar {
+            background: #FFFFFF;
+            border-top: 1px solid #E5E7EB;
+        }
+    )qss").arg(accent, accentDark, soft));
 }

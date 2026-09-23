@@ -132,13 +132,26 @@ bool OfflineStore::seedDefaults(QString *errorMessage) {
         {QStringLiteral("apiBaseUrl"), QStringLiteral("http://localhost:8080")},
         {QStringLiteral("tenantSlug"), QStringLiteral("default")},
         {QStringLiteral("operatorEmail"), QStringLiteral("")},
+        {QStringLiteral("apiAccessToken"), QStringLiteral("")},
+        {QStringLiteral("desktopTheme"), QStringLiteral("mukuyu")},
         {QStringLiteral("platformName"), QStringLiteral("MST Agritech")},
         {QStringLiteral("supportEmail"), QStringLiteral("support@mst.co.zw")},
         {QStringLiteral("defaultCurrency"), QStringLiteral("USD")},
         {QStringLiteral("autoSyncEnabled"), QStringLiteral("false")},
+        {QStringLiteral("oracleEnabled"), QStringLiteral("false")},
         {QStringLiteral("maintenanceMode"), QStringLiteral("false")},
         {QStringLiteral("retryCount"), QStringLiteral("3")},
-        {QStringLiteral("maxOrderValueUsd"), QStringLiteral("50000")}
+        {QStringLiteral("maxOrderValueUsd"), QStringLiteral("50000")},
+        {QStringLiteral("ssoEnabled"), QStringLiteral("false")},
+        {QStringLiteral("providerLabel"), QStringLiteral("Continue with SSO")},
+        {QStringLiteral("providerType"), QStringLiteral("OIDC")},
+        {QStringLiteral("issuerUri"), QStringLiteral("")},
+        {QStringLiteral("clientId"), QStringLiteral("")},
+        {QStringLiteral("scopes"), QStringLiteral("openid profile email")},
+        {QStringLiteral("defaultRoleName"), QStringLiteral("USER")},
+        {QStringLiteral("emailDomains"), QStringLiteral("mst.co.zw")},
+        {QStringLiteral("autoProvisionUsers"), QStringLiteral("false")},
+        {QStringLiteral("allowPasswordLogin"), QStringLiteral("true")}
     };
 
     for (auto it = defaults.cbegin(); it != defaults.cend(); ++it) {
@@ -183,13 +196,26 @@ AppSettings OfflineStore::settings() const {
     settings.apiBaseUrl = readSetting(QStringLiteral("apiBaseUrl"), QStringLiteral("http://localhost:8080"));
     settings.tenantSlug = readSetting(QStringLiteral("tenantSlug"), QStringLiteral("default"));
     settings.operatorEmail = readSetting(QStringLiteral("operatorEmail"));
+    settings.apiAccessToken = readSetting(QStringLiteral("apiAccessToken"));
+    settings.desktopTheme = readSetting(QStringLiteral("desktopTheme"), QStringLiteral("mukuyu"));
     settings.platformName = readSetting(QStringLiteral("platformName"), QStringLiteral("MST Agritech"));
     settings.supportEmail = readSetting(QStringLiteral("supportEmail"), QStringLiteral("support@mst.co.zw"));
     settings.defaultCurrency = readSetting(QStringLiteral("defaultCurrency"), QStringLiteral("USD"));
     settings.autoSyncEnabled = readSetting(QStringLiteral("autoSyncEnabled"), QStringLiteral("false")) == QStringLiteral("true");
+    settings.oracleEnabled = readSetting(QStringLiteral("oracleEnabled"), QStringLiteral("false")) == QStringLiteral("true");
     settings.maintenanceMode = readSetting(QStringLiteral("maintenanceMode"), QStringLiteral("false")) == QStringLiteral("true");
     settings.retryCount = readSetting(QStringLiteral("retryCount"), QStringLiteral("3")).toInt();
     settings.maxOrderValueUsd = readSetting(QStringLiteral("maxOrderValueUsd"), QStringLiteral("50000")).toDouble();
+    settings.ssoEnabled = readSetting(QStringLiteral("ssoEnabled"), QStringLiteral("false")) == QStringLiteral("true");
+    settings.providerLabel = readSetting(QStringLiteral("providerLabel"), QStringLiteral("Continue with SSO"));
+    settings.providerType = readSetting(QStringLiteral("providerType"), QStringLiteral("OIDC"));
+    settings.issuerUri = readSetting(QStringLiteral("issuerUri"));
+    settings.clientId = readSetting(QStringLiteral("clientId"));
+    settings.scopes = readSetting(QStringLiteral("scopes"), QStringLiteral("openid profile email"));
+    settings.defaultRoleName = readSetting(QStringLiteral("defaultRoleName"), QStringLiteral("USER"));
+    settings.emailDomains = readSetting(QStringLiteral("emailDomains"), QStringLiteral("mst.co.zw"));
+    settings.autoProvisionUsers = readSetting(QStringLiteral("autoProvisionUsers"), QStringLiteral("false")) == QStringLiteral("true");
+    settings.allowPasswordLogin = readSetting(QStringLiteral("allowPasswordLogin"), QStringLiteral("true")) == QStringLiteral("true");
     return settings;
 }
 
@@ -206,13 +232,26 @@ bool OfflineStore::saveSettings(const AppSettings &settings, QString *errorMessa
         {QStringLiteral("apiBaseUrl"), settings.apiBaseUrl},
         {QStringLiteral("tenantSlug"), settings.tenantSlug},
         {QStringLiteral("operatorEmail"), settings.operatorEmail},
+        {QStringLiteral("apiAccessToken"), settings.apiAccessToken},
+        {QStringLiteral("desktopTheme"), settings.desktopTheme},
         {QStringLiteral("platformName"), settings.platformName},
         {QStringLiteral("supportEmail"), settings.supportEmail},
         {QStringLiteral("defaultCurrency"), settings.defaultCurrency},
         {QStringLiteral("autoSyncEnabled"), settings.autoSyncEnabled ? QStringLiteral("true") : QStringLiteral("false")},
+        {QStringLiteral("oracleEnabled"), settings.oracleEnabled ? QStringLiteral("true") : QStringLiteral("false")},
         {QStringLiteral("maintenanceMode"), settings.maintenanceMode ? QStringLiteral("true") : QStringLiteral("false")},
         {QStringLiteral("retryCount"), QString::number(settings.retryCount)},
-        {QStringLiteral("maxOrderValueUsd"), QString::number(settings.maxOrderValueUsd, 'f', 2)}
+        {QStringLiteral("maxOrderValueUsd"), QString::number(settings.maxOrderValueUsd, 'f', 2)},
+        {QStringLiteral("ssoEnabled"), settings.ssoEnabled ? QStringLiteral("true") : QStringLiteral("false")},
+        {QStringLiteral("providerLabel"), settings.providerLabel},
+        {QStringLiteral("providerType"), settings.providerType},
+        {QStringLiteral("issuerUri"), settings.issuerUri},
+        {QStringLiteral("clientId"), settings.clientId},
+        {QStringLiteral("scopes"), settings.scopes},
+        {QStringLiteral("defaultRoleName"), settings.defaultRoleName},
+        {QStringLiteral("emailDomains"), settings.emailDomains},
+        {QStringLiteral("autoProvisionUsers"), settings.autoProvisionUsers ? QStringLiteral("true") : QStringLiteral("false")},
+        {QStringLiteral("allowPasswordLogin"), settings.allowPasswordLogin ? QStringLiteral("true") : QStringLiteral("false")}
     };
 
     for (auto it = values.cbegin(); it != values.cend(); ++it) {
