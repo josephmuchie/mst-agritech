@@ -2,6 +2,7 @@
 #include "OfflineStore.h"
 
 #include <QApplication>
+#include <QTimer>
 #include <QMessageBox>
 #include <QStyleFactory>
 
@@ -25,5 +26,8 @@ int main(int argc, char *argv[]) {
 
     MainWindow window(&store);
     window.show();
+    if (app.arguments().contains(QStringLiteral("--smoke-test"))) {
+        QTimer::singleShot(1000, &app, &QCoreApplication::quit);
+    }
     return app.exec();
 }
