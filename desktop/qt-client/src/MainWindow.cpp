@@ -496,14 +496,14 @@ void MainWindow::applyTheme() {
 
     setStyleSheet(QStringLiteral(R"qss(
         QMainWindow, QWidget {
-            background: #F4F7FA;
+            background: #F0F9FF;
             color: #0F172A;
             font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
             font-size: 13px;
         }
         QFrame#TopBar {
-            background: #0B1220;
-            border-bottom: 1px solid #050A12;
+            background: #0C4A6E;
+            border-bottom: 1px solid #075985;
         }
         QLabel#TopBarTitle {
             color: #F8FAFC;
@@ -511,20 +511,20 @@ void MainWindow::applyTheme() {
             letter-spacing: 0.3px;
         }
         QPushButton#TopBarButton {
-            background: #132033;
-            color: #F8FAFC;
-            border: 1px solid #223349;
+            background: #075985;
+            color: #E0F2FE;
+            border: 1px solid #0891B2;
             border-radius: 8px;
             padding: 7px 16px;
         }
         QPushButton#TopBarButton:hover {
-            background: #17324A;
+            background: #0891B2;
             color: #FFFFFF;
             border-color: %1;
         }
         QFrame#NavPanel {
-            background: #0A8086;
-            border-right: 1px solid #07666B;
+            background: #0C4A6E;
+            border-right: 1px solid #075985;
         }
         QSplitter::handle {
             background: #D8DEE6;
@@ -558,7 +558,7 @@ void MainWindow::applyTheme() {
             color: %2;
         }
         QListWidget {
-            background: #0A8086;
+            background: #0C4A6E;
             border: none;
             outline: 0;
             padding-top: 4px;
@@ -568,20 +568,20 @@ void MainWindow::applyTheme() {
             border-radius: 6px;
             margin: 3px 0;
             padding: 11px 12px 11px 15px;
-            color: #F1F5F9;
+            color: #BAE6FD;
             font-weight: 600;
         }
         QListWidget::item:hover {
-            background: #089199;
+            background: #075985;
             border: 1px solid transparent;
             color: #FFFFFF;
         }
         QListWidget::item:selected {
-            background: #07666B;
+            background: #0891B2;
             color: #FFFFFF;
             font-weight: 700;
             border: none;
-            border-left: 4px solid #FFFFFF;
+            border-left: 4px solid #E0F2FE;
             border-radius: 6px;
             padding-left: 15px;
         }
@@ -590,15 +590,15 @@ void MainWindow::applyTheme() {
         }
         QFrame[frameShape="6"], QFrame#MetricCard, QFrame#QuickActionCard, QGroupBox, QTableView, QTabWidget::pane {
             background: #FFFFFF;
-            border: 1px solid #E6EAF0;
+            border: 1px solid #BAE6FD;
             border-radius: 14px;
             color: #0F172A;
         }
         QFrame#WelcomeHero {
             background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                                        stop:0 #FFFFFF, stop:1 #E6FAFE);
+                                        stop:0 #FFFFFF, stop:1 #E0F2FE);
             border: 1px solid #BFEFF5;
-            border-left: 6px solid %1;
+            border-left: 6px solid #0891B2;
             border-radius: 18px;
             padding: 12px;
         }
@@ -609,7 +609,7 @@ void MainWindow::applyTheme() {
             color: #0F172A;
         }
         QFrame#MetricCard, QFrame#QuickActionCard {
-            border: 1px solid #DDE3EA;
+            border: 1px solid #BAE6FD;
         }
         QFrame#QuickActionCard:hover {
             border: 1px solid %1;
@@ -622,8 +622,8 @@ void MainWindow::applyTheme() {
             selection-color: #111827;
         }
         QHeaderView::section {
-            background: #F7FAFC;
-            color: #0F172A;
+            background: #E0F2FE;
+            color: #0C4A6E;
             border: none;
             border-bottom: 1px solid #E5E7EB;
             padding: 10px;
@@ -647,7 +647,7 @@ void MainWindow::applyTheme() {
         QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox {
             background: #FFFFFF;
             color: #0F172A;
-            border: 1px solid #D7DEE8;
+            border: 1px solid #BAE6FD;
             border-radius: 10px;
             padding: 8px;
         }
@@ -672,7 +672,7 @@ void MainWindow::applyTheme() {
         QStatusBar {
             background: #FFFFFF;
             color: #334155;
-            border-top: 1px solid #E5E7EB;
+            border-top: 1px solid #BAE6FD;
         }
     )qss").arg(accent, accentDark, soft));
 }
