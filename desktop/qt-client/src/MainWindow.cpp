@@ -105,6 +105,7 @@ protected:
         const QColor cyan(QStringLiteral("#FFFFFF"));
         const QColor teal(QStringLiteral("#E6FAFE"));
         const QColor text(QStringLiteral("#F8FAFC"));
+        painter.fillRect(rect(), QColor(QStringLiteral("#075985")));
 
         const QRectF iconRect(0, 7, 44, 44);
         if (m_icon.isValid()) {
@@ -526,6 +527,9 @@ void MainWindow::applyTheme() {
             background: #075985;
             border-right: 1px solid #0891B2;
         }
+        QFrame#NavPanel QWidget {
+            background: #075985;
+        }
         QSplitter::handle {
             background: #D8DEE6;
         }
@@ -562,6 +566,9 @@ void MainWindow::applyTheme() {
             border: none;
             outline: 0;
             padding-top: 4px;
+        }
+        QListWidget::viewport {
+            background: #075985;
         }
         QListWidget::item {
             background: transparent;
