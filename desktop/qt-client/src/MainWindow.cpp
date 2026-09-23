@@ -86,8 +86,9 @@ QStringList statusOptionsFor(const QString &module) {
 
 class BrandLockupWidget : public QWidget {
 public:
-    explicit BrandLockupWidget(QWidget *parent = nullptr)
+    explicit BrandLockupWidget(const QColor &backgroundColor, QWidget *parent = nullptr)
         : QWidget(parent),
+          m_backgroundColor(backgroundColor),
           m_icon(QStringLiteral(":/brand/icon-white.svg")) {
         setMinimumSize(188, 58);
         setMaximumHeight(64);
@@ -105,7 +106,7 @@ protected:
         const QColor cyan(QStringLiteral("#FFFFFF"));
         const QColor teal(QStringLiteral("#E6FAFE"));
         const QColor text(QStringLiteral("#F8FAFC"));
-        painter.fillRect(rect(), QColor(QStringLiteral("#075985")));
+        painter.fillRect(rect(), m_backgroundColor);
 
         const QRectF iconRect(0, 7, 44, 44);
         if (m_icon.isValid()) {
@@ -136,6 +137,7 @@ protected:
     }
 
 private:
+    QColor m_backgroundColor;
     QSvgRenderer m_icon;
 };
 
@@ -157,8 +159,6 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     navPanel->setObjectName(QStringLiteral("NavPanel"));
     auto *navLayout = new QVBoxLayout(navPanel);
     navLayout->setContentsMargins(18, 18, 18, 18);
-    navLayout->addWidget(new BrandLockupWidget(navPanel));
-    navLayout->addSpacing(12);
     navLayout->addWidget(m_navigation, 1);
 
     auto *splitter = new QSplitter(this);
@@ -176,18 +176,8 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     topBar->setFixedHeight(58);
     auto *topBarLayout = new QHBoxLayout(topBar);
     topBarLayout->setContentsMargins(20, 0, 18, 0);
-    auto *appTitle = new QLabel(QStringLiteral("<b>MST Agritech Desktop</b>"), topBar);
-    appTitle->setObjectName(QStringLiteral("TopBarTitle"));
-    auto *syncTopButton = new QPushButton(QStringLiteral("Sync"), topBar);
-    syncTopButton->setObjectName(QStringLiteral("TopBarButton"));
-    auto *settingsTopButton = new QPushButton(QStringLiteral("Settings"), topBar);
-    settingsTopButton->setObjectName(QStringLiteral("TopBarButton"));
-    connect(syncTopButton, &QPushButton::clicked, m_syncManager, &SyncManager::syncNow);
-    connect(settingsTopButton, &QPushButton::clicked, this, [this]() { selectPage(QStringLiteral("Settings")); });
-    topBarLayout->addWidget(appTitle);
+    topBarLayout->addWidget(new BrandLockupWidget(QColor(QStringLiteral("#0C4A6E")), topBar));
     topBarLayout->addStretch(1);
-    topBarLayout->addWidget(syncTopButton);
-    topBarLayout->addWidget(settingsTopButton);
 
     rootLayout->addWidget(topBar);
     rootLayout->addWidget(splitter, 1);
