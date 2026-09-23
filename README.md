@@ -132,6 +132,7 @@ erDiagram
 | Layer | Technology |
 |---|---|
 | Frontend | React 19, TypeScript, Vite, Ant Design 5, Redux Toolkit, RTK Query |
+| Desktop | Qt 6 Widgets, C++17, SQLite offline store |
 | Backend | Spring Boot 3.2, Java 17, Spring Security 6 (JWT), Flyway, Jasper Reports |
 | Database | PostgreSQL 16 |
 | Container | Docker Compose |
@@ -145,6 +146,7 @@ erDiagram
 - Docker Desktop
 - Node 20+
 - Java 17+, Maven 3.9+
+- Qt 6.4+ and CMake 3.21+ for the desktop client
 
 ### 1 — Start infrastructure
 ```bash
@@ -186,6 +188,8 @@ mst-agritech/
 │       ├── pages/             # 17 feature pages + admin sub-pages
 │       ├── app/               # Redux store + RTK Query apiSlice
 │       └── hooks/             # useSSE, useWebSocket
+├── desktop/
+│   └── qt-client/             # Qt 6 desktop app with SQLite offline sync queue
 ├── backend/
 │   ├── core-api/              # Spring Boot REST API (Maven)
 │   │   └── src/main/java/com/mst/agritech/
