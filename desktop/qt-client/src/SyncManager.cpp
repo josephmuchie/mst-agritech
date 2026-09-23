@@ -45,6 +45,10 @@ void SyncManager::syncNow() {
     request.setHeader(QNetworkRequest::UserAgentHeader, QStringLiteral("MST-Agritech-Desktop/0.1"));
 
     const AppSettings settings = m_store->settings();
+    if (!settings.apiAccessToken.isEmpty()) {
+        request.setRawHeader("Authorization", QStringLiteral("Bearer %1").arg(settings.apiAccessToken).toUtf8());
+    }
+
     QJsonObject envelope;
     envelope.insert(QStringLiteral("tenantSlug"), settings.tenantSlug);
     envelope.insert(QStringLiteral("operatorEmail"), settings.operatorEmail);
@@ -55,7 +59,10 @@ void SyncManager::syncNow() {
         const int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         if (reply->error() != QNetworkReply::NoError || statusCode < 200 || statusCode >= 300) {
             setOnline(false);
-            const QString message = QStringLiteral("Sync failed: %1").arg(reply->errorString());
+            const QString responseBody = QString::fromUtf8(reply->readAll()).trimmed();
+            const QString message = responseBody.isEmpty()
+                ? QStringLiteral("Sync failed: %1").arg(reply->errorString())
+                : QStringLiteral("Sync failed (%1): %2").arg(statusCode).arg(responseBody.left(500));
             markPendingAttemptFailed(message);
             emit syncFinished(false, message);
             reply->deleteLater();

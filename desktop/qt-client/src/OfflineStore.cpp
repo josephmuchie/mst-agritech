@@ -129,7 +129,7 @@ bool OfflineStore::createSchema(QString *errorMessage) {
 
 bool OfflineStore::seedDefaults(QString *errorMessage) {
     const QMap<QString, QString> defaults = {
-        {QStringLiteral("apiBaseUrl"), QStringLiteral("http://localhost:8080")},
+        {QStringLiteral("apiBaseUrl"), QStringLiteral("http://localhost:8081")},
         {QStringLiteral("tenantSlug"), QStringLiteral("default")},
         {QStringLiteral("operatorEmail"), QStringLiteral("")},
         {QStringLiteral("apiAccessToken"), QStringLiteral("")},
@@ -193,7 +193,7 @@ bool OfflineStore::writeSetting(const QString &key, const QString &value, QStrin
 
 AppSettings OfflineStore::settings() const {
     AppSettings settings;
-    settings.apiBaseUrl = readSetting(QStringLiteral("apiBaseUrl"), QStringLiteral("http://localhost:8080"));
+    settings.apiBaseUrl = readSetting(QStringLiteral("apiBaseUrl"), QStringLiteral("http://localhost:8081"));
     settings.tenantSlug = readSetting(QStringLiteral("tenantSlug"), QStringLiteral("default"));
     settings.operatorEmail = readSetting(QStringLiteral("operatorEmail"));
     settings.apiAccessToken = readSetting(QStringLiteral("apiAccessToken"));
