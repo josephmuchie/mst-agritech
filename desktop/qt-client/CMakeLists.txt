@@ -15,6 +15,51 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Sql Network)
 
+if(APPLE)
+    # Some Homebrew Qt builds still export the deprecated AGL framework even
+    # though recent macOS SDKs no longer ship it. The desktop client does not
+    # use AGL/OpenGL APIs directly, so strip only that stale framework entry.
+    function(remove_imported_apple_framework target_name framework_name)
+        foreach(prop_name IN ITEMS INTERFACE_LINK_LIBRARIES INTERFACE_LINK_OPTIONS)
+            get_target_property(prop_values ${target_name} ${prop_name})
+            if(NOT prop_values)
+                continue()
+            endif()
+
+            set(filtered_values "")
+            list(LENGTH prop_values prop_length)
+            set(index 0)
+            while(index LESS prop_length)
+                list(GET prop_values ${index} value)
+                if(value STREQUAL "-framework")
+                    math(EXPR next_index "${index} + 1")
+                    if(next_index LESS prop_length)
+                        list(GET prop_values ${next_index} next_value)
+                        if(next_value STREQUAL framework_name)
+                            math(EXPR index "${index} + 2")
+                            continue()
+                        endif()
+                    endif()
+                endif()
+
+                if(value MATCHES "^-framework[= ]${framework_name}$"
+                    OR value MATCHES "^SHELL:-framework[= ]${framework_name}$"
+                    OR value STREQUAL framework_name)
+                    math(EXPR index "${index} + 1")
+                    continue()
+                endif()
+
+                list(APPEND filtered_values "${value}")
+                math(EXPR index "${index} + 1")
+            endwhile()
+
+            set_property(TARGET ${target_name} PROPERTY ${prop_name} "${filtered_values}")
+        endforeach()
+    endfunction()
+
+    remove_imported_apple_framework(Qt6::Gui AGL)
+endif()
+
 qt_add_executable(MSTAgritechDesktop
     MACOSX_BUNDLE
     WIN32
