@@ -27,6 +27,7 @@ namespace {
 
 QFrame *metricCard(const QString &title, QLabel *valueLabel) {
     auto *frame = new QFrame;
+    frame->setObjectName(QStringLiteral("MetricCard"));
     frame->setFrameShape(QFrame::StyledPanel);
     frame->setMinimumHeight(100);
 
@@ -41,6 +42,22 @@ QFrame *metricCard(const QString &title, QLabel *valueLabel) {
     layout->addWidget(titleLabel);
     layout->addWidget(valueLabel);
     layout->addStretch(1);
+    return frame;
+}
+
+QFrame *quickActionCard(const QString &title, const QString &description, QPushButton *button) {
+    auto *frame = new QFrame;
+    frame->setObjectName(QStringLiteral("QuickActionCard"));
+    frame->setFrameShape(QFrame::StyledPanel);
+    auto *titleLabel = new QLabel(QStringLiteral("<b>%1</b>").arg(title), frame);
+    auto *descriptionLabel = new QLabel(description, frame);
+    descriptionLabel->setWordWrap(true);
+
+    auto *layout = new QVBoxLayout(frame);
+    layout->addWidget(titleLabel);
+    layout->addWidget(descriptionLabel);
+    layout->addStretch(1);
+    layout->addWidget(button, 0, Qt::AlignLeft);
     return frame;
 }
 
@@ -86,8 +103,8 @@ protected:
         painter.setRenderHint(QPainter::Antialiasing);
 
         const QColor cyan(QStringLiteral("#00D3F3"));
-        const QColor teal(QStringLiteral("#0A8086"));
-        const QColor navy(QStringLiteral("#0F172A"));
+        const QColor teal(QStringLiteral("#71E6F4"));
+        const QColor text(QStringLiteral("#F8FAFC"));
 
         const QRectF iconRect(0, 7, 44, 44);
         if (m_icon.isValid()) {
@@ -103,7 +120,7 @@ protected:
 
         QFont titleFont(QStringLiteral("Arial"), 16, QFont::DemiBold);
         painter.setFont(titleFont);
-        painter.setPen(navy);
+        painter.setPen(text);
         painter.drawText(QRectF(56, 7, width() - 58, 25), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("MukuyuSmart"));
 
         QFont subtitleFont(QStringLiteral("Arial"), 8, QFont::Medium);
@@ -243,12 +260,18 @@ void MainWindow::addPage(const QString &name, QWidget *page) {
 
 QWidget *MainWindow::createDashboardPage() {
     auto *page = new QWidget(this);
-    auto *title = new QLabel(QStringLiteral("<h1>MST Agritech Desktop</h1>"), page);
+    auto *hero = new QFrame(page);
+    hero->setObjectName(QStringLiteral("WelcomeHero"));
+    auto *title = new QLabel(QStringLiteral("<h1>Welcome to MST Agritech Desktop</h1>"), hero);
     auto *description = new QLabel(
-        QStringLiteral("Work with agricultural trade data offline on macOS and Windows. "
-                       "New and updated records are stored in SQLite and queued for sync when the API is reachable."),
-        page);
+        QStringLiteral("Offline-first agricultural trade operations, built for desktop workflows. "
+                       "Capture data locally, review queued changes, and sync when the server is available."),
+        hero);
     description->setWordWrap(true);
+
+    auto *heroLayout = new QVBoxLayout(hero);
+    heroLayout->addWidget(title);
+    heroLayout->addWidget(description);
 
     m_farmerCountLabel = new QLabel(page);
     m_buyerCountLabel = new QLabel(page);
@@ -268,16 +291,22 @@ QWidget *MainWindow::createDashboardPage() {
     connect(syncButton, &QPushButton::clicked, m_syncManager, &SyncManager::syncNow);
     connect(checkButton, &QPushButton::clicked, m_syncManager, &SyncManager::checkConnectivity);
 
-    auto *actions = new QHBoxLayout;
-    actions->addWidget(syncButton);
-    actions->addWidget(checkButton);
-    actions->addStretch(1);
+    auto *openIngestion = new QPushButton(QStringLiteral("Open ingestion"), page);
+    auto *openSettings = new QPushButton(QStringLiteral("Open settings"), page);
+    connect(openIngestion, &QPushButton::clicked, this, [this]() { selectPage(QStringLiteral("Data Ingestion")); });
+    connect(openSettings, &QPushButton::clicked, this, [this]() { selectPage(QStringLiteral("Settings")); });
+
+    auto *quickGrid = new QGridLayout;
+    quickGrid->addWidget(quickActionCard(QStringLiteral("Server sync"), QStringLiteral("Check connectivity and push queued offline changes to the backend."), syncButton), 0, 0);
+    quickGrid->addWidget(quickActionCard(QStringLiteral("Data ingestion"), QStringLiteral("Stage JSON/file imports or submit online ingestion payloads."), openIngestion), 0, 1);
+    quickGrid->addWidget(quickActionCard(QStringLiteral("Connection settings"), QStringLiteral("Configure API URL, tenant, operator, and access token."), openSettings), 0, 2);
+    quickGrid->addWidget(quickActionCard(QStringLiteral("API health"), QStringLiteral("Verify the configured backend is reachable before syncing."), checkButton), 0, 3);
 
     auto *layout = new QVBoxLayout(page);
-    layout->addWidget(title);
-    layout->addWidget(description);
+    layout->setContentsMargins(26, 24, 26, 24);
+    layout->addWidget(hero);
     layout->addLayout(grid);
-    layout->addLayout(actions);
+    layout->addLayout(quickGrid);
     layout->addStretch(1);
     return page;
 }
@@ -441,21 +470,21 @@ void MainWindow::applyTheme() {
 
     setStyleSheet(QStringLiteral(R"qss(
         QMainWindow, QWidget {
-            background: #F6F8FB;
-            color: #1F2937;
+            background: #ECEFF3;
+            color: #20242A;
             font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
             font-size: 13px;
         }
         QFrame#NavPanel {
-            background: #FFFFFF;
-            border-right: 1px solid #E5E7EB;
+            background: #252A31;
+            border-right: 1px solid #1B1F25;
         }
         QSplitter::handle {
-            background: #E5EAF0;
+            background: #D8DEE6;
         }
         QMenuBar {
-            background: #FFFFFF;
-            border-bottom: 1px solid #E5E7EB;
+            background: #F8FAFC;
+            border-bottom: 1px solid #D8DEE6;
             padding: 4px 10px;
         }
         QMenuBar::item {
@@ -482,7 +511,7 @@ void MainWindow::applyTheme() {
             color: %2;
         }
         QListWidget {
-            background: #FFFFFF;
+            background: #252A31;
             border: none;
             outline: 0;
             padding-top: 4px;
@@ -490,31 +519,41 @@ void MainWindow::applyTheme() {
         QListWidget::item {
             border: 1px solid transparent;
             border-radius: 6px;
-            margin: 2px 0;
-            padding: 10px 12px 10px 16px;
-            color: #475569;
+            margin: 3px 0;
+            padding: 11px 12px 11px 15px;
+            color: #C8D0DA;
         }
         QListWidget::item:hover {
-            background: #F5F7FA;
+            background: #303641;
             border: 1px solid transparent;
-            color: #0F172A;
+            color: #FFFFFF;
         }
         QListWidget::item:selected {
-            background: #EEF3F6;
-            color: #111827;
+            background: #343B46;
+            color: #FFFFFF;
             font-weight: 700;
             border: none;
             border-left: 4px solid %1;
             border-radius: 6px;
-            padding-left: 16px;
+            padding-left: 15px;
         }
         QLabel {
             background: transparent;
         }
-        QFrame[frameShape="6"], QGroupBox, QTableView, QTabWidget::pane {
+        QFrame[frameShape="6"], QFrame#MetricCard, QFrame#QuickActionCard, QGroupBox, QTableView, QTabWidget::pane {
             background: #FFFFFF;
             border: 1px solid #E6EAF0;
             border-radius: 14px;
+        }
+        QFrame#WelcomeHero {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                                        stop:0 #FFFFFF, stop:1 %3);
+            border: 1px solid #D8DEE6;
+            border-radius: 16px;
+            padding: 8px;
+        }
+        QFrame#MetricCard, QFrame#QuickActionCard {
+            border: 1px solid #DDE3EA;
         }
         QTableView {
             gridline-color: #EEF2F7;
