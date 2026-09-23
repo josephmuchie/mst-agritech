@@ -148,8 +148,8 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     resize(1280, 820);
 
     m_navigation = new QListWidget(this);
-    m_navigation->setMaximumWidth(230);
-    m_navigation->setMinimumWidth(190);
+    m_navigation->setMaximumWidth(260);
+    m_navigation->setMinimumWidth(220);
 
     m_stack = new QStackedWidget(this);
     auto *navPanel = new QFrame(this);
@@ -164,7 +164,33 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     splitter->addWidget(navPanel);
     splitter->addWidget(m_stack);
     splitter->setStretchFactor(1, 1);
-    setCentralWidget(splitter);
+
+    auto *root = new QWidget(this);
+    auto *rootLayout = new QVBoxLayout(root);
+    rootLayout->setContentsMargins(0, 0, 0, 0);
+    rootLayout->setSpacing(0);
+
+    auto *topBar = new QFrame(root);
+    topBar->setObjectName(QStringLiteral("TopBar"));
+    topBar->setFixedHeight(58);
+    auto *topBarLayout = new QHBoxLayout(topBar);
+    topBarLayout->setContentsMargins(20, 0, 18, 0);
+    auto *appTitle = new QLabel(QStringLiteral("<b>MST Agritech Desktop</b>"), topBar);
+    appTitle->setObjectName(QStringLiteral("TopBarTitle"));
+    auto *syncTopButton = new QPushButton(QStringLiteral("Sync"), topBar);
+    syncTopButton->setObjectName(QStringLiteral("TopBarButton"));
+    auto *settingsTopButton = new QPushButton(QStringLiteral("Settings"), topBar);
+    settingsTopButton->setObjectName(QStringLiteral("TopBarButton"));
+    connect(syncTopButton, &QPushButton::clicked, m_syncManager, &SyncManager::syncNow);
+    connect(settingsTopButton, &QPushButton::clicked, this, [this]() { selectPage(QStringLiteral("Settings")); });
+    topBarLayout->addWidget(appTitle);
+    topBarLayout->addStretch(1);
+    topBarLayout->addWidget(syncTopButton);
+    topBarLayout->addWidget(settingsTopButton);
+
+    rootLayout->addWidget(topBar);
+    rootLayout->addWidget(splitter, 1);
+    setCentralWidget(root);
 
     addPage(QStringLiteral("Dashboard"), createDashboardPage());
     addPage(QStringLiteral("Farmers"), createModulePage(
@@ -470,14 +496,35 @@ void MainWindow::applyTheme() {
 
     setStyleSheet(QStringLiteral(R"qss(
         QMainWindow, QWidget {
-            background: #ECEFF3;
+            background: #E7EBF0;
             color: #20242A;
             font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
             font-size: 13px;
         }
-        QFrame#NavPanel {
+        QFrame#TopBar {
+            background: #171B21;
+            border-bottom: 1px solid #0D1117;
+        }
+        QLabel#TopBarTitle {
+            color: #F8FAFC;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+        }
+        QPushButton#TopBarButton {
             background: #252A31;
-            border-right: 1px solid #1B1F25;
+            color: #E5EAF0;
+            border: 1px solid #3A424D;
+            border-radius: 8px;
+            padding: 7px 16px;
+        }
+        QPushButton#TopBarButton:hover {
+            background: #303844;
+            color: #FFFFFF;
+            border-color: %1;
+        }
+        QFrame#NavPanel {
+            background: #20242B;
+            border-right: 1px solid #14181E;
         }
         QSplitter::handle {
             background: #D8DEE6;
@@ -511,7 +558,7 @@ void MainWindow::applyTheme() {
             color: %2;
         }
         QListWidget {
-            background: #252A31;
+            background: #20242B;
             border: none;
             outline: 0;
             padding-top: 4px;
@@ -524,12 +571,12 @@ void MainWindow::applyTheme() {
             color: #C8D0DA;
         }
         QListWidget::item:hover {
-            background: #303641;
+            background: #2B313A;
             border: 1px solid transparent;
             color: #FFFFFF;
         }
         QListWidget::item:selected {
-            background: #343B46;
+            background: #313944;
             color: #FFFFFF;
             font-weight: 700;
             border: none;
@@ -547,13 +594,20 @@ void MainWindow::applyTheme() {
         }
         QFrame#WelcomeHero {
             background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                                        stop:0 #FFFFFF, stop:1 %3);
-            border: 1px solid #D8DEE6;
-            border-radius: 16px;
-            padding: 8px;
+                                        stop:0 #1F2937, stop:1 #0F766E);
+            border: 1px solid #111827;
+            border-radius: 18px;
+            padding: 12px;
+        }
+        QFrame#WelcomeHero QLabel {
+            color: #FFFFFF;
         }
         QFrame#MetricCard, QFrame#QuickActionCard {
             border: 1px solid #DDE3EA;
+        }
+        QFrame#QuickActionCard:hover {
+            border: 1px solid %1;
+            background: #FBFEFF;
         }
         QTableView {
             gridline-color: #EEF2F7;
