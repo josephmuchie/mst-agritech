@@ -41,7 +41,6 @@ private:
     QLabel *m_onlineLabel = nullptr;
     QLabel *m_pendingLabel = nullptr;
     QLabel *m_databaseLabel = nullptr;
-    QLabel *m_logoLabel = nullptr;
     QLabel *m_farmerCountLabel = nullptr;
     QLabel *m_buyerCountLabel = nullptr;
     QLabel *m_orderCountLabel = nullptr;

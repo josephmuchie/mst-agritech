@@ -67,37 +67,59 @@ QStringList statusOptionsFor(const QString &module) {
     return {QStringLiteral("ACTIVE"), QStringLiteral("INACTIVE")};
 }
 
-QPixmap websiteBrandLockup() {
-    QPixmap pixmap(192, 58);
-    pixmap.fill(Qt::transparent);
-
-    QPainter painter(&pixmap);
-    painter.setRenderHint(QPainter::Antialiasing);
-    const QColor cyan(QStringLiteral("#00D3F3"));
-    const QColor teal(QStringLiteral("#0A8086"));
-    const QColor navy(QStringLiteral("#0F172A"));
-
-    QSvgRenderer icon(QStringLiteral(":/brand/icon-cyan.svg"));
-    if (icon.isValid()) {
-        icon.render(&painter, QRectF(0, 6, 46, 46));
+class BrandLockupWidget : public QWidget {
+public:
+    explicit BrandLockupWidget(QWidget *parent = nullptr)
+        : QWidget(parent),
+          m_icon(QStringLiteral(":/brand/icon-cyan.svg")) {
+        setMinimumSize(188, 58);
+        setMaximumHeight(64);
     }
 
-    QFont titleFont(QStringLiteral("Arial"), 16, QFont::DemiBold);
-    painter.setFont(titleFont);
-    painter.setPen(navy);
-    painter.drawText(QRectF(57, 8, 132, 24), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("MukuyuSmart"));
+    QSize sizeHint() const override {
+        return QSize(188, 58);
+    }
 
-    QFont subtitleFont(QStringLiteral("Arial"), 8, QFont::Medium);
-    painter.setFont(subtitleFont);
-    painter.setPen(teal);
-    painter.drawText(QRectF(58, 33, 132, 16), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("TECHNOLOGIES"));
+protected:
+    void paintEvent(QPaintEvent *) override {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
 
-    painter.setBrush(cyan);
-    painter.setPen(Qt::NoPen);
-    painter.drawRoundedRect(QRectF(57, 51, 78, 3), 1.5, 1.5);
+        const QColor cyan(QStringLiteral("#00D3F3"));
+        const QColor teal(QStringLiteral("#0A8086"));
+        const QColor navy(QStringLiteral("#0F172A"));
 
-    return pixmap;
-}
+        const QRectF iconRect(0, 7, 44, 44);
+        if (m_icon.isValid()) {
+            m_icon.render(&painter, iconRect);
+        } else {
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(cyan);
+            painter.drawRoundedRect(iconRect, 10, 10);
+            painter.setPen(QPen(Qt::white, 2.4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            painter.drawArc(QRectF(8, 15, 30, 30), 30 * 16, 115 * 16);
+            painter.drawLine(QPointF(19, 38), QPointF(32, 19));
+        }
+
+        QFont titleFont(QStringLiteral("Arial"), 16, QFont::DemiBold);
+        painter.setFont(titleFont);
+        painter.setPen(navy);
+        painter.drawText(QRectF(56, 7, width() - 58, 25), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("MukuyuSmart"));
+
+        QFont subtitleFont(QStringLiteral("Arial"), 8, QFont::Medium);
+        subtitleFont.setLetterSpacing(QFont::AbsoluteSpacing, 1.4);
+        painter.setFont(subtitleFont);
+        painter.setPen(teal);
+        painter.drawText(QRectF(57, 33, width() - 60, 16), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("TECHNOLOGIES"));
+
+        painter.setBrush(cyan);
+        painter.setPen(Qt::NoPen);
+        painter.drawRoundedRect(QRectF(57, 52, 80, 3), 1.5, 1.5);
+    }
+
+private:
+    QSvgRenderer m_icon;
+};
 
 } // namespace
 
@@ -117,9 +139,7 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     navPanel->setObjectName(QStringLiteral("NavPanel"));
     auto *navLayout = new QVBoxLayout(navPanel);
     navLayout->setContentsMargins(18, 18, 18, 18);
-    m_logoLabel = new QLabel(navPanel);
-    m_logoLabel->setPixmap(websiteBrandLockup());
-    navLayout->addWidget(m_logoLabel);
+    navLayout->addWidget(new BrandLockupWidget(navPanel));
     navLayout->addSpacing(12);
     navLayout->addWidget(m_navigation, 1);
 
