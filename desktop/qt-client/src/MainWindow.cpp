@@ -496,14 +496,14 @@ void MainWindow::applyTheme() {
 
     setStyleSheet(QStringLiteral(R"qss(
         QMainWindow, QWidget {
-            background: #E7EBF0;
-            color: #20242A;
+            background: #F4F7FA;
+            color: #0F172A;
             font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
             font-size: 13px;
         }
         QFrame#TopBar {
-            background: #171B21;
-            border-bottom: 1px solid #0D1117;
+            background: #001529;
+            border-bottom: 1px solid #00101F;
         }
         QLabel#TopBarTitle {
             color: #F8FAFC;
@@ -511,20 +511,20 @@ void MainWindow::applyTheme() {
             letter-spacing: 0.3px;
         }
         QPushButton#TopBarButton {
-            background: #252A31;
+            background: #0A263D;
             color: #E5EAF0;
-            border: 1px solid #3A424D;
+            border: 1px solid #16445F;
             border-radius: 8px;
             padding: 7px 16px;
         }
         QPushButton#TopBarButton:hover {
-            background: #303844;
+            background: #0E3A55;
             color: #FFFFFF;
             border-color: %1;
         }
         QFrame#NavPanel {
-            background: #20242B;
-            border-right: 1px solid #14181E;
+            background: #001529;
+            border-right: 1px solid #00101F;
         }
         QSplitter::handle {
             background: #D8DEE6;
@@ -558,7 +558,7 @@ void MainWindow::applyTheme() {
             color: %2;
         }
         QListWidget {
-            background: #20242B;
+            background: #001529;
             border: none;
             outline: 0;
             padding-top: 4px;
@@ -568,15 +568,15 @@ void MainWindow::applyTheme() {
             border-radius: 6px;
             margin: 3px 0;
             padding: 11px 12px 11px 15px;
-            color: #C8D0DA;
+            color: #D7E3EA;
         }
         QListWidget::item:hover {
-            background: #2B313A;
+            background: #082A3E;
             border: 1px solid transparent;
             color: #FFFFFF;
         }
         QListWidget::item:selected {
-            background: #313944;
+            background: #0A3A4A;
             color: #FFFFFF;
             font-weight: 700;
             border: none;
@@ -591,16 +591,20 @@ void MainWindow::applyTheme() {
             background: #FFFFFF;
             border: 1px solid #E6EAF0;
             border-radius: 14px;
+            color: #0F172A;
         }
         QFrame#WelcomeHero {
             background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                                        stop:0 #1F2937, stop:1 #0F766E);
-            border: 1px solid #111827;
+                                        stop:0 #001529, stop:1 #0A8086);
+            border: 1px solid #00384A;
             border-radius: 18px;
             padding: 12px;
         }
         QFrame#WelcomeHero QLabel {
             color: #FFFFFF;
+        }
+        QFrame#MetricCard QLabel, QFrame#QuickActionCard QLabel, QGroupBox QLabel {
+            color: #0F172A;
         }
         QFrame#MetricCard, QFrame#QuickActionCard {
             border: 1px solid #DDE3EA;
@@ -616,8 +620,8 @@ void MainWindow::applyTheme() {
             selection-color: #111827;
         }
         QHeaderView::section {
-            background: #F8FAFC;
-            color: #475569;
+            background: #F7FAFC;
+            color: #0F172A;
             border: none;
             border-bottom: 1px solid #E5E7EB;
             padding: 10px;
@@ -640,6 +644,7 @@ void MainWindow::applyTheme() {
         }
         QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox {
             background: #FFFFFF;
+            color: #0F172A;
             border: 1px solid #D7DEE8;
             border-radius: 10px;
             padding: 8px;
@@ -664,6 +669,7 @@ void MainWindow::applyTheme() {
         }
         QStatusBar {
             background: #FFFFFF;
+            color: #334155;
             border-top: 1px solid #E5E7EB;
         }
     )qss").arg(accent, accentDark, soft));
