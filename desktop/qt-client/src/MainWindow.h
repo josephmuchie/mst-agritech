@@ -15,7 +15,9 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(OfflineStore *store, QWidget *parent = nullptr);
+    explicit MainWindow(OfflineStore *store,
+                        QWidget *parent = nullptr,
+                        bool enableBackgroundSync = true);
 
 private:
     QWidget *createDashboardPage();

@@ -131,7 +131,7 @@ bool OfflineStore::seedDefaults(QString *errorMessage) {
     const QMap<QString, QString> defaults = {
         {QStringLiteral("apiBaseUrl"), QStringLiteral("http://localhost:8080")},
         {QStringLiteral("tenantSlug"), QStringLiteral("default")},
-        {QStringLiteral("operatorEmail"), QString()},
+        {QStringLiteral("operatorEmail"), QStringLiteral("")},
         {QStringLiteral("platformName"), QStringLiteral("MST Agritech")},
         {QStringLiteral("supportEmail"), QStringLiteral("support@mst.co.zw")},
         {QStringLiteral("defaultCurrency"), QStringLiteral("USD")},
@@ -168,7 +168,7 @@ bool OfflineStore::writeSetting(const QString &key, const QString &value, QStrin
         ON CONFLICT(key) DO UPDATE SET value = excluded.value
     )sql"));
     query.bindValue(QStringLiteral(":key"), key);
-    query.bindValue(QStringLiteral(":value"), value);
+    query.bindValue(QStringLiteral(":value"), value.isNull() ? QStringLiteral("") : value);
     if (!query.exec()) {
         if (errorMessage) {
             *errorMessage = query.lastError().text();

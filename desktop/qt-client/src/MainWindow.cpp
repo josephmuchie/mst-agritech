@@ -64,7 +64,7 @@ QStringList statusOptionsFor(const QString &module) {
 
 } // namespace
 
-MainWindow::MainWindow(OfflineStore *store, QWidget *parent)
+MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgroundSync)
     : QMainWindow(parent),
       m_store(store),
       m_syncManager(new SyncManager(store, this)) {
@@ -145,20 +145,24 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent)
         refreshSyncQueue();
     });
 
-    auto *timer = new QTimer(this);
-    timer->setInterval(60000);
-    connect(timer, &QTimer::timeout, this, [this]() {
-        if (m_store->settings().autoSyncEnabled) {
-            m_syncManager->checkConnectivity();
-            m_syncManager->syncNow();
-        }
-    });
-    timer->start();
+    if (enableBackgroundSync) {
+        auto *timer = new QTimer(this);
+        timer->setInterval(60000);
+        connect(timer, &QTimer::timeout, this, [this]() {
+            if (m_store->settings().autoSyncEnabled) {
+                m_syncManager->checkConnectivity();
+                m_syncManager->syncNow();
+            }
+        });
+        timer->start();
+    }
 
     updateDashboard();
     updateStatusBar();
     refreshSyncQueue();
-    m_syncManager->checkConnectivity();
+    if (enableBackgroundSync) {
+        m_syncManager->checkConnectivity();
+    }
 }
 
 void MainWindow::addPage(const QString &name, QWidget *page) {
