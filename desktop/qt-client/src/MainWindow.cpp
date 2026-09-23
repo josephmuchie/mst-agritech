@@ -11,6 +11,7 @@
 #include <QListWidget>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QPainter>
 #include <QPixmap>
 #include <QPushButton>
 #include <QSplitter>
@@ -65,6 +66,39 @@ QStringList statusOptionsFor(const QString &module) {
     return {QStringLiteral("ACTIVE"), QStringLiteral("INACTIVE")};
 }
 
+QPixmap cyanBrandLogo() {
+    QPixmap pixmap(188, 52);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing);
+    const QColor cyan(QStringLiteral("#00D3F3"));
+    const QColor navy(QStringLiteral("#0F172A"));
+
+    QRectF mark(0, 5, 42, 42);
+    painter.setBrush(cyan);
+    painter.setPen(Qt::NoPen);
+    painter.drawRoundedRect(mark, 10, 10);
+
+    QPen whitePen(Qt::white, 2.6, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    painter.setPen(whitePen);
+    painter.drawArc(QRectF(8, 13, 34, 36), 25 * 16, 115 * 16);
+    painter.drawArc(QRectF(5, 8, 32, 34), 205 * 16, 95 * 16);
+    painter.drawLine(QPointF(20, 36), QPointF(33, 18));
+
+    QFont titleFont(QStringLiteral("Arial"), 15, QFont::DemiBold);
+    painter.setFont(titleFont);
+    painter.setPen(navy);
+    painter.drawText(QRectF(52, 5, 132, 24), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("MST"));
+
+    QFont subtitleFont(QStringLiteral("Arial"), 9, QFont::Medium);
+    painter.setFont(subtitleFont);
+    painter.setPen(cyan.darker(120));
+    painter.drawText(QRectF(52, 27, 132, 18), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("AGRITECH"));
+
+    return pixmap;
+}
+
 } // namespace
 
 MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgroundSync)
@@ -84,12 +118,7 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     auto *navLayout = new QVBoxLayout(navPanel);
     navLayout->setContentsMargins(18, 18, 18, 18);
     m_logoLabel = new QLabel(navPanel);
-    QPixmap logo(QStringLiteral(":/brand/primary-logo-cyan.svg"));
-    if (!logo.isNull()) {
-        m_logoLabel->setPixmap(logo.scaledToWidth(168, Qt::SmoothTransformation));
-    } else {
-        m_logoLabel->setText(QStringLiteral("<b>MST Agritech</b>"));
-    }
+    m_logoLabel->setPixmap(cyanBrandLogo());
     navLayout->addWidget(m_logoLabel);
     navLayout->addSpacing(12);
     navLayout->addWidget(m_navigation, 1);
@@ -440,23 +469,24 @@ void MainWindow::applyTheme() {
         }
         QListWidget::item {
             border: 1px solid transparent;
-            border-radius: 12px;
-            margin: 4px 0;
-            padding: 11px 13px 11px 15px;
+            border-radius: 6px;
+            margin: 2px 0;
+            padding: 10px 12px 10px 16px;
             color: #475569;
         }
         QListWidget::item:hover {
-            background: #F8FAFC;
-            border: 1px solid #E2E8F0;
+            background: #F5F7FA;
+            border: 1px solid transparent;
             color: #0F172A;
         }
         QListWidget::item:selected {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                                        stop:0 %3, stop:1 #FFFFFF);
-            color: #0F172A;
+            background: #EEF3F6;
+            color: #111827;
             font-weight: 700;
-            border: 1px solid #B9F3FA;
-            border-left: 5px solid %1;
+            border: none;
+            border-left: 4px solid %1;
+            border-radius: 6px;
+            padding-left: 16px;
         }
         QLabel {
             background: transparent;
