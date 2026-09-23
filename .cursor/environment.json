@@ -1,0 +1,21 @@
+{
+  "name": "MST Agritech Platform",
+  "user": "ubuntu",
+  "install": "bash .cursor/install.sh",
+  "start": "bash .cursor/start.sh",
+  "terminals": [
+    {
+      "name": "core-api",
+      "command": "cd backend/core-api && mvn spring-boot:run"
+    },
+    {
+      "name": "notification-service",
+      "command": "cd backend/notification-service && npm run start:dev"
+    },
+    {
+      "name": "frontend",
+      "command": "cd frontend && npm run dev -- --host 0.0.0.0"
+    }
+  ],
+  "ports": [5173, 8081, 3001]
+}
