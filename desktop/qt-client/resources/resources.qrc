@@ -3,5 +3,7 @@
         <file alias="primary-logo.svg">../../../frontend/public/Assets/SVG/Primary logo.svg</file>
         <file alias="primary-logo-cyan.svg">../../../frontend/public/Assets/SVG/Primary logo cyan.svg</file>
         <file alias="primary-logo-black.svg">../../../frontend/public/Assets/SVG/Primary logo black.svg</file>
+        <file alias="secondary-logo-cyan.svg">../../../frontend/public/Assets/SVG/Secondary logo cyan.svg</file>
+        <file alias="icon-cyan.svg">../../../frontend/public/Assets/SVG/icon cyan.svg</file>
     </qresource>
 </RCC>

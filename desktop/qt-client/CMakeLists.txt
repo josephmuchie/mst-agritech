@@ -13,7 +13,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Sql Network)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Sql Network Svg)
 
 if(APPLE)
     # Some Homebrew Qt builds still export the deprecated AGL framework even
@@ -88,6 +88,7 @@ target_link_libraries(MSTAgritechDesktop
         Qt6::Widgets
         Qt6::Sql
         Qt6::Network
+        Qt6::Svg
 )
 
 set_target_properties(MSTAgritechDesktop PROPERTIES

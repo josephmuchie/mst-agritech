@@ -18,6 +18,7 @@
 #include <QSqlTableModel>
 #include <QStackedWidget>
 #include <QStatusBar>
+#include <QSvgRenderer>
 #include <QTableView>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -66,35 +67,34 @@ QStringList statusOptionsFor(const QString &module) {
     return {QStringLiteral("ACTIVE"), QStringLiteral("INACTIVE")};
 }
 
-QPixmap cyanBrandLogo() {
-    QPixmap pixmap(188, 52);
+QPixmap websiteBrandLockup() {
+    QPixmap pixmap(192, 58);
     pixmap.fill(Qt::transparent);
 
     QPainter painter(&pixmap);
     painter.setRenderHint(QPainter::Antialiasing);
     const QColor cyan(QStringLiteral("#00D3F3"));
+    const QColor teal(QStringLiteral("#0A8086"));
     const QColor navy(QStringLiteral("#0F172A"));
 
-    QRectF mark(0, 5, 42, 42);
-    painter.setBrush(cyan);
-    painter.setPen(Qt::NoPen);
-    painter.drawRoundedRect(mark, 10, 10);
+    QSvgRenderer icon(QStringLiteral(":/brand/icon-cyan.svg"));
+    if (icon.isValid()) {
+        icon.render(&painter, QRectF(0, 6, 46, 46));
+    }
 
-    QPen whitePen(Qt::white, 2.6, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    painter.setPen(whitePen);
-    painter.drawArc(QRectF(8, 13, 34, 36), 25 * 16, 115 * 16);
-    painter.drawArc(QRectF(5, 8, 32, 34), 205 * 16, 95 * 16);
-    painter.drawLine(QPointF(20, 36), QPointF(33, 18));
-
-    QFont titleFont(QStringLiteral("Arial"), 15, QFont::DemiBold);
+    QFont titleFont(QStringLiteral("Arial"), 16, QFont::DemiBold);
     painter.setFont(titleFont);
     painter.setPen(navy);
-    painter.drawText(QRectF(52, 5, 132, 24), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("MST"));
+    painter.drawText(QRectF(57, 8, 132, 24), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("MukuyuSmart"));
 
-    QFont subtitleFont(QStringLiteral("Arial"), 9, QFont::Medium);
+    QFont subtitleFont(QStringLiteral("Arial"), 8, QFont::Medium);
     painter.setFont(subtitleFont);
-    painter.setPen(cyan.darker(120));
-    painter.drawText(QRectF(52, 27, 132, 18), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("AGRITECH"));
+    painter.setPen(teal);
+    painter.drawText(QRectF(58, 33, 132, 16), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("TECHNOLOGIES"));
+
+    painter.setBrush(cyan);
+    painter.setPen(Qt::NoPen);
+    painter.drawRoundedRect(QRectF(57, 51, 78, 3), 1.5, 1.5);
 
     return pixmap;
 }
@@ -118,7 +118,7 @@ MainWindow::MainWindow(OfflineStore *store, QWidget *parent, bool enableBackgrou
     auto *navLayout = new QVBoxLayout(navPanel);
     navLayout->setContentsMargins(18, 18, 18, 18);
     m_logoLabel = new QLabel(navPanel);
-    m_logoLabel->setPixmap(cyanBrandLogo());
+    m_logoLabel->setPixmap(websiteBrandLockup());
     navLayout->addWidget(m_logoLabel);
     navLayout->addSpacing(12);
     navLayout->addWidget(m_navigation, 1);
