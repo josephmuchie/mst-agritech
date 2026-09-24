@@ -40,9 +40,16 @@ fi
 
 xattr -cr "$APP_PATH" || true
 
-"$MACDEPLOYQT" "$APP_PATH" -always-overwrite -dmg -codesign=-
+"$MACDEPLOYQT" "$APP_PATH" -always-overwrite
 
+# macdeployqt can copy files with extended attributes. Clear those after
+# deployment and sign manually so codesign does not fail with "resource fork,
+# Finder information, or similar detritus not allowed".
 xattr -cr "$APP_PATH" || true
 codesign --force --deep --sign - "$APP_PATH"
 
-echo "Deployment complete."
+DMG_PATH="${DMG_PATH:-${APP_PATH%.app}.dmg}"
+rm -f "$DMG_PATH"
+hdiutil create -volname "MST Agritech" -srcfolder "$APP_PATH" -ov -format UDZO "$DMG_PATH"
+
+echo "Deployment complete: $DMG_PATH"
