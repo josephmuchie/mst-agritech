@@ -5,9 +5,34 @@
 #include <QDebug>
 #include <QIcon>
 #include <QMessageBox>
+#include <QPainter>
+#include <QPixmap>
 #include <QStyleFactory>
+#include <QSvgRenderer>
 #include <cstdlib>
 #include <cstring>
+
+namespace {
+
+QIcon mukuyuAppIcon() {
+    QPixmap pixmap(128, 128);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(Qt::white);
+    painter.drawRoundedRect(QRectF(8, 8, 112, 112), 24, 24);
+
+    QSvgRenderer renderer(QStringLiteral(":/brand/icon-cyan.svg"));
+    if (renderer.isValid()) {
+        renderer.render(&painter, QRectF(30, 30, 68, 68));
+    }
+
+    return QIcon(pixmap);
+}
+
+} // namespace
 
 int main(int argc, char *argv[]) {
     bool smokeTest = std::getenv("MST_AGRITECH_SMOKE_TEST") != nullptr;
@@ -27,7 +52,8 @@ int main(int argc, char *argv[]) {
     if (QStyleFactory::keys().contains(QStringLiteral("Fusion"))) {
         QApplication::setStyle(QStringLiteral("Fusion"));
     }
-    app.setWindowIcon(QIcon(QStringLiteral(":/brand/icon-cyan.svg")));
+    const QIcon appIcon = mukuyuAppIcon();
+    app.setWindowIcon(appIcon);
 
     OfflineStore store;
     QString error;
@@ -45,7 +71,7 @@ int main(int argc, char *argv[]) {
     }
 
     MainWindow window(&store, nullptr, !smokeTest);
-    window.setWindowIcon(QIcon(QStringLiteral(":/brand/icon-cyan.svg")));
+    window.setWindowIcon(appIcon);
     window.show();
     return app.exec();
 }
