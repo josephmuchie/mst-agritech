@@ -8,6 +8,7 @@ yarn-error.log*
 # ── Build outputs ─────────────────────────────────────────────
 dist/
 build/
+desktop/qt-client/build*/
 target/
 out/
 *.class
