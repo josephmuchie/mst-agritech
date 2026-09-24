@@ -72,19 +72,12 @@ desktop/qt-client/build/MST\ Agritech
 After a successful build, package the `.app` with the Qt frameworks and plugins:
 
 ```bash
-"$HOME/Qt/6.11.2/macos/bin/macdeployqt" \
-  "desktop/qt-client/build/MST Agritech.app"
+QT_ROOT="$HOME/Qt/6.11.2/macos" desktop/qt-client/scripts/deploy-macos.sh
 ```
 
-To create a DMG:
+The script creates a DMG and works around Qt SQL plugins that are not used by this app but may reference missing local libraries such as ODBC, Mimer, or Postgres.app.
 
-```bash
-"$HOME/Qt/6.11.2/macos/bin/macdeployqt" \
-  "desktop/qt-client/build/MST Agritech.app" \
-  -dmg
-```
-
-If you installed a different Qt version, replace `6.11.2` with that version.
+If you installed a different Qt version, replace `6.11.2` with that version. If your build path is different, pass `APP_PATH="/path/to/MST Agritech.app"`.
 
 ## Build on Windows
 
